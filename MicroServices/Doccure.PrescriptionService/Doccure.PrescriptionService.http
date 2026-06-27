@@ -1,0 +1,6 @@
+@Doccure.PrescriptionService_HostAddress = http://localhost:5025
+
+GET {{Doccure.PrescriptionService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
