@@ -1,0 +1,6 @@
+@Doccure.IdentityService_HostAddress = http://localhost:5151
+
+GET {{Doccure.IdentityService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
