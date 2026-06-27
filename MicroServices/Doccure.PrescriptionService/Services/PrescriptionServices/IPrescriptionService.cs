@@ -6,9 +6,9 @@ namespace Doccure.PrescriptionService.Services.PrescriptionServices
 {
     public interface IPrescriptionService
     {
-        Task<List<ResultPrescriptionDto>> GetAllAsync();
-        Task<ResultPrescriptionDto> GetByIdAsync(int id);
         Task CreateAsync(CreatePrescriptionDto dto);
-        Task DeleteAsync(int id);
+        Task<ResultPrescriptionDto> GetByIdAsync(int id);
+        Task<ResultPrescriptionDto> GetByAppintmentIdAsync(int appointmentId);
+        Task<List<ResultPrescriptionDto>> GetByPatientIdAsync(string patientId);
     }
 }

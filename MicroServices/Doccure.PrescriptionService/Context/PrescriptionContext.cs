@@ -9,7 +9,7 @@ namespace Doccure.PrescriptionService.Context
         {
         }
 
-        DbSet<Prescription> Prescriptions { get; set; }
-        DbSet<PrescriptionItem> PrescriptionItems { get; set; }
+        public DbSet<Prescription> Prescriptions { get; set; }
+        public DbSet<PrescriptionItem> PrescriptionItems { get; set; }
     }
 }
