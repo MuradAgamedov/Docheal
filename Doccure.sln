@@ -1,0 +1,49 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doccure.BranchService", "Doccure.BranchService\Doccure.BranchService.csproj", "{2A28368D-1F90-49B0-93E0-7CFBF17FF3B6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MicroServices", "MicroServices", "{B7F3A6F2-919F-4C37-9504-2B83308FBAF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doccure.DoctorService", "MicroServices\Doccure.DoctorService\Doccure.DoctorService.csproj", "{D09057C5-A359-4242-B9D0-420FD4D49F2E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Requirements", "Requirements", "{38B81FF1-1AED-4619-84B2-5B475BE0B487}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JsonData", "JsonData", "{49F3BF2C-3F16-4C77-859B-CF812B62E64C}"
+	ProjectSection(SolutionItems) = preProject
+		DoctorExamples.txt = DoctorExamples.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doccure.ReviewService", "MicroServices\Doccure.ReviewService\Doccure.ReviewService.csproj", "{D6D1EE2B-4890-4E39-99DB-AAF20E6DE930}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A28368D-1F90-49B0-93E0-7CFBF17FF3B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A28368D-1F90-49B0-93E0-7CFBF17FF3B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A28368D-1F90-49B0-93E0-7CFBF17FF3B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A28368D-1F90-49B0-93E0-7CFBF17FF3B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D09057C5-A359-4242-B9D0-420FD4D49F2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D09057C5-A359-4242-B9D0-420FD4D49F2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D09057C5-A359-4242-B9D0-420FD4D49F2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D09057C5-A359-4242-B9D0-420FD4D49F2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6D1EE2B-4890-4E39-99DB-AAF20E6DE930}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6D1EE2B-4890-4E39-99DB-AAF20E6DE930}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6D1EE2B-4890-4E39-99DB-AAF20E6DE930}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6D1EE2B-4890-4E39-99DB-AAF20E6DE930}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2A28368D-1F90-49B0-93E0-7CFBF17FF3B6} = {B7F3A6F2-919F-4C37-9504-2B83308FBAF4}
+		{D09057C5-A359-4242-B9D0-420FD4D49F2E} = {B7F3A6F2-919F-4C37-9504-2B83308FBAF4}
+		{49F3BF2C-3F16-4C77-859B-CF812B62E64C} = {38B81FF1-1AED-4619-84B2-5B475BE0B487}
+		{D6D1EE2B-4890-4E39-99DB-AAF20E6DE930} = {B7F3A6F2-919F-4C37-9504-2B83308FBAF4}
+	EndGlobalSection
+EndGlobal

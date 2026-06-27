@@ -1,0 +1,6 @@
+@Doccure.ReviewService_HostAddress = http://localhost:5240
+
+GET {{Doccure.ReviewService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

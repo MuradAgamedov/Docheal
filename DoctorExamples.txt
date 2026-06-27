@@ -1,0 +1,71 @@
+﻿{
+  "name": "Murad",
+  "surname": "Agamedov",
+  "branchId": "685d8c3a4b7f6e12d91f2a45",
+  "email": "murad.agamedov@example.com",
+  "phone": "+994501234567",
+  "imageUrl": "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d",
+  "about": "8 ildən artıq təcrübəyə malik kardioloq. Ürək-damar xəstəliklərinin diaqnostikası və müalicəsi üzrə ixtisaslaşıb.",
+  "experienceYear": 8,
+  "pricePerHour": 120,
+  "educations": [
+    {
+      "schoolName": "Azərbaycan Tibb Universiteti",
+      "degree": "Tibb Doktoru",
+      "year": "2010-2016"
+    },
+    {
+      "schoolName": "İstanbul Universiteti",
+      "degree": "Kardiologiya Rezidenturası",
+      "year": "2017-2021"
+    }
+  ],
+  "experiences": [
+    {
+      "clinicName": "Baku Medical Plaza",
+      "yearRange": "2021-2023"
+    },
+    {
+      "clinicName": "Doccure Hospital",
+      "yearRange": "2023-Hazırda"
+    }
+  ],
+  "awards": [
+    {
+      "title": "İlin Həkimi",
+      "year": "2024",
+      "description": "Yüksək peşəkarlığa və pasiyent məmnuniyyətinə görə."
+    }
+  ],
+  "locations": [
+    {
+      "clinicName": "Doccure Main Clinic",
+      "address": "Nizami küç. 125",
+      "city": "Bakı",
+      "description": "Əsas filial",
+      "price": 120,
+      "businessHour": "09:00 - 18:00"
+    },
+    {
+      "clinicName": "Doccure Yasamal",
+      "address": "Şərifzadə küç. 48",
+      "city": "Bakı",
+      "description": "Filial",
+      "price": 100,
+      "businessHour": "10:00 - 17:00"
+    }
+  ],
+  "services": [
+    "Kardioloji konsultasiya",
+    "EKQ",
+    "Exokardioqrafiya",
+    "Qan təzyiqinin monitorinqi"
+  ],
+  "specializations": [
+    "Kardiologiya",
+    "Daxili Xəstəliklər"
+  ]
+}
+
+
+---------------------------------------------------------------
