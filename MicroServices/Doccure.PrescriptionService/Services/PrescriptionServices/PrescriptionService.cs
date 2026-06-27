@@ -23,6 +23,7 @@ namespace Doccure.PrescriptionService.Services.PrescriptionServices
                 AppointmentId=dto.AppointmentId,
                 DoctorId=dto.DoctorId,
                 PatientId=dto.PatientId,
+                CreatedDate = DateTime.UtcNow,
 
                 PrescriptionItems = dto.PrescriptionItems.Select(x=>new PrescriptionItem { 
                     MedicineName=x.MedicineName,

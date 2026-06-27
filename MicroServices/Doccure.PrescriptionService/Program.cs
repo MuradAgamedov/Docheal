@@ -13,6 +13,11 @@ namespace Doccure.PrescriptionService
             builder.Services.AddDbContext<PrescriptionContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreConnection")));
             builder.Services.AddControllers();
+            builder.Services.AddScoped<
+                   Doccure.PrescriptionService.Services.PrescriptionServices.IPrescriptionService,
+                   Doccure.PrescriptionService.Services.PrescriptionServices.PrescriptionService>();
+
+
             builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddSwaggerGen();
 

@@ -8,8 +8,8 @@ namespace Doccure.PrescriptionService.Mapping
     {
         public GeneralMapping()
         {
-            CreateMap<Prescription, CreatePrescriptionDto>().ReverseMap();
-            CreateMap<Prescription, ResultPrescriptionDto>().ReverseMap();
+            CreateMap<Prescription, CreatePrescriptionDto>();
+            CreateMap<Prescription, ResultPrescriptionDto>();
             CreateMap<PrescriptionItem, PrescriptionItemDto>().ReverseMap();
         }
     }
