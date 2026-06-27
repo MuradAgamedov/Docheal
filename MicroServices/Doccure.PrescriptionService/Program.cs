@@ -1,3 +1,6 @@
+using Doccure.PrescriptionService.Context;
+using Microsoft.EntityFrameworkCore;
+
 namespace Doccure.PrescriptionService
 {
     public class Program
@@ -7,7 +10,8 @@ namespace Doccure.PrescriptionService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.AddDbContext<PrescriptionContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreConnection")));
             builder.Services.AddControllers();
             builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddSwaggerGen();
