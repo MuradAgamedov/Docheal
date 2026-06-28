@@ -510,7 +510,7 @@
                     </div>
                     <div class="branch-actions">
                         <button class="btn-branch-view"><i class="bi bi-people-fill me-1"></i>Həkimləri Gör</button>
-                        <button class="btn-branch-edit" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                        <a href="/Admin/Branch/UpdateBranch?id=@item.BranchId" class="btn-branch-edit d-inline-flex align-items-center justify-content-center" style="text-decoration: none;" title="Redaktə et"><i class="bi bi-pencil"></i></a>
                         <button class="btn-branch-del" title="Sil" onclick="confirmDelete('@item.BranchId', '@item.BranchName')"><i class="bi bi-trash"></i></button>
                     </div>
                 </div>

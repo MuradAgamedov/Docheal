@@ -16,7 +16,9 @@ namespace Doccure.Web.UI
              Doccure.Web.UI.Services.BranchServices.IBranchService,
              Doccure.Web.UI.Services.BranchServices.BranchService>();
             builder.Services.AddHttpClient<IRegisterService, RegisterService>();
-
+            builder.Services.AddHttpClient<Doccure.Web.UI.Services.LoginServices.ILoginService, Doccure.Web.UI.Services.LoginServices.LoginService>();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddSession();
             var app = builder.Build();
 
             if (!app.Environment.IsDevelopment())
@@ -27,7 +29,7 @@ namespace Doccure.Web.UI
 
             app.UseHttpsRedirection();
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthorization();
 
             app.MapStaticAssets();

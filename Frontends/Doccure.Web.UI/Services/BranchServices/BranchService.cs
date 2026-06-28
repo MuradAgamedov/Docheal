@@ -1,15 +1,18 @@
 using Doccure.Web.UI.Dtos.BranchDtos;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
 
 namespace Doccure.Web.UI.Services.BranchServices
 {
     public class BranchService : IBranchService
     {
         private readonly HttpClient _client;
-
-        public BranchService(HttpClient client)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public BranchService(HttpClient client, IHttpContextAccessor httpContextAccessor)
         {
             _client = client;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task CreateAsync(CreateBranchDto dto)
@@ -28,20 +31,28 @@ namespace Doccure.Web.UI.Services.BranchServices
 
         public async Task<List<ResultBranchDto>> GetAllAsync()
         {
+            var token = _httpContextAccessor.HttpContext.Session.GetString("JwtToken");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var responseMessage = await _client.GetAsync("https://localhost:5000/api/branches");
             var jsonData = await responseMessage.Content.ReadAsStringAsync();
             var values = JsonConvert.DeserializeObject<List<ResultBranchDto>>(jsonData);
             return values;
         }
 
-        public Task<GetBranchByIdDto> GetByIdAsync(string id)
+        public async Task<GetBranchByIdDto> GetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var responseMessage = await _client.GetAsync($"https://localhost:5000/api/branches/GetBranch?id={id}");
+            var jsonData = await responseMessage.Content.ReadAsStringAsync();
+            var value = JsonConvert.DeserializeObject<GetBranchByIdDto>(jsonData);
+            return value;
         }
 
-        public Task UpdateAsync(UpdateBranchDto dto)
+        public async Task UpdateAsync(UpdateBranchDto dto)
         {
-            throw new NotImplementedException();
+            var jsonData = JsonConvert.SerializeObject(dto);
+            var stringContent = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
+            var responseMessage = await _client.PutAsync("https://localhost:5000/api/branches", stringContent);
+            responseMessage.EnsureSuccessStatusCode();
         }
     }
 }
