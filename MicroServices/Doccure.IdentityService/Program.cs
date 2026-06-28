@@ -1,4 +1,4 @@
-
+﻿
 using Doccure.IdentityService.Context;
 using Doccure.IdentityService.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -23,6 +23,11 @@ namespace Doccure.IdentityService
             builder.Services.AddScoped<
                Doccure.IdentityService.Services.IAuthService,
                Doccure.IdentityService.Services.AuthService>();
+
+
+            builder.Services.AddScoped<
+               Doccure.IdentityService.Services.RoleServices.IRoleService,
+               Doccure.IdentityService.Services.RoleServices.RoleService>();
             builder.Services.AddSwaggerGen();
             var app = builder.Build();
 

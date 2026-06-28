@@ -1,0 +1,621 @@
+@model RegisterViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Qeydiyyat – Doccure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        .field-validation-valid { display: none !important; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0e82fd 0%, #01c0c8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .register-wrapper {
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .register-card {
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 24px 64px rgba(14,130,253,.18);
+            overflow: hidden;
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, #0e82fd, #01c0c8);
+            padding: 2rem 2rem 1.6rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        .register-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .register-logo-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .register-logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -.3px;
+        }
+
+        .register-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 4px;
+        }
+
+        .register-header p {
+            font-size: .87rem;
+            opacity: .85;
+            margin: 0;
+        }
+
+        .register-body {
+            padding: 2rem;
+        }
+
+        .form-label {
+            font-size: .82rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-label span { color: #ef4444; }
+
+        .input-group-custom {
+            position: relative;
+            margin-bottom: 1.1rem;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: .9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: .95rem;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .form-control-custom {
+            width: 100%;
+            padding: .62rem 1rem .62rem 2.4rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: .875rem;
+            color: #1e293b;
+            background: #f8fafc;
+            transition: all .2s;
+            outline: none;
+        }
+
+        .form-control-custom:focus {
+            border-color: #0e82fd;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(14,130,253,.12);
+        }
+
+        .form-control-custom.is-invalid {
+            border-color: #ef4444;
+            background: #fff5f5;
+        }
+
+        .form-control-custom.is-invalid:focus {
+            box-shadow: 0 0 0 3px rgba(239,68,68,.12);
+        }
+
+        .toggle-pw {
+            position: absolute;
+            right: .9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: .95rem;
+            z-index: 2;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .toggle-pw:hover { color: #0e82fd; }
+
+        .field-error {
+            font-size: .75rem;
+            color: #ef4444;
+            margin-top: 4px;
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .field-error.field-validation-error {
+            display: flex;
+        }
+
+        .field-error.field-validation-error::before {
+            content: "\f33a"; /* bi-exclamation-circle-fill unicode */
+            font-family: "bootstrap-icons";
+            font-size: .85rem;
+            display: inline-block;
+        }
+
+        .row-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+        @@media (max-width: 460px) { .row-fields { grid-template-columns: 1fr; } }
+
+        .divider-label {
+            text-align: center;
+            font-size: .75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            margin: .25rem 0 1rem;
+            position: relative;
+        }
+
+        .divider-label::before, .divider-label::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: calc(50% - 70px);
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .divider-label::before { left: 0; }
+        .divider-label::after  { right: 0; }
+
+        .btn-register {
+            width: 100%;
+            padding: .75rem;
+            background: linear-gradient(135deg, #0e82fd, #01c0c8);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: .95rem;
+            cursor: pointer;
+            transition: all .25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 1.4rem;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14,130,253,.35);
+        }
+
+        .btn-register:active { transform: translateY(0); }
+
+        .register-footer {
+            text-align: center;
+            margin-top: 1.2rem;
+            font-size: .84rem;
+            color: #64748b;
+        }
+
+        .register-footer a {
+            color: #0e82fd;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .register-footer a:hover { text-decoration: underline; }
+
+        .alert-error {
+            background: rgba(239,68,68,.08);
+            border: 1px solid rgba(239,68,68,.2);
+            border-radius: 10px;
+            padding: .75rem 1rem;
+            font-size: .83rem;
+            color: #dc2626;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .alert-success {
+            background: rgba(34,197,94,.08);
+            border: 1px solid rgba(34,197,94,.2);
+            border-radius: 10px;
+            padding: .75rem 1rem;
+            font-size: .83rem;
+            color: #15803d;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast-item {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 5px solid #22c55e;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            min-width: 300px;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(120%);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: auto;
+        }
+
+        .toast-item.show {
+            transform: translateX(0);
+        }
+
+        .toast-item.hide {
+            transform: translateX(120%);
+            opacity: 0;
+        }
+
+        .toast-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .toast-success {
+            border-left-color: #22c55e;
+        }
+        .toast-success .toast-icon {
+            color: #22c55e;
+        }
+
+        .toast-error {
+            border-left-color: #ef4444;
+        }
+        .toast-error .toast-icon {
+            color: #ef4444;
+        }
+
+        .toast-message {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.4;
+        }
+
+        .patient-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,.2);
+            border: 1px solid rgba(255,255,255,.35);
+            border-radius: 30px;
+            padding: .3rem .85rem;
+            font-size: .78rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .gender-group { display: flex; gap: .6rem; margin-bottom: 1.1rem; }
+        .gender-option { flex: 1; }
+        .gender-option input[type="radio"] { display: none; }
+        .gender-option label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: .6rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: .84rem;
+            font-weight: 600;
+            color: #64748b;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all .2s;
+            width: 100%;
+        }
+        .gender-option input[type="radio"]:checked + label {
+            border-color: #0e82fd;
+            color: #0e82fd;
+            background: rgba(14,130,253,.07);
+        }
+        .gender-option label:hover { border-color: #0e82fd; color: #0e82fd; }
+    </style>
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+    <div class="register-wrapper">
+        <div class="register-card">
+
+            <!-- Başlıq -->
+            <div class="register-header">
+                <div class="register-logo">
+                    <div class="register-logo-icon"><i class="bi bi-hospital-fill"></i></div>
+                    <span class="register-logo-text">Doccure</span>
+                </div>
+                <div class="patient-badge">
+                    <i class="bi bi-person-vcard-fill"></i> Xəstə Qeydiyyatı
+                </div>
+                <h2>Hesab Yarat</h2>
+                <p>Tibbi xidmətlərdən istifadə etmək üçün qeydiyyatdan keçin</p>
+            </div>
+
+            <!-- Form -->
+            <div class="register-body">
+
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0 && ViewContext.HttpContext.Request.Method == "POST")
+                {
+                    <div class="alert-error">
+                        <i class="bi bi-exclamation-triangle-fill mt-1" style="flex-shrink:0;"></i>
+                        <span>Zəhmət olmasa aşağıdakı xətaları düzəldin və yenidən cəhd edin.</span>
+                    </div>
+                }
+
+                <form asp-action="Register" asp-controller="Auth" method="post" novalidate>
+                    @Html.AntiForgeryToken()
+
+                    <!-- Ad / Soyad -->
+                    <div class="row-fields">
+                        <div>
+                            <label class="form-label">Ad <span>*</span></label>
+                            <div class="input-group-custom">
+                                <i class="bi bi-person input-icon"></i>
+                                <input asp-for="Name"
+                                       class="form-control-custom @(ViewData.ModelState["Name"]?.Errors.Count > 0 ? "is-invalid" : "")"
+                                       placeholder="Adınız" />
+                            </div>
+                            <span asp-validation-for="Name" class="field-error"></span>
+                        </div>
+                        <div>
+                            <label class="form-label">Soyad <span>*</span></label>
+                            <div class="input-group-custom">
+                                <i class="bi bi-person input-icon"></i>
+                                <input asp-for="Surname"
+                                       class="form-control-custom @(ViewData.ModelState["Surname"]?.Errors.Count > 0 ? "is-invalid" : "")"
+                                       placeholder="Soyadınız" />
+                            </div>
+                            <span asp-validation-for="Surname" class="field-error"></span>
+                        </div>
+                    </div>
+
+                    <!-- İstifadəçi adı -->
+                    <div>
+                        <label class="form-label">İstifadəçi Adı <span>*</span></label>
+                        <div class="input-group-custom">
+                            <i class="bi bi-at input-icon"></i>
+                            <input asp-for="Username"
+                                   class="form-control-custom @(ViewData.ModelState["Username"]?.Errors.Count > 0 ? "is-invalid" : "")"
+                                   placeholder="istifadeci_adi" />
+                        </div>
+                        <span asp-validation-for="Username" class="field-error"></span>
+                    </div>
+
+                    <!-- E-poçt -->
+                    <div>
+                        <label class="form-label">E-poçt <span>*</span></label>
+                        <div class="input-group-custom">
+                            <i class="bi bi-envelope input-icon"></i>
+                            <input asp-for="Email"
+                                   type="email"
+                                   class="form-control-custom @(ViewData.ModelState["Email"]?.Errors.Count > 0 ? "is-invalid" : "")"
+                                   placeholder="ornek@email.com" />
+                        </div>
+                        <span asp-validation-for="Email" class="field-error"></span>
+                    </div>
+
+                    <!-- Telefon və Şəhər -->
+                    <div class="row-fields">
+                        <div>
+                            <label class="form-label">Telefon Nömrəsi <span>*</span></label>
+                            <div class="input-group-custom">
+                                <i class="bi bi-telephone input-icon"></i>
+                                <input asp-for="PhoneNumber"
+                                       class="form-control-custom @(ViewData.ModelState["PhoneNumber"]?.Errors.Count > 0 ? "is-invalid" : "")"
+                                       placeholder="+994 (50) 000-00-00" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="field-error"></span>
+                        </div>
+                        <div>
+                            <label class="form-label">Şəhər</label>
+                            <div class="input-group-custom">
+                                <i class="bi bi-geo-alt input-icon"></i>
+                                <input asp-for="City"
+                                       class="form-control-custom"
+                                       placeholder="Bakı (istəyə bağlı)" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Doğum tarixi və Cinsiyyət -->
+                    <div class="row-fields">
+                        <div>
+                            <label class="form-label">Doğum Tarixi <span>*</span></label>
+                            <div class="input-group-custom">
+                                <i class="bi bi-calendar input-icon"></i>
+                                <input asp-for="BirthDate"
+                                       type="date"
+                                       class="form-control-custom @(ViewData.ModelState["BirthDate"]?.Errors.Count > 0 ? "is-invalid" : "")" />
+                            </div>
+                            <span asp-validation-for="BirthDate" class="field-error"></span>
+                        </div>
+                        <div>
+                            <label class="form-label">Cinsiyyət <span>*</span></label>
+                            <div class="gender-group">
+                                <div class="gender-option">
+                                    <input type="radio" asp-for="Gender" value="Kişi" id="genderMale" />
+                                    <label for="genderMale">
+                                        <i class="bi bi-gender-male"></i> Kişi
+                                    </label>
+                                </div>
+                                <div class="gender-option">
+                                    <input type="radio" asp-for="Gender" value="Qadın" id="genderFemale" />
+                                    <label for="genderFemale">
+                                        <i class="bi bi-gender-female"></i> Qadın
+                                    </label>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Gender" class="field-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="divider-label">Şifrə məlumatları</div>
+
+                    <!-- Şifrə -->
+                    <div>
+                        <label class="form-label">Şifrə <span>*</span></label>
+                        <div class="input-group-custom">
+                            <i class="bi bi-lock input-icon"></i>
+                            <input asp-for="Password"
+                                   type="password"
+                                   id="passwordInput"
+                                   class="form-control-custom @(ViewData.ModelState["Password"]?.Errors.Count > 0 ? "is-invalid" : "")"
+                                   placeholder="Ən az 6 simvol" />
+                            <button type="button" class="toggle-pw" onclick="togglePw('passwordInput', this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="field-error"></span>
+                    </div>
+
+                    <!-- Şifrənin təkrarı -->
+                    <div>
+                        <label class="form-label">Şifrənin Təkrarı <span>*</span></label>
+                        <div class="input-group-custom">
+                            <i class="bi bi-lock-fill input-icon"></i>
+                            <input asp-for="ConfirmPassword"
+                                   type="password"
+                                   id="confirmInput"
+                                   class="form-control-custom @(ViewData.ModelState["ConfirmPassword"]?.Errors.Count > 0 ? "is-invalid" : "")"
+                                   placeholder="Şifrəni təkrar daxil edin" />
+                            <button type="button" class="toggle-pw" onclick="togglePw('confirmInput', this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+                    </div>
+
+                    <button type="submit" class="btn-register">
+                        <i class="bi bi-person-check-fill"></i>
+                        Qeydiyyatdan Keç
+                    </button>
+                </form>
+                <div class="register-footer">
+                    Artıq hesabınız var? <a asp-controller="Auth" asp-action="Login">Daxil Olun</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        function togglePw(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon  = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast-item toast-${type}`;
+            
+            const iconClass = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill';
+            
+            toast.innerHTML = `
+                <i class="bi ${iconClass} toast-icon"></i>
+                <div class="toast-message">${message}</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Trigger transition
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+                setTimeout(() => {
+                    toast.remove();
+                }, 400);
+            }, 4000);
+        }
+
+        @if (TempData["Success"] != null)
+        {
+            <text>
+            showToast("@TempData["Success"]", "success");
+            </text>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <text>
+            showToast("@TempData["Error"]", "error");
+            </text>
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,733 @@
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+<style>
+    .page-title-block { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.75rem; flex-wrap:wrap; gap:1rem; }
+    .page-title { font-family:'Poppins',sans-serif; font-size:1.6rem; font-weight:700; color:var(--dark-color); margin:0 0 4px 0; }
+    .page-subtitle { font-size:.88rem; color:#64748b; margin:0; }
+    .page-actions  { display:flex; gap:.6rem; flex-wrap:wrap; flex-shrink:0; }
+
+    .filter-bar { background:#fff; border:1px solid var(--card-border); border-radius:16px; padding:1.1rem 1.4rem; margin-bottom:1.5rem; display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; }
+    .filter-search { position:relative; flex:1; min-width:210px; max-width:300px; }
+    .filter-search i { position:absolute; left:.9rem; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:.9rem; }
+    .filter-search input { width:100%; padding:.48rem 1rem .48rem 2.2rem; border-radius:30px; border:1.5px solid #e2e8f0; font-size:.83rem; background:#f8fafc; }
+    .filter-search input:focus { outline:none; border-color:var(--primary-color); background:#fff; box-shadow:0 0 0 3px rgba(14,130,253,.12); }
+    .filter-select { padding:.46rem 1.9rem .46rem .8rem; border-radius:30px; border:1.5px solid #e2e8f0; font-size:.82rem; color:#475569; background:#f8fafc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right .7rem center; appearance:none; cursor:pointer; }
+    .filter-select:focus { outline:none; border-color:var(--primary-color); }
+    .filter-pills { display:flex; gap:.35rem; flex-wrap:wrap; }
+    .filter-pill { padding:.4rem .85rem; border-radius:30px; border:1.5px solid #e2e8f0; background:#fff; color:#64748b; font-size:.79rem; font-weight:500; cursor:pointer; transition:all .2s; white-space:nowrap; }
+    .filter-pill:hover,.filter-pill.active { border-color:var(--primary-color); color:var(--primary-color); background:var(--primary-light); font-weight:600; }
+
+    .nurse-card { background:#fff; border:1px solid var(--card-border); border-radius:16px; overflow:hidden; transition:all .3s ease; box-shadow:0 2px 8px rgba(0,0,0,.03); display:flex; flex-direction:column; height:100%; }
+    .nurse-card:hover { transform:translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,.09); border-color:rgba(14,130,253,.2); }
+
+    .nc-banner { height:64px; position:relative; }
+    .nc-banner.pink   { background:linear-gradient(135deg,#ec4899,#f9a8d4); }
+    .nc-banner.teal   { background:linear-gradient(135deg,#01c0c8,#6ee7b7); }
+    .nc-banner.violet { background:linear-gradient(135deg,#7c3aed,#c4b5fd); }
+    .nc-banner.blue   { background:linear-gradient(135deg,#0e82fd,#93c5fd); }
+    .nc-banner.orange { background:linear-gradient(135deg,#f59e0b,#fde68a); }
+    .nc-banner.green  { background:linear-gradient(135deg,#16a34a,#86efac); }
+    .nc-banner.red    { background:linear-gradient(135deg,#ef4444,#fca5a5); }
+    .nc-banner.indigo { background:linear-gradient(135deg,#4f46e5,#a5b4fc); }
+
+    .nc-avatar-wrap { position:absolute; bottom:-24px; left:1.1rem; }
+    .nc-avatar { width:54px; height:54px; border-radius:50%; border:3px solid #fff; object-fit:cover; box-shadow:0 3px 8px rgba(0,0,0,.12); }
+    .nc-avatar-ini { width:54px; height:54px; border-radius:50%; border:3px solid #fff; display:flex; align-items:center; justify-content:center; font-family:'Poppins',sans-serif; font-weight:700; font-size:1rem; color:#fff; box-shadow:0 3px 8px rgba(0,0,0,.12); }
+
+    .nc-shift-badge { position:absolute; top:.55rem; right:.7rem; padding:.24rem .65rem; border-radius:30px; font-size:.68rem; font-weight:700; letter-spacing:.3px; display:flex; align-items:center; gap:4px; }
+    .shift-day   { background:rgba(245,158,11,.15); color:#b45309; border:1px solid rgba(245,158,11,.3); }
+    .shift-night { background:rgba(79,70,229,.15);  color:#4338ca; border:1px solid rgba(79,70,229,.3); }
+    .shift-eve   { background:rgba(14,130,253,.12); color:#0e82fd; border:1px solid rgba(14,130,253,.25); }
+
+    .nc-status-row { display:flex; align-items:center; gap:6px; margin-bottom:.6rem; }
+    .status-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .dot-active { background:#22c55e; }
+    .dot-leave  { background:#94a3b8; }
+    .dot-break  { background:#f59e0b; }
+    .nc-status-text { font-size:.75rem; font-weight:600; }
+    .st-active { color:#15803d; }
+    .st-leave  { color:#64748b; }
+    .st-break  { color:#b45309; }
+
+    .nc-body { padding:2rem 1.1rem .85rem; flex:1; display:flex; flex-direction:column; }
+    .nc-name { font-family:'Poppins',sans-serif; font-weight:700; font-size:.95rem; color:var(--dark-color); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .nc-unit { font-size:.75rem; color:#64748b; margin-bottom:.4rem; }
+    .nc-branch-tag { display:inline-block; font-size:.68rem; font-weight:600; padding:.18rem .6rem; border-radius:20px; background:var(--primary-light); color:var(--primary-color); margin-bottom:.7rem; }
+
+    .nc-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:.35rem; margin-bottom:.75rem; }
+    .nc-stat-box { background:#f8fafc; border-radius:8px; padding:.45rem .3rem; text-align:center; }
+    .nc-stat-val { font-weight:700; font-size:.83rem; color:var(--dark-color); line-height:1.2; }
+    .nc-stat-lbl { font-size:.6rem; color:#94a3b8; font-weight:500; margin-top:1px; }
+
+    .nc-skills { display:flex; flex-wrap:wrap; gap:.3rem; margin-bottom:.75rem; }
+    .nc-skill { font-size:.64rem; font-weight:600; padding:.18rem .52rem; border-radius:6px; background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
+
+    .nc-prog-row { margin-bottom:.45rem; }
+    .nc-prog-header { display:flex; justify-content:space-between; margin-bottom:4px; }
+    .nc-prog-label { font-size:.71rem; color:#64748b; font-weight:500; }
+    .nc-prog-val   { font-size:.71rem; color:var(--dark-color); font-weight:700; }
+    .nc-prog-bar { height:6px; border-radius:30px; background:#f1f5f9; overflow:hidden; margin-bottom:.6rem; }
+    .nc-prog-fill { height:100%; border-radius:30px; }
+
+    .nc-actions { padding:.75rem 1.1rem; border-top:1px solid #f1f5f9; display:flex; gap:.4rem; }
+    .btn-nc-view { flex:1; font-size:.76rem; font-weight:600; padding:.46rem .5rem; border-radius:8px; border:1.5px solid var(--primary-color); color:var(--primary-color); background:transparent; transition:all .2s; cursor:pointer; text-align:center; }
+    .btn-nc-view:hover { background:var(--primary-light); }
+    .btn-nc-icon { width:32px; height:32px; border-radius:8px; border:1.5px solid #e2e8f0; background:#fff; color:#64748b; display:inline-flex; align-items:center; justify-content:center; font-size:.82rem; cursor:pointer; transition:all .2s; flex-shrink:0; }
+    .btn-nc-icon:hover     { border-color:var(--primary-color); color:var(--primary-color); background:var(--primary-light); }
+    .btn-nc-icon.del:hover { border-color:#ef4444; color:#ef4444; background:rgba(239,68,68,.06); }
+
+    .nurse-card-wrap.hidden { display:none; }
+
+    .section-card { background:#fff; border:1px solid var(--card-border); border-radius:16px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,.03); margin-top:2rem; }
+    .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; gap:.75rem; }
+    .section-title { font-family:'Poppins',sans-serif; font-weight:600; font-size:1.1rem; color:var(--dark-color); margin:0; display:flex; align-items:center; gap:8px; }
+    .section-title i { color:var(--primary-color); }
+
+    .shift-legend { display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; }
+    .legend-item { display:flex; align-items:center; gap:5px; font-size:.75rem; font-weight:500; color:#475569; }
+    .legend-dot { width:10px; height:10px; border-radius:3px; }
+
+    .shift-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .shift-table { width:100%; min-width:700px; border-collapse:collapse; }
+    .shift-table th { padding:.7rem .9rem; font-size:.75rem; font-weight:700; color:#475569; background:#f8fafc; border-bottom:2px solid #e2e8f0; text-transform:uppercase; letter-spacing:.4px; white-space:nowrap; }
+    .shift-table th:first-child { border-radius:8px 0 0 0; min-width:160px; }
+    .shift-table th:last-child  { border-radius:0 8px 0 0; }
+    .shift-table td { padding:.75rem .9rem; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
+    .shift-table tr:last-child td { border-bottom:none; }
+    .shift-table tr:hover td { background:#fafbfc; }
+
+    .nurse-cell { display:flex; align-items:center; gap:10px; }
+    .nurse-cell-ini { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.7rem; color:#fff; flex-shrink:0; }
+    .nurse-cell-name { font-weight:600; font-size:.85rem; color:var(--dark-color); }
+    .nurse-cell-unit { font-size:.72rem; color:#94a3b8; }
+
+    .shift-badge { display:inline-flex; align-items:center; gap:4px; padding:.28rem .65rem; border-radius:6px; font-size:.72rem; font-weight:700; white-space:nowrap; }
+    .sb-day   { background:rgba(245,158,11,.12); color:#b45309; }
+    .sb-night { background:rgba(79,70,229,.12);  color:#4338ca; }
+    .sb-eve   { background:rgba(14,130,253,.1);  color:#0e82fd; }
+    .sb-off   { background:rgba(148,163,184,.1); color:#64748b; }
+</style>
+}
+
+<!-- Səhifə Başlığı -->
+<div class="page-title-block">
+    <div>
+        <h1 class="page-title">
+            <i class="bi bi-heart-pulse-fill me-2" style="color:var(--primary-color);font-size:1.35rem;"></i>
+            Tibb Bacısı İdarəsi
+        </h1>
+        <p class="page-subtitle">Tibb bacısı heyətini, növbə planlarını və fəaliyyətlərini idarə edin.</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn btn-outline-secondary d-flex align-items-center gap-2" style="border-radius:10px;font-weight:500;font-size:.85rem;">
+            <i class="bi bi-download"></i> İxrac et
+        </button>
+        <button class="btn btn-outline-primary d-flex align-items-center gap-2" style="border-radius:10px;font-weight:500;font-size:.85rem;">
+            <i class="bi bi-calendar-week"></i> Növbə Planla
+        </button>
+        <button class="btn btn-primary d-flex align-items-center gap-2" style="border-radius:10px;font-weight:500;font-size:.85rem;">
+            <i class="bi bi-plus-lg"></i> Yeni Tibb Bacısı
+        </button>
+    </div>
+</div>
+
+<!-- Statistika Kartları -->
+<div class="row g-4 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">64</div><div class="stat-label">Ümumi T. Bacısı</div></div>
+            <div class="stat-icon icon-blue"><i class="bi bi-people-fill"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">28</div><div class="stat-label">Gündüz Növbəsi</div></div>
+            <div class="stat-icon icon-yellow"><i class="bi bi-sun-fill"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">22</div><div class="stat-label">Gecə Növbəsi</div></div>
+            <div class="stat-icon icon-teal"><i class="bi bi-moon-stars-fill"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">14</div><div class="stat-label">Məzuniyyətdə</div></div>
+            <div class="stat-icon icon-red"><i class="bi bi-calendar-x-fill"></i></div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtr Paneli -->
+<div class="filter-bar">
+    <div class="filter-search">
+        <i class="bi bi-search"></i>
+        <input type="text" id="nurseSearch" placeholder="Tibb bacısı adı və ya bölmə axtar...">
+    </div>
+    <select class="filter-select" id="sortFilter">
+        <option value="">Ada Görə Sırala</option>
+        <option value="az">A → Z</option>
+        <option value="za">Z → A</option>
+        <option value="exp">Təcrübəyə Görə</option>
+        <option value="rating">Bala Görə</option>
+    </select>
+    <div class="filter-pills">
+        <button class="filter-pill active" data-cat="all">Hamısı</button>
+        <button class="filter-pill" data-cat="dahili">Daxili</button>
+        <button class="filter-pill" data-cat="cerrahi">Cərrahiyyə</button>
+        <button class="filter-pill" data-cat="acil">Təcili</button>
+        <button class="filter-pill" data-cat="active">Növbədə</button>
+        <button class="filter-pill" data-cat="leave">Məzuniyyətdə</button>
+    </div>
+</div>
+
+<!-- Tibb Bacısı Kartları -->
+<div class="row g-4" id="nurseGrid">
+
+    <!-- 1 -->
+    <div class="col-12 col-md-6 col-xl-3 nurse-card-wrap" data-name="ayşe kaya" data-cat="dahili" data-status="active">
+        <div class="nurse-card">
+            <div class="nc-banner pink">
+                <div class="nc-avatar-wrap">
+                    <img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=100&h=100&fit=crop&crop=face" class="nc-avatar" alt="">
+                </div>
+                <span class="nc-shift-badge shift-day"><i class="bi bi-sun-fill" style="font-size:.6rem;"></i>Gündüz</span>
+            </div>
+            <div class="nc-body">
+                <div class="nc-name">T.B. Ayşe Kaya</div>
+                <div class="nc-unit">Daxili Xəstəliklər · Klinik T.Bacısı</div>
+                <span class="nc-branch-tag">Daxili</span>
+                <div class="nc-status-row">
+                    <span class="status-dot dot-active"></span>
+                    <span class="nc-status-text st-active">Növbədə</span>
+                </div>
+                <div class="nc-stats">
+                    <div class="nc-stat-box"><div class="nc-stat-val">8</div><div class="nc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">412</div><div class="nc-stat-lbl">Xəstə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">4.8<i class="bi bi-star-fill text-warning" style="font-size:.55rem;"></i></div><div class="nc-stat-lbl">Bal</div></div>
+                </div>
+                <div class="nc-skills">
+                    <span class="nc-skill">IV Müalicə</span>
+                    <span class="nc-skill">Yara Baxımı</span>
+                    <span class="nc-skill">BLS</span>
+                    <span class="nc-skill">EKG</span>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Performans</span><span class="nc-prog-val">92%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:92%;background:linear-gradient(90deg,#ec4899,#f9a8d4);"></div></div>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Davamiyyət</span><span class="nc-prog-val">97%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:97%;background:linear-gradient(90deg,#16a34a,#4ade80);"></div></div>
+                </div>
+            </div>
+            <div class="nc-actions">
+                <button class="btn-nc-view"><i class="bi bi-person-lines-fill me-1"></i>Profil</button>
+                <button class="btn-nc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-nc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="col-12 col-md-6 col-xl-3 nurse-card-wrap" data-name="mehmet yılmaz" data-cat="cerrahi" data-status="active">
+        <div class="nurse-card">
+            <div class="nc-banner blue">
+                <div class="nc-avatar-wrap">
+                    <div class="nc-avatar-ini" style="background:linear-gradient(135deg,#0e82fd,#38bdf8);">MY</div>
+                </div>
+                <span class="nc-shift-badge shift-night"><i class="bi bi-moon-stars-fill" style="font-size:.6rem;"></i>Gecə</span>
+            </div>
+            <div class="nc-body">
+                <div class="nc-name">T.B. Mehmet Yılmaz</div>
+                <div class="nc-unit">Ümumi Cərrahiyyə · Əməliyyat</div>
+                <span class="nc-branch-tag" style="background:rgba(79,70,229,.1);color:#4338ca;">Cərrahiyyə</span>
+                <div class="nc-status-row">
+                    <span class="status-dot dot-active"></span>
+                    <span class="nc-status-text st-active">Növbədə</span>
+                </div>
+                <div class="nc-stats">
+                    <div class="nc-stat-box"><div class="nc-stat-val">11</div><div class="nc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">638</div><div class="nc-stat-lbl">Xəstə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">4.7<i class="bi bi-star-fill text-warning" style="font-size:.55rem;"></i></div><div class="nc-stat-lbl">Bal</div></div>
+                </div>
+                <div class="nc-skills">
+                    <span class="nc-skill">Cərrahiyyə Köm.</span>
+                    <span class="nc-skill">Steril Texnika</span>
+                    <span class="nc-skill">ACLS</span>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Performans</span><span class="nc-prog-val">88%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:88%;background:linear-gradient(90deg,#0e82fd,#38bdf8);"></div></div>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Davamiyyət</span><span class="nc-prog-val">94%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:94%;background:linear-gradient(90deg,#16a34a,#4ade80);"></div></div>
+                </div>
+            </div>
+            <div class="nc-actions">
+                <button class="btn-nc-view"><i class="bi bi-person-lines-fill me-1"></i>Profil</button>
+                <button class="btn-nc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-nc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="col-12 col-md-6 col-xl-3 nurse-card-wrap" data-name="fatma demir" data-cat="acil" data-status="active">
+        <div class="nurse-card">
+            <div class="nc-banner red">
+                <div class="nc-avatar-wrap">
+                    <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=100&h=100&fit=crop&crop=face" class="nc-avatar" alt="">
+                </div>
+                <span class="nc-shift-badge shift-eve"><i class="bi bi-sunset-fill" style="font-size:.6rem;"></i>Axşam</span>
+            </div>
+            <div class="nc-body">
+                <div class="nc-name">T.B. Fatma Demir</div>
+                <div class="nc-unit">Təcili Yardım · Triaj T.Bacısı</div>
+                <span class="nc-branch-tag" style="background:rgba(239,68,68,.1);color:#dc2626;">Təcili</span>
+                <div class="nc-status-row">
+                    <span class="status-dot dot-active"></span>
+                    <span class="nc-status-text st-active">Növbədə</span>
+                </div>
+                <div class="nc-stats">
+                    <div class="nc-stat-box"><div class="nc-stat-val">6</div><div class="nc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">890</div><div class="nc-stat-lbl">Xəstə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">4.9<i class="bi bi-star-fill text-warning" style="font-size:.55rem;"></i></div><div class="nc-stat-lbl">Bal</div></div>
+                </div>
+                <div class="nc-skills">
+                    <span class="nc-skill">Triaj</span>
+                    <span class="nc-skill">ACLS</span>
+                    <span class="nc-skill">Pediatrik Təcili</span>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Performans</span><span class="nc-prog-val">95%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:95%;background:linear-gradient(90deg,#ef4444,#fb923c);"></div></div>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Davamiyyət</span><span class="nc-prog-val">99%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:99%;background:linear-gradient(90deg,#16a34a,#4ade80);"></div></div>
+                </div>
+            </div>
+            <div class="nc-actions">
+                <button class="btn-nc-view"><i class="bi bi-person-lines-fill me-1"></i>Profil</button>
+                <button class="btn-nc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-nc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="col-12 col-md-6 col-xl-3 nurse-card-wrap" data-name="zeynep arslan" data-cat="dahili" data-status="leave">
+        <div class="nurse-card">
+            <div class="nc-banner teal">
+                <div class="nc-avatar-wrap">
+                    <div class="nc-avatar-ini" style="background:linear-gradient(135deg,#01c0c8,#6ee7b7);">ZA</div>
+                </div>
+                <span class="nc-shift-badge shift-day"><i class="bi bi-sun-fill" style="font-size:.6rem;"></i>Gündüz</span>
+            </div>
+            <div class="nc-body">
+                <div class="nc-name">T.B. Zeynep Arslan</div>
+                <div class="nc-unit">Kardiologiya · İntensiv Terapiya</div>
+                <span class="nc-branch-tag" style="background:rgba(1,192,200,.1);color:#01c0c8;">Daxili</span>
+                <div class="nc-status-row">
+                    <span class="status-dot dot-leave"></span>
+                    <span class="nc-status-text st-leave">Məzuniyyətdə</span>
+                </div>
+                <div class="nc-stats">
+                    <div class="nc-stat-box"><div class="nc-stat-val">9</div><div class="nc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">524</div><div class="nc-stat-lbl">Xəstə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">4.6<i class="bi bi-star-fill text-warning" style="font-size:.55rem;"></i></div><div class="nc-stat-lbl">Bal</div></div>
+                </div>
+                <div class="nc-skills">
+                    <span class="nc-skill">Kardiak Monitor</span>
+                    <span class="nc-skill">Defibrilyator</span>
+                    <span class="nc-skill">BLS</span>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Performans</span><span class="nc-prog-val">86%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:86%;background:linear-gradient(90deg,#01c0c8,#6ee7b7);"></div></div>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Davamiyyət</span><span class="nc-prog-val">91%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:91%;background:linear-gradient(90deg,#16a34a,#4ade80);"></div></div>
+                </div>
+            </div>
+            <div class="nc-actions">
+                <button class="btn-nc-view"><i class="bi bi-person-lines-fill me-1"></i>Profil</button>
+                <button class="btn-nc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-nc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="col-12 col-md-6 col-xl-3 nurse-card-wrap" data-name="hüseyin çelik" data-cat="cerrahi" data-status="active">
+        <div class="nurse-card">
+            <div class="nc-banner violet">
+                <div class="nc-avatar-wrap">
+                    <div class="nc-avatar-ini" style="background:linear-gradient(135deg,#7c3aed,#c4b5fd);">HÇ</div>
+                </div>
+                <span class="nc-shift-badge shift-night"><i class="bi bi-moon-stars-fill" style="font-size:.6rem;"></i>Gecə</span>
+            </div>
+            <div class="nc-body">
+                <div class="nc-name">T.B. Hüseyin Çelik</div>
+                <div class="nc-unit">Ortopediya · Əməliyyat Sonrası</div>
+                <span class="nc-branch-tag" style="background:rgba(139,92,246,.1);color:#7c3aed;">Cərrahiyyə</span>
+                <div class="nc-status-row">
+                    <span class="status-dot dot-active"></span>
+                    <span class="nc-status-text st-active">Növbədə</span>
+                </div>
+                <div class="nc-stats">
+                    <div class="nc-stat-box"><div class="nc-stat-val">7</div><div class="nc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">380</div><div class="nc-stat-lbl">Xəstə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">4.5<i class="bi bi-star-fill text-warning" style="font-size:.55rem;"></i></div><div class="nc-stat-lbl">Bal</div></div>
+                </div>
+                <div class="nc-skills">
+                    <span class="nc-skill">Post-Op Baxım</span>
+                    <span class="nc-skill">Ağrı İdarəsi</span>
+                    <span class="nc-skill">Dren İzlənməsi</span>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Performans</span><span class="nc-prog-val">83%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:83%;background:linear-gradient(90deg,#7c3aed,#c4b5fd);"></div></div>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Davamiyyət</span><span class="nc-prog-val">93%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:93%;background:linear-gradient(90deg,#16a34a,#4ade80);"></div></div>
+                </div>
+            </div>
+            <div class="nc-actions">
+                <button class="btn-nc-view"><i class="bi bi-person-lines-fill me-1"></i>Profil</button>
+                <button class="btn-nc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-nc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="col-12 col-md-6 col-xl-3 nurse-card-wrap" data-name="selin kurt" data-cat="acil" data-status="active">
+        <div class="nurse-card">
+            <div class="nc-banner orange">
+                <div class="nc-avatar-wrap">
+                    <img src="https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=100&h=100&fit=crop&crop=face" class="nc-avatar" alt="">
+                </div>
+                <span class="nc-shift-badge shift-eve"><i class="bi bi-sunset-fill" style="font-size:.6rem;"></i>Axşam</span>
+            </div>
+            <div class="nc-body">
+                <div class="nc-name">T.B. Selin Kurt</div>
+                <div class="nc-unit">Təcili Yardım · İntensiv Terapiya</div>
+                <span class="nc-branch-tag" style="background:rgba(239,68,68,.1);color:#dc2626;">Təcili</span>
+                <div class="nc-status-row">
+                    <span class="status-dot dot-break"></span>
+                    <span class="nc-status-text st-break">Fasilədə</span>
+                </div>
+                <div class="nc-stats">
+                    <div class="nc-stat-box"><div class="nc-stat-val">5</div><div class="nc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">567</div><div class="nc-stat-lbl">Xəstə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">4.7<i class="bi bi-star-fill text-warning" style="font-size:.55rem;"></i></div><div class="nc-stat-lbl">Bal</div></div>
+                </div>
+                <div class="nc-skills">
+                    <span class="nc-skill">Ventilyator</span>
+                    <span class="nc-skill">Sedasiya</span>
+                    <span class="nc-skill">ACLS</span>
+                    <span class="nc-skill">Triaj</span>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Performans</span><span class="nc-prog-val">90%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:90%;background:linear-gradient(90deg,#f59e0b,#fde68a);"></div></div>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Davamiyyət</span><span class="nc-prog-val">96%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:96%;background:linear-gradient(90deg,#16a34a,#4ade80);"></div></div>
+                </div>
+            </div>
+            <div class="nc-actions">
+                <button class="btn-nc-view"><i class="bi bi-person-lines-fill me-1"></i>Profil</button>
+                <button class="btn-nc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-nc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="col-12 col-md-6 col-xl-3 nurse-card-wrap" data-name="can öztürk" data-cat="dahili" data-status="active">
+        <div class="nurse-card">
+            <div class="nc-banner green">
+                <div class="nc-avatar-wrap">
+                    <div class="nc-avatar-ini" style="background:linear-gradient(135deg,#16a34a,#86efac);">CÖ</div>
+                </div>
+                <span class="nc-shift-badge shift-day"><i class="bi bi-sun-fill" style="font-size:.6rem;"></i>Gündüz</span>
+            </div>
+            <div class="nc-body">
+                <div class="nc-name">T.B. Can Öztürk</div>
+                <div class="nc-unit">Nevrologiya · Klinik</div>
+                <span class="nc-branch-tag" style="background:rgba(34,197,94,.1);color:#16a34a;">Daxili</span>
+                <div class="nc-status-row">
+                    <span class="status-dot dot-active"></span>
+                    <span class="nc-status-text st-active">Növbədə</span>
+                </div>
+                <div class="nc-stats">
+                    <div class="nc-stat-box"><div class="nc-stat-val">4</div><div class="nc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">290</div><div class="nc-stat-lbl">Xəstə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">4.4<i class="bi bi-star-fill text-warning" style="font-size:.55rem;"></i></div><div class="nc-stat-lbl">Bal</div></div>
+                </div>
+                <div class="nc-skills">
+                    <span class="nc-skill">EEG İzlənməsi</span>
+                    <span class="nc-skill">Növbə İzlənməsi</span>
+                    <span class="nc-skill">BLS</span>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Performans</span><span class="nc-prog-val">79%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:79%;background:linear-gradient(90deg,#16a34a,#86efac);"></div></div>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Davamiyyət</span><span class="nc-prog-val">88%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:88%;background:linear-gradient(90deg,#16a34a,#4ade80);"></div></div>
+                </div>
+            </div>
+            <div class="nc-actions">
+                <button class="btn-nc-view"><i class="bi bi-person-lines-fill me-1"></i>Profil</button>
+                <button class="btn-nc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-nc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="col-12 col-md-6 col-xl-3 nurse-card-wrap" data-name="neslihan şahin" data-cat="cerrahi" data-status="leave">
+        <div class="nurse-card">
+            <div class="nc-banner indigo">
+                <div class="nc-avatar-wrap">
+                    <div class="nc-avatar-ini" style="background:linear-gradient(135deg,#4f46e5,#a5b4fc);">NŞ</div>
+                </div>
+                <span class="nc-shift-badge shift-night"><i class="bi bi-moon-stars-fill" style="font-size:.6rem;"></i>Gecə</span>
+            </div>
+            <div class="nc-body">
+                <div class="nc-name">T.B. Neslihan Şahin</div>
+                <div class="nc-unit">Ürək-Damar Cərrahiyyəsi</div>
+                <span class="nc-branch-tag" style="background:rgba(79,70,229,.1);color:#4338ca;">Cərrahiyyə</span>
+                <div class="nc-status-row">
+                    <span class="status-dot dot-leave"></span>
+                    <span class="nc-status-text st-leave">Məzuniyyətdə</span>
+                </div>
+                <div class="nc-stats">
+                    <div class="nc-stat-box"><div class="nc-stat-val">12</div><div class="nc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">720</div><div class="nc-stat-lbl">Xəstə</div></div>
+                    <div class="nc-stat-box"><div class="nc-stat-val">4.9<i class="bi bi-star-fill text-warning" style="font-size:.55rem;"></i></div><div class="nc-stat-lbl">Bal</div></div>
+                </div>
+                <div class="nc-skills">
+                    <span class="nc-skill">Bypass Baxımı</span>
+                    <span class="nc-skill">Hemodinamik</span>
+                    <span class="nc-skill">IABP</span>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Performans</span><span class="nc-prog-val">97%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:97%;background:linear-gradient(90deg,#4f46e5,#a5b4fc);"></div></div>
+                </div>
+                <div class="nc-prog-row">
+                    <div class="nc-prog-header"><span class="nc-prog-label">Davamiyyət</span><span class="nc-prog-val">95%</span></div>
+                    <div class="nc-prog-bar"><div class="nc-prog-fill" style="width:95%;background:linear-gradient(90deg,#16a34a,#4ade80);"></div></div>
+                </div>
+            </div>
+            <div class="nc-actions">
+                <button class="btn-nc-view"><i class="bi bi-person-lines-fill me-1"></i>Profil</button>
+                <button class="btn-nc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-nc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Həftəlik Növbə Cədvəli -->
+<div class="section-card">
+    <div class="section-header">
+        <h5 class="section-title">
+            <i class="bi bi-calendar-week-fill"></i>
+            Həftəlik Növbə Cədvəli
+            <span class="badge bg-light text-secondary border ms-2" style="font-size:.72rem;font-weight:600;">23 – 29 İyun 2026</span>
+        </h5>
+        <div class="shift-legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#f59e0b;"></span>Gündüz</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#4f46e5;"></span>Gecə</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#0e82fd;"></span>Axşam</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#94a3b8;"></span>İcazə</div>
+        </div>
+    </div>
+    <div class="shift-table-wrap">
+        <table class="shift-table">
+            <thead>
+                <tr>
+                    <th>T. Bacısı</th>
+                    <th>B.e</th>
+                    <th>Ç.a</th>
+                    <th>Çər</th>
+                    <th>C.a</th>
+                    <th>Cüm</th>
+                    <th>Şnb</th>
+                    <th>Baz</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="nurse-cell">
+                            <div class="nurse-cell-ini" style="background:linear-gradient(135deg,#ec4899,#f9a8d4);">AK</div>
+                            <div><div class="nurse-cell-name">Ayşe Kaya</div><div class="nurse-cell-unit">Daxili</div></div>
+                        </div>
+                    </td>
+                    <td><span class="shift-badge sb-day"><i class="bi bi-sun-fill"></i>Gündüz</span></td>
+                    <td><span class="shift-badge sb-day"><i class="bi bi-sun-fill"></i>Gündüz</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-day"><i class="bi bi-sun-fill"></i>Gündüz</span></td>
+                    <td><span class="shift-badge sb-day"><i class="bi bi-sun-fill"></i>Gündüz</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="nurse-cell">
+                            <div class="nurse-cell-ini" style="background:linear-gradient(135deg,#0e82fd,#38bdf8);">MY</div>
+                            <div><div class="nurse-cell-name">Mehmet Yılmaz</div><div class="nurse-cell-unit">Cərrahiyyə</div></div>
+                        </div>
+                    </td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="nurse-cell">
+                            <div class="nurse-cell-ini" style="background:linear-gradient(135deg,#ef4444,#fca5a5);">FD</div>
+                            <div><div class="nurse-cell-name">Fatma Demir</div><div class="nurse-cell-unit">Təcili</div></div>
+                        </div>
+                    </td>
+                    <td><span class="shift-badge sb-eve"><i class="bi bi-sunset-fill"></i>Axşam</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-eve"><i class="bi bi-sunset-fill"></i>Axşam</span></td>
+                    <td><span class="shift-badge sb-eve"><i class="bi bi-sunset-fill"></i>Axşam</span></td>
+                    <td><span class="shift-badge sb-eve"><i class="bi bi-sunset-fill"></i>Axşam</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-eve"><i class="bi bi-sunset-fill"></i>Axşam</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="nurse-cell">
+                            <div class="nurse-cell-ini" style="background:linear-gradient(135deg,#01c0c8,#6ee7b7);">ZA</div>
+                            <div><div class="nurse-cell-name">Zeynep Arslan</div><div class="nurse-cell-unit">Daxili</div></div>
+                        </div>
+                    </td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="nurse-cell">
+                            <div class="nurse-cell-ini" style="background:linear-gradient(135deg,#7c3aed,#c4b5fd);">HÇ</div>
+                            <div><div class="nurse-cell-name">Hüseyin Çelik</div><div class="nurse-cell-unit">Cərrahiyyə</div></div>
+                        </div>
+                    </td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="nurse-cell">
+                            <div class="nurse-cell-ini" style="background:linear-gradient(135deg,#f59e0b,#fde68a);">SK</div>
+                            <div><div class="nurse-cell-name">Selin Kurt</div><div class="nurse-cell-unit">Təcili</div></div>
+                        </div>
+                    </td>
+                    <td><span class="shift-badge sb-eve"><i class="bi bi-sunset-fill"></i>Axşam</span></td>
+                    <td><span class="shift-badge sb-eve"><i class="bi bi-sunset-fill"></i>Axşam</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-eve"><i class="bi bi-sunset-fill"></i>Axşam</span></td>
+                    <td><span class="shift-badge sb-day"><i class="bi bi-sun-fill"></i>Gündüz</span></td>
+                    <td><span class="shift-badge sb-day"><i class="bi bi-sun-fill"></i>Gündüz</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="nurse-cell">
+                            <div class="nurse-cell-ini" style="background:linear-gradient(135deg,#16a34a,#86efac);">CÖ</div>
+                            <div><div class="nurse-cell-name">Can Öztürk</div><div class="nurse-cell-unit">Daxili</div></div>
+                        </div>
+                    </td>
+                    <td><span class="shift-badge sb-day"><i class="bi bi-sun-fill"></i>Gündüz</span></td>
+                    <td><span class="shift-badge sb-day"><i class="bi bi-sun-fill"></i>Gündüz</span></td>
+                    <td><span class="shift-badge sb-day"><i class="bi bi-sun-fill"></i>Gündüz</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="nurse-cell">
+                            <div class="nurse-cell-ini" style="background:linear-gradient(135deg,#4f46e5,#a5b4fc);">NŞ</div>
+                            <div><div class="nurse-cell-name">Neslihan Şahin</div><div class="nurse-cell-unit">Cərrahiyyə</div></div>
+                        </div>
+                    </td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                    <td><span class="shift-badge sb-night"><i class="bi bi-moon-stars-fill"></i>Gecə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                    <td><span class="shift-badge sb-off"><i class="bi bi-calendar-x"></i>İcazə</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            applyFilters();
+        });
+    });
+
+    document.getElementById('nurseSearch').addEventListener('input', applyFilters);
+    document.getElementById('sortFilter').addEventListener('change', applyFilters);
+
+    function applyFilters() {
+        const search = document.getElementById('nurseSearch').value.toLowerCase().trim();
+        const cat    = (document.querySelector('.filter-pill.active') || {}).dataset?.cat || 'all';
+
+        document.querySelectorAll('.nurse-card-wrap').forEach(card => {
+            const name   = card.dataset.name   || '';
+            const ccat   = card.dataset.cat    || '';
+            const status = card.dataset.status || '';
+
+            const matchSearch = !search || name.includes(search);
+            const matchCat    = cat === 'all' || ccat === cat ||
+                                (cat === 'active' && status === 'active') ||
+                                (cat === 'leave'  && status === 'leave');
+
+            card.classList.toggle('hidden', !(matchSearch && matchCat));
+        });
+    }
+</script>
+}

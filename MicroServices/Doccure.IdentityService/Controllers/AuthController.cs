@@ -1,6 +1,5 @@
 ﻿using Doccure.IdentityService.Dtos;
 using Doccure.IdentityService.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Doccure.IdentityService.Controllers
@@ -17,24 +16,29 @@ namespace Doccure.IdentityService.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> CreateRegister(RegisterDto registerDto) {
+        public async Task<IActionResult> CreateRegister(RegisterDto registerDto)
+        {
             var result = await _authService.RegisterAsync(registerDto);
-            if (!result) {
+            if (!result)
+            {
                 return BadRequest("Registration failed.");
             }
             return Ok("Registration Successful");
         }
 
-
         [HttpPost("login")]
         public async Task<IActionResult> CreateLogin(LoginDto loginDto)
         {
-            var result = await _authService.LoginAsync(loginDto);
-            if (!result)
+            var token = await _authService.LoginAsync(loginDto);
+            if (token == null)
             {
                 return BadRequest("Login failed.");
             }
-            return Ok("Login Successful");
+            return Ok(new
+            {
+                message = "Giriş başarılı",
+                token
+            });
         }
     }
 }

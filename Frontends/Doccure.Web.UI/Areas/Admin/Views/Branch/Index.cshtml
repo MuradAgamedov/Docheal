@@ -1,0 +1,603 @@
+@model List<ResultBranchDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div id="toast-container"></div>
+
+@section Styles {
+<style>
+    .branch-card {
+        background: #ffffff;
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .branch-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+        border-color: rgba(14, 130, 253, 0.2);
+    }
+
+    .branch-icon-box {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .branch-card-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 1rem;
+    }
+
+    .branch-title-group { flex: 1; }
+
+    .branch-name {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: var(--dark-color);
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+
+    .branch-code {
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background: #f1f5f9;
+        color: #64748b;
+        padding: 2px 8px;
+        border-radius: 20px;
+        display: inline-block;
+    }
+
+    .branch-desc {
+        font-size: 0.83rem;
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        flex-shrink: 0;
+    }
+
+    .branch-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .metric-box {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 0.65rem 0.5rem;
+        text-align: center;
+    }
+
+    .metric-value {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--dark-color);
+        line-height: 1.2;
+    }
+
+    .metric-label {
+        font-size: 0.68rem;
+        color: #94a3b8;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    .branch-progress-section { margin-bottom: 1rem; }
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+
+    .progress-label { font-size: 0.78rem; font-weight: 500; color: #475569; }
+    .progress-pct   { font-size: 0.78rem; font-weight: 700; color: var(--dark-color); }
+
+    .progress-bar-custom {
+        height: 7px;
+        border-radius: 30px;
+        background: #f1f5f9;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: 30px;
+        transition: width 0.8s ease;
+    }
+
+    .branch-avatars {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.85rem;
+    }
+
+    .doc-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        margin-right: -8px;
+        object-fit: cover;
+        font-size: 0.65rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+
+    .doc-avatar-more {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        background: #e2e8f0;
+        color: #64748b;
+        font-size: 0.65rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 8px;
+    }
+
+    .branch-footer-meta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-bottom: 1rem;
+        flex-grow: 1;
+        align-items: flex-end;
+    }
+
+    .branch-actions {
+        display: flex;
+        gap: 0.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .btn-branch-view {
+        flex: 1;
+        font-size: 0.8rem;
+        font-weight: 500;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        border: 1.5px solid var(--primary-color);
+        color: var(--primary-color);
+        background: transparent;
+        transition: all 0.2s;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .btn-branch-view:hover { background: var(--primary-light); }
+
+    .btn-branch-edit, .btn-branch-del {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: 1.5px solid #e2e8f0;
+        background: #fff;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .btn-branch-edit:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        background: var(--primary-light);
+    }
+
+    .btn-branch-del:hover {
+        border-color: #ef4444;
+        color: #ef4444;
+        background: rgba(239,68,68,0.06);
+    }
+
+    .filter-pill {
+        padding: 0.45rem 1rem;
+        border-radius: 30px;
+        border: 1.5px solid #e2e8f0;
+        background: #fff;
+        color: #64748b;
+        font-size: 0.83rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .filter-pill.active, .filter-pill:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        background: var(--primary-light);
+    }
+
+    .filter-pill.active { font-weight: 600; }
+
+    .page-title-block {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.75rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .page-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin: 0 0 4px 0;
+    }
+
+    .page-subtitle { font-size: 0.88rem; color: #64748b; margin: 0; }
+
+    .page-actions { display: flex; gap: 0.75rem; flex-shrink: 0; }
+
+    .search-filter-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .branch-search-box {
+        position: relative;
+        min-width: 280px;
+        flex: 1;
+        max-width: 380px;
+    }
+
+    .branch-search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 0.95rem;
+    }
+
+    .branch-search-box input {
+        padding-left: 2.6rem;
+        border-radius: 30px;
+        border: 1.5px solid #e2e8f0;
+        font-size: 0.88rem;
+        background: #f8fafc;
+        height: 40px;
+        width: 100%;
+    }
+
+    .branch-search-box input:focus {
+        outline: none;
+        background: #fff;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(14,130,253,0.12);
+    }
+
+    .filter-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    .bi-red    { background: rgba(239,68,68,0.1);  color: #ef4444; }
+    .bi-blue   { background: rgba(14,130,253,0.1); color: #0e82fd; }
+    .bi-teal   { background: rgba(1,192,200,0.1);  color: #01c0c8; }
+    .bi-violet { background: rgba(139,92,246,0.1); color: #7c3aed; }
+    .bi-orange { background: rgba(245,158,11,0.1); color: #f59e0b; }
+    .bi-green  { background: rgba(34,197,94,0.1);  color: #16a34a; }
+
+    .branch-card-wrap.hidden { display: none; }
+
+    .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: none;
+    }
+
+    .toast-item {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-left: 5px solid #22c55e;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        min-width: 300px;
+        max-width: 400px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transform: translateX(120%);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        pointer-events: auto;
+    }
+
+    .toast-item.show {
+        transform: translateX(0);
+    }
+
+    .toast-item.hide {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+
+    .toast-icon {
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    .toast-success {
+        border-left-color: #22c55e;
+    }
+    .toast-success .toast-icon {
+        color: #22c55e;
+    }
+
+    .toast-error {
+        border-left-color: #ef4444;
+    }
+    .toast-error .toast-icon {
+        color: #ef4444;
+    }
+
+    .toast-message {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #1e293b;
+        line-height: 1.4;
+    }
+</style>
+}
+
+<!-- Səhifə Başlığı -->
+<div class="page-title-block">
+    <div>
+        <h1 class="page-title">
+            <i class="bi bi-tags-fill me-2" style="color:var(--primary-color);font-size:1.4rem;"></i>
+            Şöbə İdarəsi
+        </h1>
+        <p class="page-subtitle">Bütün klinik şöbələrini idarə edin, tənzimləyin və fəaliyyətlərini izləyin.</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn btn-outline-secondary d-flex align-items-center gap-2" style="border-radius:10px;font-weight:500;font-size:0.88rem;">
+            <i class="bi bi-download"></i> İxrac et
+        </button>
+        <a href="/Admin/Branch/CreateBranch" class="btn btn-primary d-flex align-items-center gap-2" style="border-radius:10px;font-weight:500;font-size:0.88rem;">
+            <i class="bi bi-plus-lg"></i> Yeni Şöbə
+        </a>
+    </div>
+</div>
+
+<!-- Statistika Kartları -->
+<div class="row g-4 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-value">@(Model?.Count ?? 0)</div>
+                <div class="stat-label">Ümumi Şöbə</div>
+            </div>
+            <div class="stat-icon icon-blue"><i class="bi bi-hospital"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-value">@(Model?.Count(x => x.Status) ?? 0)</div>
+                <div class="stat-label">Aktiv Şöbə</div>
+            </div>
+            <div class="stat-icon icon-teal"><i class="bi bi-check-circle-fill"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-value">@(Model?.Sum(x => x.DoctorCount) ?? 0)</div>
+                <div class="stat-label">Ümumi Həkim</div>
+            </div>
+            <div class="stat-icon icon-yellow"><i class="bi bi-person-fill-gear"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-value">@(Model?.Sum(x => x.MonthlyAppointmentCount) ?? 0)</div>
+                <div class="stat-label">Aylıq Görüş</div>
+            </div>
+            <div class="stat-icon icon-red"><i class="bi bi-calendar-event"></i></div>
+        </div>
+    </div>
+</div>
+
+<!-- Axtarış + Filtr Sırası -->
+<div class="search-filter-row">
+    <div class="branch-search-box">
+        <i class="bi bi-search"></i>
+        <input type="text" id="branchSearchInput" placeholder="Şöbə adı və ya kodu axtar...">
+    </div>
+    <div class="filter-group">
+        <button class="filter-pill active" data-filter="all">Hamısı <span class="ms-1">@(Model?.Count ?? 0)</span></button>
+        <button class="filter-pill" data-filter="active">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#16a34a;margin-right:5px;"></span>Aktiv <span class="ms-1">@(Model?.Count(x => x.Status) ?? 0)</span>
+        </button>
+        <button class="filter-pill" data-filter="passive">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#94a3b8;margin-right:5px;"></span>Passiv <span class="ms-1">@(Model?.Count(x => !x.Status) ?? 0)</span>
+        </button>
+    </div>
+</div>
+
+<!-- Şöbə Kartları -->
+<div class="row g-4" id="branchGrid">
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-12 col-md-6 col-xl-4 branch-card-wrap" data-status="@(item.Status ? "active" : "passive")" data-name="@item.BranchName.ToLower()">
+                <div class="branch-card" style="@(item.Status ? "" : "opacity:0.75;")">
+                    <div class="branch-card-header">
+                        @{
+                            var isHex = item.ThemeColour != null && item.ThemeColour.StartsWith("#");
+                            var styleAttr = isHex ? $"background: {item.ThemeColour}1a; color: {item.ThemeColour};" : "";
+                            var classAttr = isHex ? "branch-icon-box" : $"branch-icon-box {item.ThemeColour}";
+                        }
+                        <div class="@classAttr" style="@styleAttr; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                            @Html.Raw(string.IsNullOrEmpty(item.ImageUrl) ? "<i class=\"bi bi-hospital-fill\"></i>" : item.ImageUrl)
+                        </div>
+                        <div class="branch-title-group">
+                            <div class="branch-name">@item.BranchName</div>
+                            <span class="branch-code">@item.BranchCode</span>
+                        </div>
+                        <span class="badge-status @(item.Status ? "badge-active" : "badge-inactive") ms-auto" style="white-space:nowrap;">
+                            @(item.Status ? "Aktiv" : "Passiv")
+                        </span>
+                    </div>
+                    <p class="branch-desc">@item.Description</p>
+                    <div class="branch-metrics">
+                        <div class="metric-box"><div class="metric-value">@item.DoctorCount</div><div class="metric-label">Həkim</div></div>
+                        <div class="metric-box"><div class="metric-value">@item.MonthlyAppointmentCount</div><div class="metric-label">Görüş/Ay</div></div>
+                        <div class="metric-box">
+                            <div class="metric-value">@item.Raiting<i class="bi bi-star-fill text-warning" style="font-size:0.65rem;"></i></div>
+                            <div class="metric-label">Ort. Bal</div>
+                        </div>
+                    </div>
+                    <div class="branch-progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">Doluluq faizi</span>
+                            <span class="progress-pct">%@item.OccupancyRate</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" style="width:@item.OccupancyRate%;background:linear-gradient(90deg,#0e82fd,#38bdf8);"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="branch-avatars">
+                        <!-- Standard fallback doctor avatar -->
+                        <div class="doc-avatar" style="background:#dbeafe;color:#1d4ed8;border:2px solid #fff;">DR</div>
+                    </div>
+                    
+                    <div class="branch-footer-meta">
+                        <i class="bi bi-clock-history"></i> Son yenilənmə: Bu gün
+                    </div>
+                    <div class="branch-actions">
+                        <button class="btn-branch-view"><i class="bi bi-people-fill me-1"></i>Həkimləri Gör</button>
+                        <button class="btn-branch-edit" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                        <button class="btn-branch-del" title="Sil" onclick="confirmDelete('@item.BranchId', '@item.BranchName')"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center py-5">
+            <div class="text-muted">
+                <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+                <p class="mt-2">Heç bir şöbə tapılmadı.</p>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const filter = this.dataset.filter;
+            document.querySelectorAll('.branch-card-wrap').forEach(card => {
+                card.classList.toggle('hidden', filter !== 'all' && card.dataset.status !== filter);
+            });
+        });
+    });
+
+    document.getElementById('branchSearchInput').addEventListener('input', function () {
+        const q = this.value.toLowerCase().trim();
+        document.querySelectorAll('.branch-card-wrap').forEach(card => {
+            card.classList.toggle('hidden', q !== '' && !card.dataset.name.includes(q));
+        });
+    });
+
+    function confirmDelete(id, name) {
+        if (confirm(`"${name}" şöbəsini silmək istədiyinizdən əminsinizmi?`)) {
+            window.location.href = `/Admin/Branch/DeleteBranch?id=${id}`;
+        }
+    }
+
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        
+        const toast = document.createElement('div');
+        toast.className = `toast-item toast-${type}`;
+        
+        const iconClass = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill';
+        
+        toast.innerHTML = `
+            <i class="bi ${iconClass} toast-icon"></i>
+            <div class="toast-message">${message}</div>
+        `;
+        
+        container.appendChild(toast);
+        
+        // Trigger transition
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+        
+        // Remove after 4 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toast.classList.add('hide');
+            setTimeout(() => {
+                toast.remove();
+            }, 400);
+        }, 4000);
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <text>
+        showToast("@TempData["Success"]", "success");
+        </text>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <text>
+        showToast("@TempData["Error"]", "error");
+        </text>
+    }
+</script>
+}

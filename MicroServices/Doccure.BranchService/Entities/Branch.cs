@@ -1,4 +1,4 @@
-﻿using MongoDB.Bson;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Doccure.BranchService.Entities
@@ -8,10 +8,17 @@ namespace Doccure.BranchService.Entities
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string BranchId { get; set; }
-        public int BranchName { get; set; }
+        public string BranchName { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
         public bool Status { get; set; }
+        public string BranchCode { get; set; }
+        public int DoctorCount { get; set; }
+        public int MonthlyAppointmentCount { get; set; }
+        public int BedCount { get; set; }
+        public decimal Raiting { get; set; }
+        public int OccupancyRate { get; set; }
+        public string ThemeColour { get; set; }
 
 
 

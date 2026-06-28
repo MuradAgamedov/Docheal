@@ -18,7 +18,6 @@ namespace Doccure.AppointmentService
                Doccure.AppointmentService.Services.AppointmentServices.IAppointmentService,
                Doccure.AppointmentService.Services.AppointmentServices.AppointmentService>();
 
-
             builder.Services.AddScoped<
                Doccure.AppointmentService.Services.AppointmentDetailServices.IAppointmentDetailService,
                Doccure.AppointmentService.Services.AppointmentDetailServices.AppointmentDetailService>();

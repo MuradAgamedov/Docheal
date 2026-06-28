@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="tr">
+@await Component.InvokeAsync("_AdminLayoutStyleComponentPartial")
+@RenderSection("Styles", required: false)
+<body>
+
+    @await Component.InvokeAsync("_AdminLayoutSidebarComponentPartial")
+
+    <div id="page-content-wrapper">
+        <div class="main-content">
+
+            @await Component.InvokeAsync("_AdminLayoutNavbarComponentPartial")
+
+            <div class="page-body">
+                @RenderBody()
+            </div>
+
+        </div>
+    </div>
+
+    @await Component.InvokeAsync("_AdminLayoutScriptsComponentPartial")
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

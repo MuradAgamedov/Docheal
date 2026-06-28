@@ -69,3 +69,34 @@
 
 
 ---------------------------------------------------------------
+
+
+[
+  {
+    "name": "Ali",
+    "surname": "Mammadov",
+    "username": "ali01",
+    "email": "ali01@example.com",
+    "password": "Ali12345$",
+    "city": "Baku"
+  },
+  {
+    "name": "Leyla",
+    "surname": "Hasanova",
+    "username": "leyla02",
+    "email": "leyla02@example.com",
+    "password": "Leyla123$",
+    "city": "Ganja"
+  },
+  {
+    "name": "Kamran",
+    "surname": "Aliyev",
+    "username": "kamran03",
+    "email": "kamran03@example.com",
+    "password": "Kamran123$",
+    "city": "Sumgait"
+  }
+]
+
+
+---------------------------------------------------------------

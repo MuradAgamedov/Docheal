@@ -1,0 +1,375 @@
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- Statistika Kartları -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-value">120</div>
+                <div class="stat-label">Ümumi Həkim</div>
+            </div>
+            <div class="stat-icon icon-blue">
+                <i class="bi bi-person-fill-gear"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-value">1,482</div>
+                <div class="stat-label">Ümumi Görüş</div>
+            </div>
+            <div class="stat-icon icon-teal">
+                <i class="bi bi-calendar-event"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Ümumi Şöbə</div>
+            </div>
+            <div class="stat-icon icon-yellow">
+                <i class="bi bi-hospital"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info">
+                <div class="stat-value">35</div>
+                <div class="stat-label">Gözləyən Rəylər</div>
+            </div>
+            <div class="stat-icon icon-red">
+                <i class="bi bi-star"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Əsas Məzmun -->
+<div class="row g-4">
+
+    <!-- Son Görüşlər -->
+    <div class="col-12 col-xl-7">
+        <div class="content-card h-100">
+            <div class="card-header-custom">
+                <h5 class="card-title-custom">
+                    <i class="bi bi-calendar-check-fill"></i>
+                    Son Görüşlər
+                </h5>
+                <a href="#" class="btn btn-sm btn-outline-primary rounded-pill px-3">Hamısına bax</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-custom align-middle">
+                    <thead>
+                        <tr>
+                            <th>Xəstə</th>
+                            <th>Həkim</th>
+                            <th>Şöbə</th>
+                            <th>Tarix</th>
+                            <th>Vəziyyət</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar-circle bg-primary-subtle text-primary">AK</div>
+                                    <span class="fw-500">Ayşe Kaya</span>
+                                </div>
+                            </td>
+                            <td>Dr. Murat Demir</td>
+                            <td><span class="badge bg-light text-secondary border">Kardiologiya</span></td>
+                            <td>28 İyun 2026, 09:30</td>
+                            <td><span class="badge-status badge-active">Təsdiqləndi</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar-circle bg-success-subtle text-success">ME</div>
+                                    <span class="fw-500">Mehmet Ercan</span>
+                                </div>
+                            </td>
+                            <td>Dr. Selin Arslan</td>
+                            <td><span class="badge bg-light text-secondary border">Pediatriya</span></td>
+                            <td>28 İyun 2026, 11:00</td>
+                            <td><span class="badge-status badge-pending">Gözləyir</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar-circle bg-warning-subtle text-warning">FY</div>
+                                    <span class="fw-500">Fatma Yıldız</span>
+                                </div>
+                            </td>
+                            <td>Dr. Kemal Öztürk</td>
+                            <td><span class="badge bg-light text-secondary border">Dermatoloji</span></td>
+                            <td>27 İyun 2026, 14:15</td>
+                            <td><span class="badge-status badge-active">Təsdiqləndi</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar-circle bg-info-subtle text-info">HB</div>
+                                    <span class="fw-500">Hasan Bozkurt</span>
+                                </div>
+                            </td>
+                            <td>Dr. Zeynep Çelik</td>
+                            <td><span class="badge bg-light text-secondary border">Nevrologiya</span></td>
+                            <td>27 İyun 2026, 16:00</td>
+                            <td><span class="badge-status badge-cancelled">Ləğv edildi</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar-circle bg-danger-subtle text-danger">NS</div>
+                                    <span class="fw-500">Nurcan Şahin</span>
+                                </div>
+                            </td>
+                            <td>Dr. Ali Kocaman</td>
+                            <td><span class="badge bg-light text-secondary border">Ortopediya</span></td>
+                            <td>26 İyun 2026, 10:45</td>
+                            <td><span class="badge-status badge-active">Təsdiqləndi</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ən Yaxşı Həkimlər -->
+    <div class="col-12 col-xl-5">
+        <div class="content-card h-100">
+            <div class="card-header-custom">
+                <h5 class="card-title-custom">
+                    <i class="bi bi-person-fill-gear"></i>
+                    Ən Yaxşı Həkimlər
+                </h5>
+                <a href="#" class="btn btn-sm btn-outline-primary rounded-pill px-3">Hamısına bax</a>
+            </div>
+            <div class="doctor-list">
+
+                <div class="doctor-item">
+                    <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=60&h=60&fit=crop" alt="Həkim" class="doctor-avatar">
+                    <div class="doctor-info">
+                        <div class="doctor-name">Dr. Murat Demir</div>
+                        <div class="doctor-branch">Kardiologiya</div>
+                    </div>
+                    <div class="doctor-rating">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span>4.9</span>
+                    </div>
+                </div>
+
+                <div class="doctor-item">
+                    <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=60&h=60&fit=crop" alt="Həkim" class="doctor-avatar">
+                    <div class="doctor-info">
+                        <div class="doctor-name">Dr. Selin Arslan</div>
+                        <div class="doctor-branch">Pediatriya</div>
+                    </div>
+                    <div class="doctor-rating">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span>4.8</span>
+                    </div>
+                </div>
+
+                <div class="doctor-item">
+                    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=60&h=60&fit=crop" alt="Həkim" class="doctor-avatar">
+                    <div class="doctor-info">
+                        <div class="doctor-name">Dr. Kemal Öztürk</div>
+                        <div class="doctor-branch">Dermatoloji</div>
+                    </div>
+                    <div class="doctor-rating">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span>4.7</span>
+                    </div>
+                </div>
+
+                <div class="doctor-item">
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=60&h=60&fit=crop" alt="Həkim" class="doctor-avatar">
+                    <div class="doctor-info">
+                        <div class="doctor-name">Dr. Zeynep Çelik</div>
+                        <div class="doctor-branch">Nevrologiya</div>
+                    </div>
+                    <div class="doctor-rating">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span>4.6</span>
+                    </div>
+                </div>
+
+                <div class="doctor-item">
+                    <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=60&h=60&fit=crop" alt="Həkim" class="doctor-avatar">
+                    <div class="doctor-info">
+                        <div class="doctor-name">Dr. Ali Kocaman</div>
+                        <div class="doctor-branch">Ortopediya</div>
+                    </div>
+                    <div class="doctor-rating">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span>4.5</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Son Rəylər -->
+    <div class="col-12 col-xl-6">
+        <div class="content-card">
+            <div class="card-header-custom">
+                <h5 class="card-title-custom">
+                    <i class="bi bi-chat-left-heart-fill"></i>
+                    Son Rəylər
+                </h5>
+                <span class="badge bg-danger-subtle text-danger rounded-pill px-3">35 Gözləyir</span>
+            </div>
+            <div class="review-list">
+
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar-circle bg-primary-subtle text-primary sm">AK</div>
+                            <div>
+                                <div class="review-author">Ayşe Kaya</div>
+                                <div class="review-doctor">Dr. Murat Demir</div>
+                            </div>
+                        </div>
+                        <div class="review-stars">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                    </div>
+                    <p class="review-text">"Çox diqqətli və təcrübəli bir həkim. Mütləq tövsiyə edirəm."</p>
+                </div>
+
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar-circle bg-success-subtle text-success sm">ME</div>
+                            <div>
+                                <div class="review-author">Mehmet Ercan</div>
+                                <div class="review-doctor">Dr. Selin Arslan</div>
+                            </div>
+                        </div>
+                        <div class="review-stars">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star text-warning"></i>
+                        </div>
+                    </div>
+                    <p class="review-text">"Uşağımla çox gözəl maraqlandı, çox sağ olsun."</p>
+                </div>
+
+                <div class="review-item border-0 mb-0 pb-0">
+                    <div class="review-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar-circle bg-warning-subtle text-warning sm">FY</div>
+                            <div>
+                                <div class="review-author">Fatma Yıldız</div>
+                                <div class="review-doctor">Dr. Kemal Öztürk</div>
+                            </div>
+                        </div>
+                        <div class="review-stars">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-half text-warning"></i>
+                        </div>
+                    </div>
+                    <p class="review-text">"Görüş prosesi çox rahat idi və müayinə əla idi."</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Sistem Aktivliyi -->
+    <div class="col-12 col-xl-6">
+        <div class="content-card">
+            <div class="card-header-custom">
+                <h5 class="card-title-custom">
+                    <i class="bi bi-activity"></i>
+                    Sistem Aktivliyi
+                </h5>
+                <span class="text-muted small">Bu gün</span>
+            </div>
+            <div class="activity-feed">
+
+                <div class="activity-item">
+                    <div class="activity-icon icon-blue">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-text">Yeni həkim qeydiyyatı: <strong>Dr. Emre Yılmaz</strong></div>
+                        <div class="activity-time">10 dəqiqə əvvəl</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon icon-teal">
+                        <i class="bi bi-calendar-plus-fill"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-text">Yeni görüş yaradıldı: <strong>Xəstə #1482</strong></div>
+                        <div class="activity-time">25 dəqiqə əvvəl</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon icon-yellow">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-text">Yeni rəy: <strong>Dr. Murat Demir</strong> üçün 5 ulduz</div>
+                        <div class="activity-time">1 saat əvvəl</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon icon-green">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-text">Görüş təsdiqləndi: <strong>Ayşe Kaya</strong></div>
+                        <div class="activity-time">2 saat əvvəl</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon icon-red">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-text">Görüş ləğv edildi: <strong>Hasan Bozkurt</strong></div>
+                        <div class="activity-time">3 saat əvvəl</div>
+                    </div>
+                </div>
+
+                <div class="activity-item border-0 mb-0 pb-0">
+                    <div class="activity-icon icon-teal">
+                        <i class="bi bi-prescription"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-text">Yeni resept yazıldı: <strong>Xəstə #1478</strong></div>
+                        <div class="activity-time">4 saat əvvəl</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

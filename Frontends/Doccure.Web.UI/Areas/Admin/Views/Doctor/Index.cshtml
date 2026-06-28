@@ -1,0 +1,555 @@
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+<style>
+    .page-title-block {
+        display: flex; justify-content: space-between;
+        align-items: flex-start; margin-bottom: 1.75rem;
+        flex-wrap: wrap; gap: 1rem;
+    }
+    .page-title { font-family: 'Poppins', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--dark-color); margin: 0 0 4px 0; }
+    .page-subtitle { font-size: .88rem; color: #64748b; margin: 0; }
+    .page-actions  { display: flex; gap: .75rem; flex-shrink: 0; }
+
+    .filter-bar {
+        background: #fff; border: 1px solid var(--card-border);
+        border-radius: 16px; padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem; display: flex;
+        flex-wrap: wrap; gap: .75rem; align-items: center;
+    }
+    .filter-search { position: relative; flex: 1; min-width: 220px; max-width: 320px; }
+    .filter-search i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+    .filter-search input {
+        width: 100%; padding: .5rem 1rem .5rem 2.4rem;
+        border-radius: 30px; border: 1.5px solid #e2e8f0;
+        font-size: .85rem; background: #f8fafc;
+    }
+    .filter-search input:focus { outline: none; border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 3px rgba(14,130,253,.12); }
+    .filter-select {
+        padding: .48rem 2rem .48rem .85rem; border-radius: 30px;
+        border: 1.5px solid #e2e8f0; font-size: .83rem; color: #475569;
+        background: #f8fafc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right .75rem center;
+        appearance: none; cursor: pointer;
+    }
+    .filter-select:focus { outline: none; border-color: var(--primary-color); }
+    .filter-pills { display: flex; gap: .4rem; flex-wrap: wrap; }
+    .filter-pill {
+        padding: .42rem .9rem; border-radius: 30px;
+        border: 1.5px solid #e2e8f0; background: #fff;
+        color: #64748b; font-size: .8rem; font-weight: 500;
+        cursor: pointer; transition: all .2s; white-space: nowrap;
+    }
+    .filter-pill:hover, .filter-pill.active { border-color: var(--primary-color); color: var(--primary-color); background: var(--primary-light); font-weight: 600; }
+
+    .doctor-card {
+        background: #fff; border: 1px solid var(--card-border);
+        border-radius: 16px; overflow: hidden;
+        transition: all .3s ease; box-shadow: 0 2px 8px rgba(0,0,0,.03);
+        display: flex; flex-direction: column; height: 100%;
+    }
+    .doctor-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,.09); border-color: rgba(14,130,253,.2); }
+
+    .dc-banner { height: 72px; background: linear-gradient(135deg, var(--primary-color), #38bdf8); position: relative; }
+    .dc-banner.teal   { background: linear-gradient(135deg,#01c0c8,#34d399); }
+    .dc-banner.violet { background: linear-gradient(135deg,#7c3aed,#a78bfa); }
+    .dc-banner.orange { background: linear-gradient(135deg,#f59e0b,#fbbf24); }
+    .dc-banner.green  { background: linear-gradient(135deg,#16a34a,#4ade80); }
+    .dc-banner.red    { background: linear-gradient(135deg,#ef4444,#fb923c); }
+
+    .dc-avatar-wrap { position: absolute; bottom: -28px; left: 1.25rem; }
+    .dc-avatar { width: 62px; height: 62px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,.12); }
+    .dc-avatar-initials {
+        width: 62px; height: 62px; border-radius: 50%; border: 3px solid #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.1rem;
+        color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,.12);
+    }
+
+    .dc-status-badge { position: absolute; top: .6rem; right: .75rem; padding: .28rem .7rem; border-radius: 30px; font-size: .7rem; font-weight: 700; letter-spacing: .3px; }
+    .dc-status-available { background: rgba(34,197,94,.15); color: #15803d; border: 1px solid rgba(34,197,94,.3); }
+    .dc-status-busy      { background: rgba(245,158,11,.15); color: #b45309; border: 1px solid rgba(245,158,11,.3); }
+
+    .dc-body { padding: 2.25rem 1.25rem 1rem; flex: 1; display: flex; flex-direction: column; }
+    .dc-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1rem; color: var(--dark-color); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dc-specialty { font-size: .78rem; color: #64748b; margin-bottom: .5rem; }
+    .dc-branch-tag { display: inline-block; font-size: .7rem; font-weight: 600; padding: .2rem .65rem; border-radius: 20px; background: var(--primary-light); color: var(--primary-color); margin-bottom: .75rem; }
+
+    .dc-rating { display: flex; align-items: center; gap: .4rem; margin-bottom: .85rem; }
+    .dc-stars { color: #f59e0b; font-size: .78rem; letter-spacing: .5px; }
+    .dc-rating-val { font-weight: 700; font-size: .85rem; color: var(--dark-color); }
+    .dc-review-cnt { font-size: .75rem; color: #94a3b8; }
+
+    .dc-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: .4rem; margin-bottom: .85rem; }
+    .dc-stat-box { background: #f8fafc; border-radius: 10px; padding: .5rem .35rem; text-align: center; }
+    .dc-stat-val { font-weight: 700; font-size: .88rem; color: var(--dark-color); line-height: 1.2; }
+    .dc-stat-lbl { font-size: .63rem; color: #94a3b8; font-weight: 500; margin-top: 1px; }
+
+    .dc-slots-label { font-size: .73rem; font-weight: 600; color: #475569; margin-bottom: .35rem; }
+    .dc-slots { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: .85rem; }
+    .dc-slot { font-size: .68rem; font-weight: 600; padding: .22rem .55rem; border-radius: 6px; background: rgba(1,192,200,.08); color: #01c0c8; border: 1px solid rgba(1,192,200,.2); }
+
+    .dc-bio { font-size: .78rem; color: #64748b; line-height: 1.6; margin-bottom: 1rem; flex-grow: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    .dc-actions { padding: .85rem 1.25rem; border-top: 1px solid #f1f5f9; display: flex; gap: .4rem; flex-wrap: wrap; }
+    .btn-dc-view { flex: 1; min-width: 90px; font-size: .76rem; font-weight: 600; padding: .48rem .5rem; border-radius: 8px; border: 1.5px solid var(--primary-color); color: var(--primary-color); background: transparent; transition: all .2s; text-align: center; cursor: pointer; white-space: nowrap; }
+    .btn-dc-view:hover { background: var(--primary-light); }
+    .btn-dc-icon { width: 34px; height: 34px; border-radius: 8px; border: 1.5px solid #e2e8f0; background: #fff; color: #64748b; display: inline-flex; align-items: center; justify-content: center; font-size: .85rem; cursor: pointer; transition: all .2s; flex-shrink: 0; }
+    .btn-dc-icon:hover { border-color: var(--primary-color); color: var(--primary-color); background: var(--primary-light); }
+    .btn-dc-icon.del:hover { border-color:#ef4444; color:#ef4444; background:rgba(239,68,68,.06); }
+
+    .doctor-card-wrap.hidden { display: none; }
+</style>
+}
+
+<!-- Səhifə Başlığı -->
+<div class="page-title-block">
+    <div>
+        <h1 class="page-title">
+            <i class="bi bi-person-fill-gear me-2" style="color:var(--primary-color);font-size:1.4rem;"></i>
+            Həkim İdarəsi
+        </h1>
+        <p class="page-subtitle">Bütün həkimləri idarə edin, cədvəllərini və fəaliyyətlərini izləyin.</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn btn-outline-secondary d-flex align-items-center gap-2" style="border-radius:10px;font-weight:500;font-size:.88rem;">
+            <i class="bi bi-download"></i> İxrac et
+        </button>
+        <button class="btn btn-primary d-flex align-items-center gap-2" style="border-radius:10px;font-weight:500;font-size:.88rem;">
+            <i class="bi bi-plus-lg"></i> Yeni Həkim
+        </button>
+    </div>
+</div>
+
+<!-- Statistika Kartları -->
+<div class="row g-4 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">120</div><div class="stat-label">Ümumi Həkim</div></div>
+            <div class="stat-icon icon-blue"><i class="bi bi-person-fill-gear"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">84</div><div class="stat-label">Bu Gün Növbədə</div></div>
+            <div class="stat-icon icon-teal"><i class="bi bi-person-check-fill"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">312</div><div class="stat-label">Bu Günkü Görüş</div></div>
+            <div class="stat-icon icon-yellow"><i class="bi bi-calendar-check-fill"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">4.7</div><div class="stat-label">Ortalama Xəstə Balı</div></div>
+            <div class="stat-icon icon-red"><i class="bi bi-star-fill"></i></div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtr Paneli -->
+<div class="filter-bar">
+    <div class="filter-search">
+        <i class="bi bi-search"></i>
+        <input type="text" id="doctorSearch" placeholder="Həkim adı və ya ixtisas axtar...">
+    </div>
+
+    <select class="filter-select" id="branchFilter">
+        <option value="">Bütün Şöbələr</option>
+        <option value="kardiologiya">Kardiologiya</option>
+        <option value="pediatriya">Pediatriya</option>
+        <option value="dermatoloji">Dermatoloji</option>
+        <option value="nevrologiya">Nevrologiya</option>
+        <option value="ortopediya">Ortopediya</option>
+    </select>
+
+    <select class="filter-select" id="statusFilter">
+        <option value="">Bütün Vəziyyətlər</option>
+        <option value="available">Mövcud</option>
+        <option value="busy">Görüşdə</option>
+    </select>
+
+    <select class="filter-select" id="sortFilter">
+        <option value="">Sıralama</option>
+        <option value="rating">Bala Görə</option>
+        <option value="name">Ada Görə</option>
+        <option value="exp">Təcrübəyə Görə</option>
+    </select>
+
+    <div class="filter-pills">
+        <button class="filter-pill active" data-cat="all">Hamısı</button>
+        <button class="filter-pill" data-cat="dahili">Daxili Tibb</button>
+        <button class="filter-pill" data-cat="cerrahi">Cərrahiyyə</button>
+        <button class="filter-pill" data-cat="tani">Diaqnoz</button>
+        <button class="filter-pill" data-cat="available">Mövcud</button>
+        <button class="filter-pill" data-cat="busy">Növbədə</button>
+    </div>
+</div>
+
+<!-- Həkim Kartları -->
+<div class="row g-4" id="doctorGrid">
+
+    <!-- 1: Dr. Murat Demir -->
+    <div class="col-12 col-md-6 col-xl-4 col-xxl-3 doctor-card-wrap"
+         data-name="murat demir" data-branch="kardiologiya" data-cat="dahili" data-status="available">
+        <div class="doctor-card">
+            <div class="dc-banner">
+                <div class="dc-avatar-wrap">
+                    <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=120&h=120&fit=crop&crop=face" class="dc-avatar" alt="">
+                </div>
+                <span class="dc-status-badge dc-status-available"><i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i>Mövcud</span>
+            </div>
+            <div class="dc-body">
+                <div class="dc-name">Dr. Murat Demir</div>
+                <div class="dc-specialty">Kardioloq · Daxili Tibb</div>
+                <span class="dc-branch-tag">Kardiologiya</span>
+                <div class="dc-rating">
+                    <span class="dc-stars">★★★★★</span>
+                    <span class="dc-rating-val">4.9</span>
+                    <span class="dc-review-cnt">(218 rəy)</span>
+                </div>
+                <div class="dc-stats">
+                    <div class="dc-stat-box"><div class="dc-stat-val">14</div><div class="dc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">2.4K</div><div class="dc-stat-lbl">Görüş</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">1.8K</div><div class="dc-stat-lbl">Xəstə</div></div>
+                </div>
+                <div class="dc-slots-label"><i class="bi bi-clock me-1"></i>Bu Günkü Mövcud Saatlar</div>
+                <div class="dc-slots">
+                    <span class="dc-slot">09:00</span><span class="dc-slot">10:30</span><span class="dc-slot">14:00</span><span class="dc-slot">15:30</span>
+                </div>
+                <p class="dc-bio">Ürək xəstəlikləri və kardiovaskülyar cərrahiyyə sahəsində beynəlxalq təcrübəyə malik mütəxəssis. Ekokardiografi sahəsinin öncülü.</p>
+            </div>
+            <div class="dc-actions">
+                <button class="btn-dc-view"><i class="bi bi-person-lines-fill me-1"></i>Profilə bax</button>
+                <button class="btn-dc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-dc-icon" title="Cədvəli aç"><i class="bi bi-calendar3"></i></button>
+                <button class="btn-dc-icon" title="Görüşlər"><i class="bi bi-list-check"></i></button>
+                <button class="btn-dc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2: Dr. Selin Arslan -->
+    <div class="col-12 col-md-6 col-xl-4 col-xxl-3 doctor-card-wrap"
+         data-name="selin arslan" data-branch="pediatriya" data-cat="dahili" data-status="busy">
+        <div class="doctor-card">
+            <div class="dc-banner teal">
+                <div class="dc-avatar-wrap">
+                    <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=120&h=120&fit=crop&crop=face" class="dc-avatar" alt="">
+                </div>
+                <span class="dc-status-badge dc-status-busy"><i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i>Görüşdə</span>
+            </div>
+            <div class="dc-body">
+                <div class="dc-name">Dr. Selin Arslan</div>
+                <div class="dc-specialty">Pediatr · Daxili Tibb</div>
+                <span class="dc-branch-tag" style="background:rgba(1,192,200,.1);color:#01c0c8;">Pediatriya</span>
+                <div class="dc-rating">
+                    <span class="dc-stars">★★★★★</span>
+                    <span class="dc-rating-val">4.8</span>
+                    <span class="dc-review-cnt">(174 rəy)</span>
+                </div>
+                <div class="dc-stats">
+                    <div class="dc-stat-box"><div class="dc-stat-val">9</div><div class="dc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">3.1K</div><div class="dc-stat-lbl">Görüş</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">2.2K</div><div class="dc-stat-lbl">Xəstə</div></div>
+                </div>
+                <div class="dc-slots-label"><i class="bi bi-clock me-1"></i>Bu Günkü Mövcud Saatlar</div>
+                <div class="dc-slots">
+                    <span class="dc-slot">13:00</span><span class="dc-slot">16:00</span><span class="dc-slot">17:30</span>
+                </div>
+                <p class="dc-bio">Yenidoğan intensiv terapiya və inkişaf pediatriyası sahəsində mütəxəssis. Ailelərə bütüncül yanaşma təqdim edir.</p>
+            </div>
+            <div class="dc-actions">
+                <button class="btn-dc-view"><i class="bi bi-person-lines-fill me-1"></i>Profilə bax</button>
+                <button class="btn-dc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-dc-icon" title="Cədvəli aç"><i class="bi bi-calendar3"></i></button>
+                <button class="btn-dc-icon" title="Görüşlər"><i class="bi bi-list-check"></i></button>
+                <button class="btn-dc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3: Dr. Kemal Öztürk -->
+    <div class="col-12 col-md-6 col-xl-4 col-xxl-3 doctor-card-wrap"
+         data-name="kemal öztürk" data-branch="dermatoloji" data-cat="tani" data-status="available">
+        <div class="doctor-card">
+            <div class="dc-banner orange">
+                <div class="dc-avatar-wrap">
+                    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=120&h=120&fit=crop&crop=face" class="dc-avatar" alt="">
+                </div>
+                <span class="dc-status-badge dc-status-available"><i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i>Mövcud</span>
+            </div>
+            <div class="dc-body">
+                <div class="dc-name">Dr. Kemal Öztürk</div>
+                <div class="dc-specialty">Dermatoloq · Diaqnoz</div>
+                <span class="dc-branch-tag" style="background:rgba(245,158,11,.1);color:#f59e0b;">Dermatoloji</span>
+                <div class="dc-rating">
+                    <span class="dc-stars">★★★★★</span>
+                    <span class="dc-rating-val">4.7</span>
+                    <span class="dc-review-cnt">(136 rəy)</span>
+                </div>
+                <div class="dc-stats">
+                    <div class="dc-stat-box"><div class="dc-stat-val">11</div><div class="dc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">1.9K</div><div class="dc-stat-lbl">Görüş</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">1.4K</div><div class="dc-stat-lbl">Xəstə</div></div>
+                </div>
+                <div class="dc-slots-label"><i class="bi bi-clock me-1"></i>Bu Günkü Mövcud Saatlar</div>
+                <div class="dc-slots">
+                    <span class="dc-slot">08:30</span><span class="dc-slot">11:00</span><span class="dc-slot">14:30</span><span class="dc-slot">16:00</span>
+                </div>
+                <p class="dc-bio">Dəri xərçəngi taraması və kosmetik dermatoloji sahəsinin öncülü. Lazer müalicələri üzrə mütəxəssis.</p>
+            </div>
+            <div class="dc-actions">
+                <button class="btn-dc-view"><i class="bi bi-person-lines-fill me-1"></i>Profilə bax</button>
+                <button class="btn-dc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-dc-icon" title="Cədvəli aç"><i class="bi bi-calendar3"></i></button>
+                <button class="btn-dc-icon" title="Görüşlər"><i class="bi bi-list-check"></i></button>
+                <button class="btn-dc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4: Dr. Zeynep Çelik -->
+    <div class="col-12 col-md-6 col-xl-4 col-xxl-3 doctor-card-wrap"
+         data-name="zeynep çelik" data-branch="nevrologiya" data-cat="dahili" data-status="busy">
+        <div class="doctor-card">
+            <div class="dc-banner violet">
+                <div class="dc-avatar-wrap">
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=120&h=120&fit=crop&crop=face" class="dc-avatar" alt="">
+                </div>
+                <span class="dc-status-badge dc-status-busy"><i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i>Görüşdə</span>
+            </div>
+            <div class="dc-body">
+                <div class="dc-name">Dr. Zeynep Çelik</div>
+                <div class="dc-specialty">Nevroloq · Daxili Tibb</div>
+                <span class="dc-branch-tag" style="background:rgba(139,92,246,.1);color:#7c3aed;">Nevrologiya</span>
+                <div class="dc-rating">
+                    <span class="dc-stars">★★★★☆</span>
+                    <span class="dc-rating-val">4.6</span>
+                    <span class="dc-review-cnt">(201 rəy)</span>
+                </div>
+                <div class="dc-stats">
+                    <div class="dc-stat-box"><div class="dc-stat-val">12</div><div class="dc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">2.7K</div><div class="dc-stat-lbl">Görüş</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">2.0K</div><div class="dc-stat-lbl">Xəstə</div></div>
+                </div>
+                <div class="dc-slots-label"><i class="bi bi-clock me-1"></i>Bu Günkü Mövcud Saatlar</div>
+                <div class="dc-slots">
+                    <span class="dc-slot">15:00</span><span class="dc-slot">17:00</span>
+                </div>
+                <p class="dc-bio">Migren, epilepsiya və sinir sistemi xəstəlikləri sahəsinin tanınmış mütəxəssisi. EEG və EMG şərhinda geniş təcrübəyə malikdir.</p>
+            </div>
+            <div class="dc-actions">
+                <button class="btn-dc-view"><i class="bi bi-person-lines-fill me-1"></i>Profilə bax</button>
+                <button class="btn-dc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-dc-icon" title="Cədvəli aç"><i class="bi bi-calendar3"></i></button>
+                <button class="btn-dc-icon" title="Görüşlər"><i class="bi bi-list-check"></i></button>
+                <button class="btn-dc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5: Dr. Ali Kocaman -->
+    <div class="col-12 col-md-6 col-xl-4 col-xxl-3 doctor-card-wrap"
+         data-name="ali kocaman" data-branch="ortopediya" data-cat="cerrahi" data-status="available">
+        <div class="doctor-card">
+            <div class="dc-banner green">
+                <div class="dc-avatar-wrap">
+                    <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=120&h=120&fit=crop&crop=face" class="dc-avatar" alt="">
+                </div>
+                <span class="dc-status-badge dc-status-available"><i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i>Mövcud</span>
+            </div>
+            <div class="dc-body">
+                <div class="dc-name">Dr. Ali Kocaman</div>
+                <div class="dc-specialty">Ortopedik Cərrah · Cərrahiyyə</div>
+                <span class="dc-branch-tag" style="background:rgba(34,197,94,.1);color:#16a34a;">Ortopediya</span>
+                <div class="dc-rating">
+                    <span class="dc-stars">★★★★★</span>
+                    <span class="dc-rating-val">4.8</span>
+                    <span class="dc-review-cnt">(189 rəy)</span>
+                </div>
+                <div class="dc-stats">
+                    <div class="dc-stat-box"><div class="dc-stat-val">16</div><div class="dc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">3.5K</div><div class="dc-stat-lbl">Görüş</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">2.8K</div><div class="dc-stat-lbl">Xəstə</div></div>
+                </div>
+                <div class="dc-slots-label"><i class="bi bi-clock me-1"></i>Bu Günkü Mövcud Saatlar</div>
+                <div class="dc-slots">
+                    <span class="dc-slot">09:30</span><span class="dc-slot">11:30</span><span class="dc-slot">14:00</span>
+                </div>
+                <p class="dc-bio">Diz və kalça protezi, artroskopik cərrahiyyə sahəsinin ən təcrübəli ortopedistlərindən. İdman zədələri müalicəsinin mütəxəssisi.</p>
+            </div>
+            <div class="dc-actions">
+                <button class="btn-dc-view"><i class="bi bi-person-lines-fill me-1"></i>Profilə bax</button>
+                <button class="btn-dc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-dc-icon" title="Cədvəli aç"><i class="bi bi-calendar3"></i></button>
+                <button class="btn-dc-icon" title="Görüşlər"><i class="bi bi-list-check"></i></button>
+                <button class="btn-dc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6: Dr. Emre Yılmaz -->
+    <div class="col-12 col-md-6 col-xl-4 col-xxl-3 doctor-card-wrap"
+         data-name="emre yılmaz" data-branch="kardiologiya" data-cat="cerrahi" data-status="available">
+        <div class="doctor-card">
+            <div class="dc-banner red">
+                <div class="dc-avatar-wrap">
+                    <div class="dc-avatar-initials" style="background:linear-gradient(135deg,#ef4444,#fb923c);">EY</div>
+                </div>
+                <span class="dc-status-badge dc-status-available"><i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i>Mövcud</span>
+            </div>
+            <div class="dc-body">
+                <div class="dc-name">Dr. Emre Yılmaz</div>
+                <div class="dc-specialty">Ürək-Damar Cərrahı · Cərrahiyyə</div>
+                <span class="dc-branch-tag">Kardiologiya</span>
+                <div class="dc-rating">
+                    <span class="dc-stars">★★★★☆</span>
+                    <span class="dc-rating-val">4.5</span>
+                    <span class="dc-review-cnt">(98 rəy)</span>
+                </div>
+                <div class="dc-stats">
+                    <div class="dc-stat-box"><div class="dc-stat-val">7</div><div class="dc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">980</div><div class="dc-stat-lbl">Görüş</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">720</div><div class="dc-stat-lbl">Xəstə</div></div>
+                </div>
+                <div class="dc-slots-label"><i class="bi bi-clock me-1"></i>Bu Günkü Mövcud Saatlar</div>
+                <div class="dc-slots">
+                    <span class="dc-slot">10:00</span><span class="dc-slot">12:00</span><span class="dc-slot">16:30</span>
+                </div>
+                <p class="dc-bio">Koroner bypass və qapaq cərrahiyyəsi sahəsinin mütəxəssisi. Minimal invaziv texnikalar üzrə ixtisaslaşmış gənc cərrahdır.</p>
+            </div>
+            <div class="dc-actions">
+                <button class="btn-dc-view"><i class="bi bi-person-lines-fill me-1"></i>Profilə bax</button>
+                <button class="btn-dc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-dc-icon" title="Cədvəli aç"><i class="bi bi-calendar3"></i></button>
+                <button class="btn-dc-icon" title="Görüşlər"><i class="bi bi-list-check"></i></button>
+                <button class="btn-dc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7: Dr. Fatma Aydın -->
+    <div class="col-12 col-md-6 col-xl-4 col-xxl-3 doctor-card-wrap"
+         data-name="fatma aydın" data-branch="pediatriya" data-cat="dahili" data-status="available">
+        <div class="doctor-card">
+            <div class="dc-banner teal">
+                <div class="dc-avatar-wrap">
+                    <div class="dc-avatar-initials" style="background:linear-gradient(135deg,#01c0c8,#34d399);">FA</div>
+                </div>
+                <span class="dc-status-badge dc-status-available"><i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i>Mövcud</span>
+            </div>
+            <div class="dc-body">
+                <div class="dc-name">Dr. Fatma Aydın</div>
+                <div class="dc-specialty">Uşaq Nevroloqu · Daxili Tibb</div>
+                <span class="dc-branch-tag" style="background:rgba(1,192,200,.1);color:#01c0c8;">Pediatriya</span>
+                <div class="dc-rating">
+                    <span class="dc-stars">★★★★★</span>
+                    <span class="dc-rating-val">4.9</span>
+                    <span class="dc-review-cnt">(143 rəy)</span>
+                </div>
+                <div class="dc-stats">
+                    <div class="dc-stat-box"><div class="dc-stat-val">10</div><div class="dc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">2.1K</div><div class="dc-stat-lbl">Görüş</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">1.6K</div><div class="dc-stat-lbl">Xəstə</div></div>
+                </div>
+                <div class="dc-slots-label"><i class="bi bi-clock me-1"></i>Bu Günkü Mövcud Saatlar</div>
+                <div class="dc-slots">
+                    <span class="dc-slot">08:00</span><span class="dc-slot">09:30</span><span class="dc-slot">11:00</span><span class="dc-slot">15:00</span>
+                </div>
+                <p class="dc-bio">Uşaqlıq dövrü epilepsiyası və nöroinkişaf pozuntuları sahəsinin mütəxəssisi. Ailələrlə ünsiyyəti ilə tanınan empatik həkimdir.</p>
+            </div>
+            <div class="dc-actions">
+                <button class="btn-dc-view"><i class="bi bi-person-lines-fill me-1"></i>Profilə bax</button>
+                <button class="btn-dc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-dc-icon" title="Cədvəli aç"><i class="bi bi-calendar3"></i></button>
+                <button class="btn-dc-icon" title="Görüşlər"><i class="bi bi-list-check"></i></button>
+                <button class="btn-dc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8: Dr. Hakan Turan -->
+    <div class="col-12 col-md-6 col-xl-4 col-xxl-3 doctor-card-wrap"
+         data-name="hakan turan" data-branch="ortopediya" data-cat="cerrahi" data-status="busy">
+        <div class="doctor-card">
+            <div class="dc-banner">
+                <div class="dc-avatar-wrap">
+                    <div class="dc-avatar-initials" style="background:linear-gradient(135deg,#0e82fd,#38bdf8);">HT</div>
+                </div>
+                <span class="dc-status-badge dc-status-busy"><i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i>Görüşdə</span>
+            </div>
+            <div class="dc-body">
+                <div class="dc-name">Dr. Hakan Turan</div>
+                <div class="dc-specialty">Ümumi Cərrah · Cərrahiyyə</div>
+                <span class="dc-branch-tag" style="background:rgba(34,197,94,.1);color:#16a34a;">Ortopediya</span>
+                <div class="dc-rating">
+                    <span class="dc-stars">★★★★☆</span>
+                    <span class="dc-rating-val">4.6</span>
+                    <span class="dc-review-cnt">(112 rəy)</span>
+                </div>
+                <div class="dc-stats">
+                    <div class="dc-stat-box"><div class="dc-stat-val">13</div><div class="dc-stat-lbl">İl Təcrübə</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">2.2K</div><div class="dc-stat-lbl">Görüş</div></div>
+                    <div class="dc-stat-box"><div class="dc-stat-val">1.7K</div><div class="dc-stat-lbl">Xəstə</div></div>
+                </div>
+                <div class="dc-slots-label"><i class="bi bi-clock me-1"></i>Bu Günkü Mövcud Saatlar</div>
+                <div class="dc-slots">
+                    <span class="dc-slot">16:00</span><span class="dc-slot">17:30</span>
+                </div>
+                <p class="dc-bio">Laparoskopik cərrahiyyə və robotik əməliyyatlar sahəsinin mütəxəssisi. Minimal invaziv texnikalar tətbiq edərək sağalmanı sürətləndirir.</p>
+            </div>
+            <div class="dc-actions">
+                <button class="btn-dc-view"><i class="bi bi-person-lines-fill me-1"></i>Profilə bax</button>
+                <button class="btn-dc-icon" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                <button class="btn-dc-icon" title="Cədvəli aç"><i class="bi bi-calendar3"></i></button>
+                <button class="btn-dc-icon" title="Görüşlər"><i class="bi bi-list-check"></i></button>
+                <button class="btn-dc-icon del" title="Sil"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+<script>
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            applyFilters();
+        });
+    });
+
+    ['doctorSearch', 'branchFilter', 'statusFilter'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', applyFilters);
+    });
+
+    function applyFilters() {
+        const search  = document.getElementById('doctorSearch').value.toLowerCase().trim();
+        const branch  = document.getElementById('branchFilter').value.toLowerCase();
+        const status  = document.getElementById('statusFilter').value.toLowerCase();
+        const cat     = (document.querySelector('.filter-pill.active') || {}).dataset?.cat || 'all';
+
+        document.querySelectorAll('.doctor-card-wrap').forEach(card => {
+            const name    = card.dataset.name   || '';
+            const cbranch = card.dataset.branch || '';
+            const cstatus = card.dataset.status || '';
+            const ccat    = card.dataset.cat    || '';
+
+            const matchSearch = !search || name.includes(search);
+            const matchBranch = !branch || cbranch === branch;
+            const matchStatus = !status || cstatus === status;
+            const matchCat    = cat === 'all' || ccat === cat ||
+                                (cat === 'available' && cstatus === 'available') ||
+                                (cat === 'busy'      && cstatus === 'busy');
+
+            card.classList.toggle('hidden', !(matchSearch && matchBranch && matchStatus && matchCat));
+        });
+    }
+</script>
+}

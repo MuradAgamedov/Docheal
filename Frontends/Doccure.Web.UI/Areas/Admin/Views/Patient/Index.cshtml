@@ -1,0 +1,537 @@
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+<style>
+    .page-title-block { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.75rem; flex-wrap:wrap; gap:1rem; }
+    .page-title { font-family:'Poppins',sans-serif; font-size:1.6rem; font-weight:700; color:var(--dark-color); margin:0 0 4px 0; }
+    .page-subtitle { font-size:.88rem; color:#64748b; margin:0; }
+    .page-actions { display:flex; gap:.6rem; flex-wrap:wrap; flex-shrink:0; }
+
+    .filter-bar { background:#fff; border:1px solid var(--card-border); border-radius:16px; padding:1.1rem 1.4rem; margin-bottom:1.5rem; display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; }
+    .filter-search { position:relative; flex:1; min-width:210px; max-width:340px; }
+    .filter-search i { position:absolute; left:.9rem; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:.9rem; }
+    .filter-search input { width:100%; padding:.48rem 1rem .48rem 2.2rem; border-radius:30px; border:1.5px solid #e2e8f0; font-size:.83rem; background:#f8fafc; }
+    .filter-search input:focus { outline:none; border-color:var(--primary-color); background:#fff; box-shadow:0 0 0 3px rgba(14,130,253,.12); }
+    .filter-select { padding:.46rem 1.9rem .46rem .8rem; border-radius:30px; border:1.5px solid #e2e8f0; font-size:.82rem; color:#475569; background:#f8fafc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right .7rem center; appearance:none; cursor:pointer; }
+    .filter-select:focus { outline:none; border-color:var(--primary-color); }
+    .filter-pills { display:flex; gap:.35rem; flex-wrap:wrap; }
+    .filter-pill { padding:.4rem .85rem; border-radius:30px; border:1.5px solid #e2e8f0; background:#fff; color:#64748b; font-size:.79rem; font-weight:500; cursor:pointer; transition:all .2s; white-space:nowrap; }
+    .filter-pill:hover,.filter-pill.active { border-color:var(--primary-color); color:var(--primary-color); background:var(--primary-light); font-weight:600; }
+
+    .pat-table-wrap { background:#fff; border:1px solid var(--card-border); border-radius:16px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.03); }
+    .pat-table-header { display:flex; align-items:center; justify-content:space-between; padding:1.1rem 1.4rem; border-bottom:1px solid #f1f5f9; flex-wrap:wrap; gap:.75rem; }
+    .pat-table-title { font-family:'Poppins',sans-serif; font-weight:600; font-size:1rem; color:var(--dark-color); margin:0; display:flex; align-items:center; gap:8px; }
+    .pat-table-title i { color:var(--primary-color); }
+
+    .patient-table { width:100%; border-collapse:collapse; }
+    .patient-table th { padding:.75rem 1rem; font-size:.75rem; font-weight:700; color:#475569; background:#f8fafc; border-bottom:2px solid #e2e8f0; text-transform:uppercase; letter-spacing:.4px; white-space:nowrap; }
+    .patient-table td { padding:.9rem 1rem; border-bottom:1px solid #f1f5f9; vertical-align:middle; font-size:.855rem; }
+    .patient-table tr:last-child td { border-bottom:none; }
+    .patient-table tr:hover td { background:#fafbfc; }
+    .patient-table tr.hidden { display:none; }
+
+    .pat-cell { display:flex; align-items:center; gap:10px; }
+    .pat-avatar { width:38px; height:38px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+    .pat-avatar-ini { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.75rem; color:#fff; flex-shrink:0; }
+    .pat-name { font-weight:600; color:var(--dark-color); }
+    .pat-id { font-size:.72rem; color:#94a3b8; }
+
+    .badge-status { display:inline-flex; align-items:center; gap:5px; padding:.3rem .75rem; border-radius:30px; font-size:.74rem; font-weight:700; }
+    .bs-active   { background:rgba(22,163,74,.1);  color:#15803d; }
+    .bs-passive  { background:rgba(148,163,184,.1); color:#64748b; }
+    .bs-new      { background:rgba(14,130,253,.1);  color:#0e82fd; }
+    .bs-critical { background:rgba(239,68,68,.1);   color:#dc2626; }
+
+    .act-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid #e2e8f0; background:#fff; color:#64748b; display:inline-flex; align-items:center; justify-content:center; font-size:.8rem; cursor:pointer; transition:all .2s; }
+    .act-btn:hover { border-color:var(--primary-color); color:var(--primary-color); background:var(--primary-light); }
+    .act-btn.del:hover { border-color:#ef4444; color:#ef4444; background:rgba(239,68,68,.06); }
+
+    .table-footer { display:flex; justify-content:space-between; align-items:center; padding:.9rem 1.4rem; border-top:1px solid #f1f5f9; flex-wrap:wrap; gap:.5rem; }
+    .table-footer-info { font-size:.8rem; color:#64748b; }
+    .pag-btn { width:32px; height:32px; border-radius:8px; border:1.5px solid #e2e8f0; background:#fff; color:#64748b; display:inline-flex; align-items:center; justify-content:center; font-size:.8rem; cursor:pointer; transition:all .2s; }
+    .pag-btn:hover,.pag-btn.active { border-color:var(--primary-color); color:#fff; background:var(--primary-color); }
+
+    .detail-modal .modal-content { border:0; border-radius:18px; box-shadow:0 20px 60px rgba(0,0,0,.15); overflow:hidden; }
+    .detail-modal .modal-header { background:linear-gradient(135deg,var(--primary-color),var(--secondary-color)); color:#fff; border:0; padding:1.4rem 1.6rem; }
+    .detail-modal .modal-title { font-family:'Poppins',sans-serif; font-weight:700; font-size:1.1rem; display:flex; align-items:center; gap:8px; }
+    .detail-modal .btn-close { filter:invert(1) brightness(2); opacity:.9; }
+    .detail-modal .modal-body { padding:1.6rem; }
+
+    .pat-detail-header { display:flex; align-items:center; gap:1.2rem; padding-bottom:1.2rem; border-bottom:1px solid #f1f5f9; margin-bottom:1.2rem; }
+    .pat-detail-avatar { width:72px; height:72px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.4rem; color:#fff; flex-shrink:0; }
+    .pat-detail-name { font-family:'Poppins',sans-serif; font-weight:700; font-size:1.15rem; color:var(--dark-color); }
+    .pat-detail-id { font-size:.8rem; color:#94a3b8; margin-top:2px; }
+
+    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+    @@media (max-width:576px) { .detail-grid { grid-template-columns:1fr; } }
+    .detail-field { background:#f8fafc; border-radius:10px; padding:.75rem 1rem; }
+    .detail-field-label { font-size:.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
+    .detail-field-value { font-size:.88rem; font-weight:600; color:var(--dark-color); }
+
+    .visit-list { margin-top:1.2rem; }
+    .visit-list-title { font-family:'Poppins',sans-serif; font-weight:600; font-size:.9rem; color:var(--dark-color); margin-bottom:.75rem; display:flex; align-items:center; gap:6px; }
+    .visit-item { display:flex; justify-content:space-between; align-items:center; padding:.6rem .85rem; background:#f8fafc; border-radius:10px; margin-bottom:.4rem; }
+    .visit-item:last-child { margin-bottom:0; }
+    .visit-doctor { font-size:.82rem; font-weight:600; color:var(--dark-color); }
+    .visit-branch { font-size:.72rem; color:#64748b; }
+    .visit-date { font-size:.75rem; color:#94a3b8; white-space:nowrap; }
+</style>
+}
+
+<!-- Səhifə Başlığı -->
+<div class="page-title-block">
+    <div>
+        <h1 class="page-title">
+            <i class="bi bi-person-vcard-fill me-2" style="color:var(--primary-color);font-size:1.35rem;"></i>
+            Xəstə İdarəsi
+        </h1>
+        <p class="page-subtitle">Xəstə qeydlərini, tibbî tarixçəni və görüşləri idarə edin.</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn btn-outline-secondary d-flex align-items-center gap-2" style="border-radius:10px;font-weight:500;font-size:.85rem;">
+            <i class="bi bi-download"></i> İxrac et
+        </button>
+        <button class="btn btn-primary d-flex align-items-center gap-2" style="border-radius:10px;font-weight:500;font-size:.85rem;">
+            <i class="bi bi-plus-lg"></i> Yeni Xəstə
+        </button>
+    </div>
+</div>
+
+<!-- Statistika Kartları -->
+<div class="row g-4 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">2,840</div><div class="stat-label">Ümumi Xəstə</div></div>
+            <div class="stat-icon icon-blue"><i class="bi bi-people-fill"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">128</div><div class="stat-label">Bu Ay Yeni</div></div>
+            <div class="stat-icon icon-teal"><i class="bi bi-person-plus-fill"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">46</div><div class="stat-label">Yatan Xəstə</div></div>
+            <div class="stat-icon icon-yellow"><i class="bi bi-hospital-fill"></i></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-info"><div class="stat-value">312</div><div class="stat-label">Bu Ay Buraxıldı</div></div>
+            <div class="stat-icon icon-green"><i class="bi bi-check-circle-fill"></i></div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtr Paneli -->
+<div class="filter-bar">
+    <div class="filter-search">
+        <i class="bi bi-search"></i>
+        <input type="text" id="patientSearch" placeholder="Xəstə adı, ID və ya telefon axtar...">
+    </div>
+    <select class="filter-select" id="branchFilter">
+        <option value="">Bütün Şöbələr</option>
+        <option value="kardiologiya">Kardiologiya</option>
+        <option value="pediatriya">Pediatriya</option>
+        <option value="dermatoloji">Dermatoloji</option>
+        <option value="nevrologiya">Nevrologiya</option>
+        <option value="ortopediya">Ortopediya</option>
+    </select>
+    <select class="filter-select" id="statusFilter">
+        <option value="">Bütün Vəziyyətlər</option>
+        <option value="aktiv">Aktiv</option>
+        <option value="yeni">Yeni</option>
+        <option value="kritik">Kritik</option>
+        <option value="passiv">Passiv</option>
+    </select>
+    <div class="filter-pills">
+        <button class="filter-pill active" data-cat="all">Hamısı</button>
+        <button class="filter-pill" data-cat="aktiv">Aktiv</button>
+        <button class="filter-pill" data-cat="yeni">Yeni</button>
+        <button class="filter-pill" data-cat="kritik">Kritik</button>
+    </div>
+</div>
+
+<!-- Xəstə Cədvəli -->
+<div class="pat-table-wrap">
+    <div class="pat-table-header">
+        <h5 class="pat-table-title"><i class="bi bi-table"></i> Xəstə Siyahısı</h5>
+        <span class="text-muted small">10 xəstədən 2,840 göstərilir</span>
+    </div>
+    <div style="overflow-x:auto;">
+        <table class="patient-table">
+            <thead>
+                <tr>
+                    <th>Xəstə</th>
+                    <th>Xəstə ID</th>
+                    <th>Yaş / Cins</th>
+                    <th>Qan Qrupu</th>
+                    <th>Şöbə</th>
+                    <th>Son Görüş</th>
+                    <th>Vəziyyət</th>
+                    <th style="text-align:center;">Əməliyyat</th>
+                </tr>
+            </thead>
+            <tbody id="patientTableBody">
+
+                <tr data-name="ayşe kaya" data-branch="kardiologiya" data-status="aktiv" data-cat="aktiv">
+                    <td>
+                        <div class="pat-cell">
+                            <img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&h=80&fit=crop&crop=face" class="pat-avatar" alt="">
+                            <div><div class="pat-name">Ayşe Kaya</div><div class="pat-id">+994 50 123 45 67</div></div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:.82rem;color:#475569;font-weight:600;">#XST-0001</span></td>
+                    <td>34 / Q</td>
+                    <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:.75rem;">A+</span></td>
+                    <td><span class="badge bg-light text-secondary border" style="font-size:.74rem;">Kardiologiya</span></td>
+                    <td style="color:#64748b;font-size:.82rem;">28 İyun 2026</td>
+                    <td><span class="badge-status bs-active"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Aktiv</span></td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <button class="act-btn" title="Profilə bax" onclick="openDetail('AK','Ayşe Kaya','#XST-0001','34','Qadın','A+','Kardiologiya','Dr. Murat Demir','+994 50 123 45 67','ayse@email.com','28 İyun 2026','Aktiv')"><i class="bi bi-eye"></i></button>
+                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr data-name="mehmet ercan" data-branch="pediatriya" data-status="yeni" data-cat="yeni">
+                    <td>
+                        <div class="pat-cell">
+                            <div class="pat-avatar-ini" style="background:linear-gradient(135deg,#0e82fd,#38bdf8);">ME</div>
+                            <div><div class="pat-name">Mehmet Ercan</div><div class="pat-id">+994 55 234 56 78</div></div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:.82rem;color:#475569;font-weight:600;">#XST-0002</span></td>
+                    <td>8 / K</td>
+                    <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:.75rem;">B+</span></td>
+                    <td><span class="badge bg-light text-secondary border" style="font-size:.74rem;">Pediatriya</span></td>
+                    <td style="color:#64748b;font-size:.82rem;">28 İyun 2026</td>
+                    <td><span class="badge-status bs-new"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Yeni</span></td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <button class="act-btn" title="Profilə bax" onclick="openDetail('ME','Mehmet Ercan','#XST-0002','8','Kişi','B+','Pediatriya','Dr. Selin Arslan','+994 55 234 56 78','mehmet@email.com','28 İyun 2026','Yeni')"><i class="bi bi-eye"></i></button>
+                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr data-name="fatma yıldız" data-branch="dermatoloji" data-status="aktiv" data-cat="aktiv">
+                    <td>
+                        <div class="pat-cell">
+                            <div class="pat-avatar-ini" style="background:linear-gradient(135deg,#f59e0b,#fde68a);color:#92400e;">FY</div>
+                            <div><div class="pat-name">Fatma Yıldız</div><div class="pat-id">+994 70 345 67 89</div></div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:.82rem;color:#475569;font-weight:600;">#XST-0003</span></td>
+                    <td>45 / Q</td>
+                    <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:.75rem;">O+</span></td>
+                    <td><span class="badge bg-light text-secondary border" style="font-size:.74rem;">Dermatoloji</span></td>
+                    <td style="color:#64748b;font-size:.82rem;">27 İyun 2026</td>
+                    <td><span class="badge-status bs-active"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Aktiv</span></td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <button class="act-btn" title="Profilə bax" onclick="openDetail('FY','Fatma Yıldız','#XST-0003','45','Qadın','O+','Dermatoloji','Dr. Kemal Öztürk','+994 70 345 67 89','fatma@email.com','27 İyun 2026','Aktiv')"><i class="bi bi-eye"></i></button>
+                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr data-name="hasan bozkurt" data-branch="nevrologiya" data-status="kritik" data-cat="kritik">
+                    <td>
+                        <div class="pat-cell">
+                            <div class="pat-avatar-ini" style="background:linear-gradient(135deg,#ef4444,#fca5a5);">HB</div>
+                            <div><div class="pat-name">Hasan Bozkurt</div><div class="pat-id">+994 51 456 78 90</div></div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:.82rem;color:#475569;font-weight:600;">#XST-0004</span></td>
+                    <td>62 / K</td>
+                    <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:.75rem;">AB-</span></td>
+                    <td><span class="badge bg-light text-secondary border" style="font-size:.74rem;">Nevrologiya</span></td>
+                    <td style="color:#64748b;font-size:.82rem;">27 İyun 2026</td>
+                    <td><span class="badge-status bs-critical"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Kritik</span></td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <button class="act-btn" title="Profilə bax" onclick="openDetail('HB','Hasan Bozkurt','#XST-0004','62','Kişi','AB-','Nevrologiya','Dr. Zeynep Çelik','+994 51 456 78 90','hasan@email.com','27 İyun 2026','Kritik')"><i class="bi bi-eye"></i></button>
+                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr data-name="nurcan şahin" data-branch="ortopediya" data-status="aktiv" data-cat="aktiv">
+                    <td>
+                        <div class="pat-cell">
+                            <div class="pat-avatar-ini" style="background:linear-gradient(135deg,#7c3aed,#c4b5fd);">NŞ</div>
+                            <div><div class="pat-name">Nurcan Şahin</div><div class="pat-id">+994 77 567 89 01</div></div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:.82rem;color:#475569;font-weight:600;">#XST-0005</span></td>
+                    <td>38 / Q</td>
+                    <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:.75rem;">A-</span></td>
+                    <td><span class="badge bg-light text-secondary border" style="font-size:.74rem;">Ortopediya</span></td>
+                    <td style="color:#64748b;font-size:.82rem;">26 İyun 2026</td>
+                    <td><span class="badge-status bs-active"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Aktiv</span></td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <button class="act-btn" title="Profilə bax" onclick="openDetail('NŞ','Nurcan Şahin','#XST-0005','38','Qadın','A-','Ortopediya','Dr. Ali Kocaman','+994 77 567 89 01','nurcan@email.com','26 İyun 2026','Aktiv')"><i class="bi bi-eye"></i></button>
+                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr data-name="emre yılmaz" data-branch="kardiologiya" data-status="yeni" data-cat="yeni">
+                    <td>
+                        <div class="pat-cell">
+                            <div class="pat-avatar-ini" style="background:linear-gradient(135deg,#01c0c8,#6ee7b7);">EY</div>
+                            <div><div class="pat-name">Emre Yılmaz</div><div class="pat-id">+994 50 678 90 12</div></div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:.82rem;color:#475569;font-weight:600;">#XST-0006</span></td>
+                    <td>51 / K</td>
+                    <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:.75rem;">B-</span></td>
+                    <td><span class="badge bg-light text-secondary border" style="font-size:.74rem;">Kardiologiya</span></td>
+                    <td style="color:#64748b;font-size:.82rem;">26 İyun 2026</td>
+                    <td><span class="badge-status bs-new"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Yeni</span></td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <button class="act-btn" title="Profilə bax" onclick="openDetail('EY','Emre Yılmaz','#XST-0006','51','Kişi','B-','Kardiologiya','Dr. Murat Demir','+994 50 678 90 12','emre@email.com','26 İyun 2026','Yeni')"><i class="bi bi-eye"></i></button>
+                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr data-name="selin arslan" data-branch="pediatriya" data-status="aktiv" data-cat="aktiv">
+                    <td>
+                        <div class="pat-cell">
+                            <div class="pat-avatar-ini" style="background:linear-gradient(135deg,#ec4899,#f9a8d4);">SA</div>
+                            <div><div class="pat-name">Selin Arslan</div><div class="pat-id">+994 55 789 01 23</div></div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:.82rem;color:#475569;font-weight:600;">#XST-0007</span></td>
+                    <td>12 / Q</td>
+                    <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:.75rem;">O-</span></td>
+                    <td><span class="badge bg-light text-secondary border" style="font-size:.74rem;">Pediatriya</span></td>
+                    <td style="color:#64748b;font-size:.82rem;">25 İyun 2026</td>
+                    <td><span class="badge-status bs-active"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Aktiv</span></td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <button class="act-btn" title="Profilə bax" onclick="openDetail('SA','Selin Arslan','#XST-0007','12','Qadın','O-','Pediatriya','Dr. Selin Arslan','+994 55 789 01 23','selina@email.com','25 İyun 2026','Aktiv')"><i class="bi bi-eye"></i></button>
+                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr data-name="kemal öztürk" data-branch="nevrologiya" data-status="aktiv" data-cat="aktiv">
+                    <td>
+                        <div class="pat-cell">
+                            <div class="pat-avatar-ini" style="background:linear-gradient(135deg,#16a34a,#86efac);">KÖ</div>
+                            <div><div class="pat-name">Kemal Öztürk</div><div class="pat-id">+994 70 890 12 34</div></div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:.82rem;color:#475569;font-weight:600;">#XST-0008</span></td>
+                    <td>57 / K</td>
+                    <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:.75rem;">AB+</span></td>
+                    <td><span class="badge bg-light text-secondary border" style="font-size:.74rem;">Nevrologiya</span></td>
+                    <td style="color:#64748b;font-size:.82rem;">25 İyun 2026</td>
+                    <td><span class="badge-status bs-active"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Aktiv</span></td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <button class="act-btn" title="Profilə bax" onclick="openDetail('KÖ','Kemal Öztürk','#XST-0008','57','Kişi','AB+','Nevrologiya','Dr. Zeynep Çelik','+994 70 890 12 34','kemal@email.com','25 İyun 2026','Aktiv')"><i class="bi bi-eye"></i></button>
+                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr data-name="zeynep çelik" data-branch="dermatoloji" data-status="passiv" data-cat="passiv">
+                    <td>
+                        <div class="pat-cell">
+                            <div class="pat-avatar-ini" style="background:linear-gradient(135deg,#94a3b8,#cbd5e1);">ZÇ</div>
+                            <div><div class="pat-name">Zeynep Çelik</div><div class="pat-id">+994 51 901 23 45</div></div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:.82rem;color:#475569;font-weight:600;">#XST-0009</span></td>
+                    <td>29 / Q</td>
+                    <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:.75rem;">A+</span></td>
+                    <td><span class="badge bg-light text-secondary border" style="font-size:.74rem;">Dermatoloji</span></td>
+                    <td style="color:#64748b;font-size:.82rem;">20 İyun 2026</td>
+                    <td><span class="badge-status bs-passive"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Passiv</span></td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <button class="act-btn" title="Profilə bax" onclick="openDetail('ZÇ','Zeynep Çelik','#XST-0009','29','Qadın','A+','Dermatoloji','Dr. Kemal Öztürk','+994 51 901 23 45','zeynep@email.com','20 İyun 2026','Passiv')"><i class="bi bi-eye"></i></button>
+                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr data-name="ali kocaman" data-branch="ortopediya" data-status="kritik" data-cat="kritik">
+                    <td>
+                        <div class="pat-cell">
+                            <div class="pat-avatar-ini" style="background:linear-gradient(135deg,#dc2626,#fca5a5);">AK</div>
+                            <div><div class="pat-name">Ali Kocaman</div><div class="pat-id">+994 77 012 34 56</div></div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:.82rem;color:#475569;font-weight:600;">#XST-0010</span></td>
+                    <td>71 / K</td>
+                    <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:.75rem;">O+</span></td>
+                    <td><span class="badge bg-light text-secondary border" style="font-size:.74rem;">Ortopediya</span></td>
+                    <td style="color:#64748b;font-size:.82rem;">24 İyun 2026</td>
+                    <td><span class="badge-status bs-critical"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Kritik</span></td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <button class="act-btn" title="Profilə bax" onclick="openDetail('AK2','Ali Kocaman','#XST-0010','71','Kişi','O+','Ortopediya','Dr. Ali Kocaman','+994 77 012 34 56','ali@email.com','24 İyun 2026','Kritik')"><i class="bi bi-eye"></i></button>
+                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="table-footer">
+        <span class="table-footer-info">Cəmi 2,840 xəstədən 1-10 arası göstərilir</span>
+        <div class="d-flex gap-1">
+            <button class="pag-btn"><i class="bi bi-chevron-left"></i></button>
+            <button class="pag-btn active">1</button>
+            <button class="pag-btn">2</button>
+            <button class="pag-btn">3</button>
+            <button class="pag-btn">...</button>
+            <button class="pag-btn">284</button>
+            <button class="pag-btn"><i class="bi bi-chevron-right"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- Xəstə Detal Modası -->
+<div class="modal fade detail-modal" id="patientDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-person-vcard-fill"></i> Xəstə Məlumatları</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="pat-detail-header">
+                    <div class="pat-detail-avatar" id="modalAvatar" style="background:linear-gradient(135deg,#0e82fd,#38bdf8);">AK</div>
+                    <div>
+                        <div class="pat-detail-name" id="modalName">Ayşe Kaya</div>
+                        <div class="pat-detail-id" id="modalId">#XST-0001</div>
+                        <span class="badge-status bs-active mt-2" id="modalStatus"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Aktiv</span>
+                    </div>
+                </div>
+                <div class="detail-grid">
+                    <div class="detail-field"><div class="detail-field-label">Yaş</div><div class="detail-field-value" id="modalAge">34</div></div>
+                    <div class="detail-field"><div class="detail-field-label">Cins</div><div class="detail-field-value" id="modalGender">Qadın</div></div>
+                    <div class="detail-field"><div class="detail-field-label">Qan Qrupu</div><div class="detail-field-value" id="modalBlood">A+</div></div>
+                    <div class="detail-field"><div class="detail-field-label">Şöbə</div><div class="detail-field-value" id="modalBranch">Kardiologiya</div></div>
+                    <div class="detail-field"><div class="detail-field-label">Müalicə Həkimi</div><div class="detail-field-value" id="modalDoctor">Dr. Murat Demir</div></div>
+                    <div class="detail-field"><div class="detail-field-label">Son Görüş</div><div class="detail-field-value" id="modalLastVisit">28 İyun 2026</div></div>
+                    <div class="detail-field"><div class="detail-field-label">Telefon</div><div class="detail-field-value" id="modalPhone">+994 50 123 45 67</div></div>
+                    <div class="detail-field"><div class="detail-field-label">E-poçt</div><div class="detail-field-value" id="modalEmail">ayse@email.com</div></div>
+                </div>
+                <div class="visit-list">
+                    <div class="visit-list-title"><i class="bi bi-clock-history" style="color:var(--primary-color);"></i> Son Ziyarətlər</div>
+                    <div class="visit-item">
+                        <div><div class="visit-doctor">Dr. Murat Demir</div><div class="visit-branch">Kardiologiya</div></div>
+                        <div class="visit-date">28 İyun 2026</div>
+                    </div>
+                    <div class="visit-item">
+                        <div><div class="visit-doctor">Dr. Murat Demir</div><div class="visit-branch">Kardiologiya</div></div>
+                        <div class="visit-date">14 İyun 2026</div>
+                    </div>
+                    <div class="visit-item">
+                        <div><div class="visit-doctor">Dr. Selin Arslan</div><div class="visit-branch">Daxili Tibb</div></div>
+                        <div class="visit-date">02 May 2026</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius:10px;">Bağla</button>
+                <button type="button" class="btn btn-primary" style="border-radius:10px;"><i class="bi bi-pencil me-1"></i>Redaktə et</button>
+                <button type="button" class="btn btn-outline-primary" style="border-radius:10px;"><i class="bi bi-calendar-plus me-1"></i>Görüş Yarat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const bgMap = {
+        'AK':  'linear-gradient(135deg,#ec4899,#f9a8d4)',
+        'ME':  'linear-gradient(135deg,#0e82fd,#38bdf8)',
+        'FY':  'linear-gradient(135deg,#f59e0b,#fde68a)',
+        'HB':  'linear-gradient(135deg,#ef4444,#fca5a5)',
+        'NŞ':  'linear-gradient(135deg,#7c3aed,#c4b5fd)',
+        'EY':  'linear-gradient(135deg,#01c0c8,#6ee7b7)',
+        'SA':  'linear-gradient(135deg,#ec4899,#f9a8d4)',
+        'KÖ':  'linear-gradient(135deg,#16a34a,#86efac)',
+        'ZÇ':  'linear-gradient(135deg,#94a3b8,#cbd5e1)',
+        'AK2': 'linear-gradient(135deg,#dc2626,#fca5a5)',
+    };
+
+    function openDetail(ini, name, id, age, gender, blood, branch, doctor, phone, email, lastVisit, status) {
+        const disp = ini.replace('2','');
+        document.getElementById('modalAvatar').textContent = disp;
+        document.getElementById('modalAvatar').style.background = bgMap[ini] || 'linear-gradient(135deg,#0e82fd,#38bdf8)';
+        document.getElementById('modalName').textContent      = name;
+        document.getElementById('modalId').textContent        = id;
+        document.getElementById('modalAge').textContent       = age;
+        document.getElementById('modalGender').textContent    = gender;
+        document.getElementById('modalBlood').textContent     = blood;
+        document.getElementById('modalBranch').textContent    = branch;
+        document.getElementById('modalDoctor').textContent    = doctor;
+        document.getElementById('modalPhone').textContent     = phone;
+        document.getElementById('modalEmail').textContent     = email;
+        document.getElementById('modalLastVisit').textContent = lastVisit;
+
+        const el = document.getElementById('modalStatus');
+        el.className = 'badge-status mt-2';
+        const dot = '<i class="bi bi-circle-fill" style="font-size:.45rem;"></i>';
+        if (status === 'Aktiv')        { el.classList.add('bs-active');   el.innerHTML = dot + 'Aktiv'; }
+        else if (status === 'Yeni')    { el.classList.add('bs-new');      el.innerHTML = dot + 'Yeni'; }
+        else if (status === 'Kritik')  { el.classList.add('bs-critical'); el.innerHTML = dot + 'Kritik'; }
+        else                           { el.classList.add('bs-passive');  el.innerHTML = dot + 'Passiv'; }
+
+        new bootstrap.Modal(document.getElementById('patientDetailModal')).show();
+    }
+
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            applyFilters();
+        });
+    });
+    document.getElementById('patientSearch').addEventListener('input', applyFilters);
+    document.getElementById('branchFilter').addEventListener('change', applyFilters);
+    document.getElementById('statusFilter').addEventListener('change', applyFilters);
+
+    function applyFilters() {
+        const search  = document.getElementById('patientSearch').value.toLowerCase().trim();
+        const branch  = document.getElementById('branchFilter').value;
+        const status  = document.getElementById('statusFilter').value;
+        const cat     = (document.querySelector('.filter-pill.active') || {}).dataset?.cat || 'all';
+
+        document.querySelectorAll('#patientTableBody tr').forEach(row => {
+            const mSearch = !search || (row.dataset.name || '').includes(search);
+            const mBranch = !branch || row.dataset.branch === branch;
+            const mStatus = !status || row.dataset.status === status;
+            const mCat    = cat === 'all' || row.dataset.cat === cat;
+            row.classList.toggle('hidden', !(mSearch && mBranch && mStatus && mCat));
+        });
+    }
+</script>
+}
