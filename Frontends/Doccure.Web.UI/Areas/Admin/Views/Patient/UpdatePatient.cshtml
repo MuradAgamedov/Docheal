@@ -1,0 +1,251 @@
+@model Doccure.Web.UI.Dtos.PatientDtos.UpdatePatientDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .avatar-upload-wrap {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+    .avatar-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #e2e8f0;
+        box-shadow: 0 2px 12px rgba(0,0,0,.12);
+        transition: opacity .2s;
+    }
+    .avatar-upload-wrap:hover .avatar-preview { opacity: .7; }
+    .avatar-overlay {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        background: #4f46e5;
+        color: #fff;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        box-shadow: 0 2px 6px rgba(79,70,229,.4);
+        pointer-events: none;
+    }
+</style>
+
+<div class="container-fluid p-0">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 font-weight-bold text-dark mb-1">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>Xəstə Məlumatlarını Redaktə Et
+                    </h1>
+                    <p class="text-muted small mb-0">Xəstənin şəxsi və tibbi məlumatlarını yeniləmək üçün aşağıdakı formadan istifadə edin.</p>
+                </div>
+                <a href="/Admin/Patient/Index" class="btn btn-light border d-flex align-items-center gap-2" style="border-radius: 10px;">
+                    <i class="bi bi-arrow-left"></i> Geri Qayıt
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="card-body p-4">
+                    <form method="post" action="/Admin/Patient/UpdatePatient" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" asp-for="PatientId" />
+                        <input type="hidden" asp-for="AppUserId" />
+                        <input type="hidden" asp-for="ImageUrl" />
+
+                        <div class="row g-3">
+
+                            <!-- ════════ Profil Şəkli ════════ -->
+                            <div class="col-12">
+                                <h5 class="text-primary font-weight-bold mb-3 border-bottom pb-2">
+                                    <i class="bi bi-image me-1"></i> Profil Şəkli
+                                </h5>
+                            </div>
+
+                            <div class="col-12 d-flex align-items-center gap-4 mb-2">
+                                <label class="avatar-upload-wrap" for="imageFile" title="Şəkil seç">
+                                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                    {
+                                        <img id="avatarPreview" src="@Model.ImageUrl" alt="Profil şəkli" class="avatar-preview" />
+                                    }
+                                    else
+                                    {
+                                        <img id="avatarPreview" src="/img/default-avatar.png"
+                                             onerror="this.src='https://ui-avatars.com/api/?name=@Uri.EscapeDataString((Model.Name ?? "?") + " " + (Model.Surname ?? ""))&background=4f46e5&color=fff&size=120'"
+                                             alt="Profil şəkli" class="avatar-preview" />
+                                    }
+                                    <span class="avatar-overlay"><i class="bi bi-camera-fill"></i></span>
+                                </label>
+                                <div>
+                                    <input type="file" id="imageFile" name="imageFile" accept="image/*" class="d-none" />
+                                    <label for="imageFile" class="btn btn-outline-primary btn-sm" style="border-radius: 8px;">
+                                        <i class="bi bi-upload me-1"></i>Şəkil Seç
+                                    </label>
+                                    <p class="text-muted small mt-1 mb-0">PNG, JPG, JPEG — maks. 5 MB</p>
+                                    <p id="selectedFileName" class="text-success small mb-0 d-none"></p>
+                                </div>
+                            </div>
+
+                            <!-- ════════ Şəxsi Profil Məlumatları ════════ -->
+                            <div class="col-12 mt-3">
+                                <h5 class="text-primary font-weight-bold mb-3 border-bottom pb-2">
+                                    <i class="bi bi-person-circle me-1"></i> Şəxsi Məlumatlar
+                                </h5>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label font-weight-600 text-secondary" style="font-size: .85rem;">Ad</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-person text-muted"></i></span>
+                                    <input type="text" asp-for="Name" class="form-control" placeholder="Xəstənin adı" style="border-radius: 0 10px 10px 0;" required />
+                                </div>
+                                <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label font-weight-600 text-secondary" style="font-size: .85rem;">Soyad</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-person text-muted"></i></span>
+                                    <input type="text" asp-for="Surname" class="form-control" placeholder="Xəstənin soyadı" style="border-radius: 0 10px 10px 0;" required />
+                                </div>
+                                <span asp-validation-for="Surname" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label font-weight-600 text-secondary" style="font-size: .85rem;">E-poçt Ünvanı</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-envelope text-muted"></i></span>
+                                    <input type="email" asp-for="Email" class="form-control" placeholder="ornek@@mail.com" style="border-radius: 0 10px 10px 0;" required />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label font-weight-600 text-secondary" style="font-size: .85rem;">Telefon Nömrəsi</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-telephone text-muted"></i></span>
+                                    <input type="text" asp-for="PhoneNumber" class="form-control" placeholder="Məs. +994 50 123 45 67" style="border-radius: 0 10px 10px 0;" />
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label font-weight-600 text-secondary" style="font-size: .85rem;">Doğum Tarixi</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-calendar-date text-muted"></i></span>
+                                    <input type="date" asp-for="BirthDate" class="form-control" style="border-radius: 0 10px 10px 0;" />
+                                </div>
+                                <span asp-validation-for="BirthDate" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label font-weight-600 text-secondary" style="font-size: .85rem;">Cins</label>
+                                <select asp-for="Gender" class="form-select" style="border-radius: 10px; height: 38px;">
+                                    <option value="">Seçin...</option>
+                                    <option value="Male">Kişi</option>
+                                    <option value="Female">Qadın</option>
+                                </select>
+                                <span asp-validation-for="Gender" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label font-weight-600 text-secondary" style="font-size: .85rem;">Qan Qrupu</label>
+                                <select asp-for="BloodGroup" class="form-select" style="border-radius: 10px; height: 38px;">
+                                    <option value="">Seçin...</option>
+                                    <option value="A+">A Rh+</option>
+                                    <option value="A-">A Rh-</option>
+                                    <option value="B+">B Rh+</option>
+                                    <option value="B-">B Rh-</option>
+                                    <option value="AB+">AB Rh+</option>
+                                    <option value="AB-">AB Rh-</option>
+                                    <option value="0+">0 Rh+</option>
+                                    <option value="0-">0 Rh-</option>
+                                </select>
+                                <span asp-validation-for="BloodGroup" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label font-weight-600 text-secondary" style="font-size: .85rem;">Şəhər</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-geo-alt text-muted"></i></span>
+                                    <input type="text" asp-for="City" class="form-control" placeholder="Bakı, Sumqayıt..." style="border-radius: 0 10px 10px 0;" />
+                                </div>
+                                <span asp-validation-for="City" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- ════════ Tibbi və Sığorta Məlumatları ════════ -->
+                            <div class="col-12 mt-4">
+                                <h5 class="text-primary font-weight-bold mb-3 border-bottom pb-2">
+                                    <i class="bi bi-heart-pulse me-1"></i> Tibbi və Sığorta Məlumatları
+                                </h5>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label font-weight-600 text-secondary" style="font-size: .85rem;">T.C. Kimlik No</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-card-text text-muted"></i></span>
+                                    <input type="text" asp-for="TcKimlikNo" class="form-control" placeholder="11 rəqəmli T.C. Kimlik No" maxlength="11" style="border-radius: 0 10px 10px 0;" required />
+                                </div>
+                                <span asp-validation-for="TcKimlikNo" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label font-weight-600 text-secondary" style="font-size: .85rem;">Sığorta Növü</label>
+                                <select asp-for="InsuranceType" class="form-select" style="border-radius: 10px; height: 38px;" required>
+                                    <option value="">Seçin...</option>
+                                    <option value="İcbari Tibbi Sığorta">İcbari Tibbi Sığorta</option>
+                                    <option value="Özəl Sığorta">Özəl Sığorta</option>
+                                    <option value="Sığortasız">Sığortasız</option>
+                                </select>
+                                <span asp-validation-for="InsuranceType" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-12 mt-3">
+                                <div class="form-check form-switch p-0 d-flex align-items-center gap-3">
+                                    <input class="form-check-input ms-0" type="checkbox" asp-for="Status" style="width: 2.8em; height: 1.5em; cursor: pointer;" />
+                                    <label class="form-check-label font-weight-600 text-dark" style="font-size: .9rem; cursor: pointer;">Xəstənin Statusu (Aktiv / Passiv)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                            <a href="/Admin/Patient/Index" class="btn btn-outline-secondary px-4" style="border-radius: 10px;">Ləğv et</a>
+                            <button type="submit" class="btn btn-primary px-4 d-flex align-items-center gap-2" style="border-radius: 10px;">
+                                <i class="bi bi-check-lg"></i> Məlumatları Yenilə
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Live preview: şəkil seçilən kimi göstər
+    document.getElementById('imageFile').addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        const nameEl = document.getElementById('selectedFileName');
+        nameEl.textContent = '✓ ' + file.name;
+        nameEl.classList.remove('d-none');
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('avatarPreview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+</script>

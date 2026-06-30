@@ -1,0 +1,373 @@
+@model Doccure.Web.UI.Dtos.DoctorDtos.CreateDoctorDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+<style>
+    .form-card { background:#fff;border:1px solid var(--card-border);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.03); }
+    .form-card-header { padding:1.25rem 1.5rem;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:.75rem; }
+    .form-card-title { font-family:'Poppins',sans-serif;font-weight:600;font-size:1rem;color:var(--dark-color);margin:0; }
+    .form-card-body { padding:1.5rem; }
+
+    .tab-nav { display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:1.5rem;border-bottom:2px solid #f1f5f9;padding-bottom:0; }
+    .tab-btn { padding:.55rem 1.1rem;border:none;background:none;font-size:.83rem;font-weight:500;color:#64748b;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;border-radius:6px 6px 0 0;white-space:nowrap; }
+    .tab-btn:hover { color:var(--primary-color);background:var(--primary-light); }
+    .tab-btn.active { color:var(--primary-color);border-bottom-color:var(--primary-color);font-weight:600; }
+
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    .list-row { background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:1rem;margin-bottom:.75rem;position:relative; }
+    .list-row-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem; }
+    .list-row-num { font-size:.75rem;font-weight:700;color:#94a3b8;background:#e2e8f0;padding:.2rem .6rem;border-radius:20px; }
+    .btn-remove-row { width:28px;height:28px;border-radius:6px;border:1px solid #fca5a5;background:rgba(239,68,68,.07);color:#ef4444;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;transition:all .2s; }
+    .btn-remove-row:hover { background:#ef4444;color:#fff; }
+
+    .btn-add-row { display:inline-flex;align-items:center;gap:.4rem;padding:.48rem 1rem;border-radius:8px;border:1.5px dashed #cbd5e1;background:#f8fafc;color:#64748b;font-size:.83rem;font-weight:500;cursor:pointer;transition:all .2s;margin-top:.5rem; }
+    .btn-add-row:hover { border-color:var(--primary-color);color:var(--primary-color);background:var(--primary-light); }
+
+    .tag-input-wrap { display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem .75rem;border:1.5px solid #e2e8f0;border-radius:10px;min-height:46px;cursor:text;background:#fff;transition:border-color .2s; }
+    .tag-input-wrap:focus-within { border-color:var(--primary-color);box-shadow:0 0 0 3px rgba(14,130,253,.1); }
+    .tag-item { display:inline-flex;align-items:center;gap:.3rem;background:var(--primary-light);color:var(--primary-color);padding:.22rem .65rem;border-radius:20px;font-size:.78rem;font-weight:600; }
+    .tag-item button { background:none;border:none;color:var(--primary-color);cursor:pointer;font-size:.75rem;line-height:1;padding:0;display:flex;align-items:center; }
+    .tag-input-field { border:none;outline:none;font-size:.83rem;flex:1;min-width:120px;background:transparent;color:#1e293b; }
+    .tag-hint { font-size:.73rem;color:#94a3b8;margin-top:.35rem; }
+
+    .form-label { font-size:.83rem;font-weight:600;color:#475569;margin-bottom:.4rem; }
+    .form-control, .form-select { font-size:.85rem;border-radius:10px;border:1.5px solid #e2e8f0;color:#1e293b; }
+    .form-control:focus, .form-select:focus { border-color:var(--primary-color);box-shadow:0 0 0 3px rgba(14,130,253,.1); }
+
+    .upload-box { border:2px dashed #cbd5e1;border-radius:14px;padding:1.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;cursor:pointer;transition:all .2s;min-height:110px;background:#f8fafc;text-align:center; }
+    .upload-box:hover { border-color:var(--primary-color);background:var(--primary-light); }
+    .upload-box.has-image { border-style:solid;border-color:#e2e8f0; }
+</style>
+}
+
+<div class="d-flex align-items-center gap-2 mb-4">
+    <a href="/Admin/Doctor" class="btn btn-outline-secondary btn-sm" style="border-radius:8px;">
+        <i class="bi bi-arrow-left"></i>
+    </a>
+    <div>
+        <h1 style="font-family:'Poppins',sans-serif;font-size:1.4rem;font-weight:700;color:var(--dark-color);margin:0;">Yeni Həkim Əlavə Et</h1>
+        <p style="font-size:.83rem;color:#64748b;margin:0;">Həkimin bütün məlumatlarını tablar üzrə doldurun</p>
+    </div>
+</div>
+
+<form asp-action="CreateDoctor" method="post" enctype="multipart/form-data" id="doctorForm">
+    <!-- Tab Nav -->
+    <div class="tab-nav">
+        <button type="button" class="tab-btn active" data-tab="general"><i class="bi bi-person me-1"></i>Ümumi</button>
+        <button type="button" class="tab-btn" data-tab="education"><i class="bi bi-mortarboard me-1"></i>Təhsil</button>
+        <button type="button" class="tab-btn" data-tab="experience"><i class="bi bi-briefcase me-1"></i>Təcrübə</button>
+        <button type="button" class="tab-btn" data-tab="awards"><i class="bi bi-trophy me-1"></i>Mükafatlar</button>
+        <button type="button" class="tab-btn" data-tab="locations"><i class="bi bi-geo-alt me-1"></i>Lokasiyalar</button>
+        <button type="button" class="tab-btn" data-tab="services"><i class="bi bi-grid me-1"></i>Xidmətlər</button>
+        <button type="button" class="tab-btn" data-tab="specializations"><i class="bi bi-stars me-1"></i>İxtisaslaşma</button>
+    </div>
+
+    <!-- Tab: Ümumi -->
+    <div class="tab-panel active form-card" id="tab-general">
+        <div class="form-card-header"><i class="bi bi-person-fill" style="color:var(--primary-color);"></i><h2 class="form-card-title">Ümumi Məlumatlar</h2></div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Ad</label>
+                    <input asp-for="Name" class="form-control" placeholder="Həkimin adı" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Soyad</label>
+                    <input asp-for="Surname" class="form-control" placeholder="Həkimin soyadı" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">E-poçt</label>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="email@example.com" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Telefon</label>
+                    <input asp-for="Phone" class="form-control" placeholder="+994 50 000 00 00" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Şöbə</label>
+                    <select asp-for="BranchId" class="form-select">
+                        <option value="">-- Şöbə seçin --</option>
+                        @if (ViewBag.Branches != null)
+                        {
+                            foreach (var branch in ViewBag.Branches)
+                            {
+                                <option value="@branch.BranchId">@branch.BranchName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Təcrübə (il)</label>
+                    <input asp-for="ExperienceYear" type="number" min="0" class="form-control" placeholder="0" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Qiymət/saat (₼)</label>
+                    <input asp-for="PricePerHour" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Şəkil</label>
+                    <div class="upload-box" id="upload-box" onclick="document.getElementById('imageFile').click()">
+                        <img id="img-preview" src="" alt="" style="display:none;width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #e2e8f0;" />
+                        <div id="upload-placeholder">
+                            <i class="bi bi-cloud-arrow-up" style="font-size:2rem;color:#94a3b8;"></i>
+                            <div style="font-size:.83rem;color:#64748b;margin-top:.35rem;">Şəkil yükləmək üçün klikləyin</div>
+                            <div style="font-size:.72rem;color:#94a3b8;">JPG, PNG, WEBP · Maks 5 MB</div>
+                        </div>
+                    </div>
+                    <input type="file" id="imageFile" name="imageFile" accept="image/*" style="display:none;" onchange="previewImage(this)" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Haqqında</label>
+                    <textarea asp-for="About" class="form-control" rows="4" placeholder="Həkim haqqında qısa məlumat..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Təhsil -->
+    <div class="tab-panel form-card" id="tab-education">
+        <div class="form-card-header"><i class="bi bi-mortarboard-fill" style="color:var(--primary-color);"></i><h2 class="form-card-title">Təhsil Məlumatları</h2></div>
+        <div class="form-card-body">
+            <div id="education-list"></div>
+            <button type="button" class="btn-add-row" onclick="addRow('education')">
+                <i class="bi bi-plus-lg"></i> Təhsil əlavə et
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab: Təcrübə -->
+    <div class="tab-panel form-card" id="tab-experience">
+        <div class="form-card-header"><i class="bi bi-briefcase-fill" style="color:var(--primary-color);"></i><h2 class="form-card-title">İş Təcrübəsi</h2></div>
+        <div class="form-card-body">
+            <div id="experience-list"></div>
+            <button type="button" class="btn-add-row" onclick="addRow('experience')">
+                <i class="bi bi-plus-lg"></i> Təcrübə əlavə et
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab: Mükafatlar -->
+    <div class="tab-panel form-card" id="tab-awards">
+        <div class="form-card-header"><i class="bi bi-trophy-fill" style="color:var(--primary-color);"></i><h2 class="form-card-title">Mükafatlar</h2></div>
+        <div class="form-card-body">
+            <div id="awards-list"></div>
+            <button type="button" class="btn-add-row" onclick="addRow('awards')">
+                <i class="bi bi-plus-lg"></i> Mükafat əlavə et
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab: Lokasiyalar -->
+    <div class="tab-panel form-card" id="tab-locations">
+        <div class="form-card-header"><i class="bi bi-geo-alt-fill" style="color:var(--primary-color);"></i><h2 class="form-card-title">Lokasiyalar</h2></div>
+        <div class="form-card-body">
+            <div id="locations-list"></div>
+            <button type="button" class="btn-add-row" onclick="addRow('locations')">
+                <i class="bi bi-plus-lg"></i> Lokasiya əlavə et
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab: Xidmətlər -->
+    <div class="tab-panel form-card" id="tab-services">
+        <div class="form-card-header"><i class="bi bi-grid-fill" style="color:var(--primary-color);"></i><h2 class="form-card-title">Xidmətlər</h2></div>
+        <div class="form-card-body">
+            <label class="form-label">Xidmətlər <span style="color:#94a3b8;font-weight:400;">(Enter ilə əlavə edin)</span></label>
+            <div class="tag-input-wrap" id="services-wrap">
+                <input type="text" class="tag-input-field" id="services-input" placeholder="Xidmət adı yazın, Enter basın..." />
+            </div>
+            <div id="services-hidden"></div>
+            <p class="tag-hint"><i class="bi bi-info-circle me-1"></i>Məs: EKQ, USM, Müalicə, Cərrahiyyə</p>
+        </div>
+    </div>
+
+    <!-- Tab: İxtisaslaşma -->
+    <div class="tab-panel form-card" id="tab-specializations">
+        <div class="form-card-header"><i class="bi bi-stars" style="color:var(--primary-color);"></i><h2 class="form-card-title">İxtisaslaşma Sahələri</h2></div>
+        <div class="form-card-body">
+            <label class="form-label">İxtisaslaşma <span style="color:#94a3b8;font-weight:400;">(Enter ilə əlavə edin)</span></label>
+            <div class="tag-input-wrap" id="specializations-wrap">
+                <input type="text" class="tag-input-field" id="specializations-input" placeholder="İxtisas yazın, Enter basın..." />
+            </div>
+            <div id="specializations-hidden"></div>
+            <p class="tag-hint"><i class="bi bi-info-circle me-1"></i>Məs: Kardiovaskülyar Cərrahiyyə, Ekokardiografi</p>
+        </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="d-flex justify-content-end gap-3 mt-4">
+        <a href="/Admin/Doctor" class="btn btn-outline-secondary" style="border-radius:10px;font-weight:500;">Ləğv et</a>
+        <button type="submit" class="btn btn-primary" style="border-radius:10px;font-weight:500;min-width:140px;">
+            <i class="bi bi-check-lg me-1"></i> Yadda saxla
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+<script>
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+            document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+        });
+    });
+
+    // Dynamic list counters
+    const counters = { education: 0, experience: 0, awards: 0, locations: 0 };
+
+    function addRow(type) {
+        const idx = counters[type]++;
+        const container = document.getElementById(type + '-list');
+        const div = document.createElement('div');
+        div.className = 'list-row';
+        div.dataset.idx = idx;
+        div.innerHTML = buildRow(type, idx);
+        container.appendChild(div);
+        updateRowNumbers(type);
+    }
+
+    function buildRow(type, idx) {
+        const header = `<div class="list-row-header"><span class="list-row-num">#${idx + 1}</span><button type="button" class="btn-remove-row" onclick="removeRow(this, '${type}')"><i class="bi bi-x"></i></button></div>`;
+        if (type === 'education') return header + `
+            <div class="row g-2">
+                <div class="col-md-5"><label class="form-label">Məktəb / Universitet</label><input name="Educations[${idx}].SchoolName" class="form-control" placeholder="Məktəb adı" /></div>
+                <div class="col-md-4"><label class="form-label">Dərəcə</label><input name="Educations[${idx}].Degree" class="form-control" placeholder="Bakalavr, Magistr..." /></div>
+                <div class="col-md-3"><label class="form-label">İl</label><input name="Educations[${idx}].Year" class="form-control" placeholder="2015-2019" /></div>
+            </div>`;
+        if (type === 'experience') return header + `
+            <div class="row g-2">
+                <div class="col-md-7"><label class="form-label">Klinika / Xəstəxana</label><input name="Experiences[${idx}].ClinicName" class="form-control" placeholder="Klinika adı" /></div>
+                <div class="col-md-5"><label class="form-label">İl aralığı</label><input name="Experiences[${idx}].YearRange" class="form-control" placeholder="2018 - 2022" /></div>
+            </div>`;
+        if (type === 'awards') return header + `
+            <div class="row g-2">
+                <div class="col-md-6"><label class="form-label">Mükafat adı</label><input name="Awards[${idx}].Title" class="form-control" placeholder="Mükafat adı" /></div>
+                <div class="col-md-2"><label class="form-label">İl</label><input name="Awards[${idx}].Year" class="form-control" placeholder="2022" /></div>
+                <div class="col-md-4"><label class="form-label">Təsvir</label><input name="Awards[${idx}].Description" class="form-control" placeholder="Qısa açıqlama" /></div>
+            </div>`;
+        if (type === 'locations') return header + `
+            <div class="row g-2">
+                <div class="col-md-6"><label class="form-label">Klinika adı</label><input name="Locations[${idx}].ClinicName" class="form-control" placeholder="Klinika adı" /></div>
+                <div class="col-md-6"><label class="form-label">Şəhər</label><input name="Locations[${idx}].City" class="form-control" placeholder="Bakı" /></div>
+                <div class="col-12"><label class="form-label">Ünvan</label><input name="Locations[${idx}].Address" class="form-control" placeholder="Küçə, ev nömrəsi" /></div>
+                <div class="col-md-4"><label class="form-label">Qiymət (₼)</label><input name="Locations[${idx}].Price" type="number" step="0.01" class="form-control" placeholder="0.00" /></div>
+                <div class="col-md-4"><label class="form-label">İş saatları</label><input name="Locations[${idx}].BusinessHour" class="form-control" placeholder="09:00 - 18:00" /></div>
+                <div class="col-md-4"><label class="form-label">Açıqlama</label><input name="Locations[${idx}].Description" class="form-control" placeholder="Əlavə məlumat" /></div>
+            </div>`;
+        return '';
+    }
+
+    function removeRow(btn, type) {
+        btn.closest('.list-row').remove();
+        reindexRows(type);
+    }
+
+    function reindexRows(type) {
+        const rows = document.querySelectorAll(`#${type}-list .list-row`);
+        rows.forEach((row, i) => {
+            row.querySelectorAll('[name]').forEach(input => {
+                input.name = input.name.replace(/\[\d+\]/, `[${i}]`);
+            });
+            const num = row.querySelector('.list-row-num');
+            if (num) num.textContent = `#${i + 1}`;
+        });
+        counters[type] = rows.length;
+    }
+
+    function updateRowNumbers(type) {
+        document.querySelectorAll(`#${type}-list .list-row`).forEach((row, i) => {
+            const num = row.querySelector('.list-row-num');
+            if (num) num.textContent = `#${i + 1}`;
+        });
+    }
+
+    // Tag inputs (Services & Specializations)
+    function initTagInput(inputId, wrapperId, hiddenId, fieldName) {
+        const input = document.getElementById(inputId);
+        const hidden = document.getElementById(hiddenId);
+        let tags = [];
+
+        function render() {
+            const wrap = document.getElementById(wrapperId);
+            wrap.querySelectorAll('.tag-item').forEach(t => t.remove());
+            hidden.innerHTML = '';
+            tags.forEach((tag, i) => {
+                const span = document.createElement('span');
+                span.className = 'tag-item';
+                span.innerHTML = `${tag}<button type="button" onclick="removeTag(this, '${inputId}', '${wrapperId}', '${hiddenId}', '${fieldName}')"><i class="bi bi-x"></i></button>`;
+                wrap.insertBefore(span, input);
+                const inp = document.createElement('input');
+                inp.type = 'hidden';
+                inp.name = `${fieldName}[${i}]`;
+                inp.value = tag;
+                hidden.appendChild(inp);
+            });
+        }
+
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const val = this.value.trim();
+                if (val && !tags.includes(val)) {
+                    tags.push(val);
+                    render();
+                }
+                this.value = '';
+            }
+            if (e.key === 'Backspace' && !this.value && tags.length) {
+                tags.pop();
+                render();
+            }
+        });
+
+        document.getElementById(wrapperId).addEventListener('click', () => input.focus());
+
+        window[`removeTag_${fieldName}`] = function(btn) {
+            const tag = btn.parentElement.childNodes[0].textContent;
+            tags = tags.filter(t => t !== tag);
+            render();
+        };
+    }
+
+    // Override removeTag globally
+    function removeTag(btn, inputId, wrapperId, hiddenId, fieldName) {
+        const tagEl = btn.closest('.tag-item');
+        const tag = tagEl.childNodes[0].textContent;
+        tagEl.remove();
+        const hidden = document.getElementById(hiddenId);
+        const inputs = Array.from(hidden.querySelectorAll('input'));
+        const idx = inputs.findIndex(i => i.value === tag);
+        if (idx !== -1) inputs[idx].remove();
+        // Re-index
+        Array.from(hidden.querySelectorAll('input')).forEach((inp, i) => {
+            inp.name = `${fieldName}[${i}]`;
+        });
+    }
+
+    initTagInput('services-input', 'services-wrap', 'services-hidden', 'Services');
+    initTagInput('specializations-input', 'specializations-wrap', 'specializations-hidden', 'Specializations');
+
+    function previewImage(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const box = document.getElementById('upload-box');
+            const preview = document.getElementById('img-preview');
+            const placeholder = document.getElementById('upload-placeholder');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+            box.classList.add('has-image');
+        };
+        reader.readAsDataURL(file);
+    }
+</script>
+}

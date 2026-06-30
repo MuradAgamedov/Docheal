@@ -1,13 +1,12 @@
-﻿
+
 using Doccure.BranchService.Services;
 using Doccure.BranchService.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic.FileIO;
 using System.Text;
 using Microsoft.OpenApi.Models;
+
 namespace Doccure.BranchService
 {
     public class Program
@@ -16,7 +15,6 @@ namespace Doccure.BranchService
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             var jwt = builder.Configuration.GetSection("Jwt");
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -29,15 +27,14 @@ namespace Doccure.BranchService
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = jwt["Issuer"],
                         ValidAudience = jwt["Audience"],
-
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(jwt["Key"]!)
                         )
                     };
                 });
+
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-           
+
             builder.Services.AddScoped<
                 Doccure.BranchService.Services.IBranchService,
                 Doccure.BranchService.Services.BranchService>();
@@ -45,10 +42,9 @@ namespace Doccure.BranchService
             builder.Services.AddAutoMapper(typeof(Program));
 
             builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettingsKey"));
+            builder.Services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
 
-            builder.Services.AddSingleton<IDatabaseSettings>(sp=>sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
             builder.Services.AddEndpointsApiExplorer();
-
             builder.Services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -76,15 +72,15 @@ namespace Doccure.BranchService
                     }
                 });
             });
+
             var app = builder.Build();
+
             app.UseSwagger();
             app.UseSwaggerUI();
 
-
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
-            app.UseAuthorization();
-
 
             app.MapControllers();
 

@@ -156,7 +156,26 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        margin-left: 8px;
+        margin-left: -8px;
+        z-index: 2;
+        transition: all 0.2s ease;
+    }
+
+    .doc-avatar-more:hover {
+        transform: translateY(-2px) scale(1.1);
+        background: #cbd5e1;
+        color: #334155;
+    }
+
+    .doc-avatar-link {
+        transition: all 0.2s ease;
+        margin-right: 0;
+    }
+
+    .doc-avatar-link:hover {
+        transform: translateY(-2px) scale(1.1);
+        z-index: 10;
+        position: relative;
     }
 
     .branch-footer-meta {
@@ -501,15 +520,49 @@
                     </div>
                     
                     <div class="branch-avatars">
-                        <!-- Standard fallback doctor avatar -->
-                        <div class="doc-avatar" style="background:#dbeafe;color:#1d4ed8;border:2px solid #fff;">DR</div>
+                        @{
+                            var branchDoctors = ((List<Doccure.Web.UI.Dtos.DoctorDtos.ResultDoctorDto>)ViewBag.Doctors)?
+                                                .Where(x => x.BranchId == item.BranchId)
+                                                .ToList() ?? new List<Doccure.Web.UI.Dtos.DoctorDtos.ResultDoctorDto>();
+                        }
+                        @if (branchDoctors.Count == 0)
+                        {
+                            <div class="doc-avatar" style="background:#f1f5f9;color:#94a3b8;border:2px solid #fff;" title="Həkim yoxdur">DR</div>
+                        }
+                        else
+                        {
+                            @for (int idx = 0; idx < Math.Min(3, branchDoctors.Count); idx++)
+                            {
+                                var doc = branchDoctors[idx];
+                                <a href="/Admin/Doctor/UpdateDoctor?id=@doc.DoctorId" class="doc-avatar-link" title="Dr. @doc.Name @doc.Surname" style="text-decoration:none;">
+                                    @if (!string.IsNullOrEmpty(doc.ImageUrl))
+                                    {
+                                        <img src="@doc.ImageUrl" class="doc-avatar" alt="Dr. @doc.Name @doc.Surname" />
+                                    }
+                                    else
+                                    {
+                                        var initials = (doc.Name.Length > 0 ? doc.Name[0].ToString() : "") + (doc.Surname.Length > 0 ? doc.Surname[0].ToString() : "");
+                                        <div class="doc-avatar" style="background:var(--primary-color);color:#fff;font-weight:700;">
+                                            @initials.ToUpper()
+                                        </div>
+                                    }
+                                </a>
+                            }
+                            
+                            @if (branchDoctors.Count > 3)
+                            {
+                                <span class="doc-avatar-more" style="cursor:pointer;" onclick="openDoctorsModal('@item.BranchId', '@item.BranchName')" title="Bütün həkimləri gör">
+                                    +@(branchDoctors.Count - 3)
+                                </span>
+                            }
+                        }
                     </div>
                     
                     <div class="branch-footer-meta">
                         <i class="bi bi-clock-history"></i> Son yenilənmə: Bu gün
                     </div>
                     <div class="branch-actions">
-                        <button class="btn-branch-view"><i class="bi bi-people-fill me-1"></i>Həkimləri Gör</button>
+                        <button class="btn-branch-view" onclick="openDoctorsModal('@item.BranchId', '@item.BranchName')"><i class="bi bi-people-fill me-1"></i>Həkimləri Gör</button>
                         <a href="/Admin/Branch/UpdateBranch?id=@item.BranchId" class="btn-branch-edit d-inline-flex align-items-center justify-content-center" style="text-decoration: none;" title="Redaktə et"><i class="bi bi-pencil"></i></a>
                         <button class="btn-branch-del" title="Sil" onclick="confirmDelete('@item.BranchId', '@item.BranchName')"><i class="bi bi-trash"></i></button>
                     </div>
@@ -528,8 +581,97 @@
     }
 </div>
 
+<!-- Doctors Modal -->
+<div class="modal fade" id="doctorsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+            <div class="modal-header" style="border-bottom: 1px solid #f1f5f9; padding: 1.25rem 1.5rem;">
+                <h5 class="modal-title" id="modalTitle" style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--dark-color);">
+                    <i class="bi bi-people-fill me-2" style="color:var(--primary-color);"></i>
+                    Şöbə Həkimləri
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalBody" style="padding: 1.5rem; max-height: 400px; overflow-y: auto;">
+                <!-- Doctors List will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
 <script>
+    // Doctors data for each branch
+    const branchDoctorsData = {
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                var branchDocs = ((List<Doccure.Web.UI.Dtos.DoctorDtos.ResultDoctorDto>)ViewBag.Doctors)?
+                                  .Where(x => x.BranchId == item.BranchId)
+                                  .ToList() ?? new List<Doccure.Web.UI.Dtos.DoctorDtos.ResultDoctorDto>();
+                <text>"@item.BranchId": [
+                    @foreach(var doc in branchDocs)
+                    {
+                        <text>{
+                            id: "@doc.DoctorId",
+                            name: "@doc.Name",
+                            surname: "@doc.Surname",
+                            imageUrl: "@(doc.ImageUrl ?? "")"
+                        },</text>
+                    }
+                ],</text>
+            }
+        }
+    };
+
+    function openDoctorsModal(branchId, branchName) {
+        const doctors = branchDoctorsData[branchId] || [];
+        const titleEl = document.getElementById('modalTitle');
+        titleEl.innerHTML = `<i class="bi bi-people-fill me-2" style="color:var(--primary-color);"></i>"${branchName}" Şöbəsinin Həkimləri`;
+        
+        const bodyEl = document.getElementById('modalBody');
+        bodyEl.innerHTML = '';
+        
+        if (doctors.length === 0) {
+            bodyEl.innerHTML = '<p class="text-muted text-center py-3">Bu şöbədə həkim yoxdur.</p>';
+        } else {
+            const listGroup = document.createElement('div');
+            listGroup.className = 'list-group list-group-flush';
+            
+            doctors.forEach(doc => {
+                const item = document.createElement('a');
+                item.href = `/Admin/Doctor/UpdateDoctor?id=${doc.id}`;
+                item.className = 'list-group-item list-group-item-action d-flex align-items-center py-3 px-0 border-bottom';
+                item.style.gap = '12px';
+                item.style.textDecoration = 'none';
+                
+                let avatarHtml = '';
+                if (doc.imageUrl) {
+                    avatarHtml = `<img src="${doc.imageUrl}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" alt="" />`;
+                } else {
+                    const initials = (doc.name[0] || '') + (doc.surname[0] || '');
+                    avatarHtml = `<div style="width:40px;height:40px;border-radius:50%;background:var(--primary-color);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;">${initials.toUpperCase()}</div>`;
+                }
+                
+                item.innerHTML = `
+                    ${avatarHtml}
+                    <div class="flex-grow-1">
+                        <div style="font-weight:600;color:var(--dark-color);font-size:0.9rem;">Dr. ${doc.name} ${doc.surname}</div>
+                        <div style="font-size:0.75rem;color:#64748b;">Həkimi redaktə etmək üçün klikləyin</div>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted ms-auto" style="font-size:0.8rem;"></i>
+                `;
+                listGroup.appendChild(item);
+            });
+            bodyEl.appendChild(listGroup);
+        }
+        
+        const modalElement = document.getElementById('doctorsModal');
+        const myModal = new bootstrap.Modal(modalElement);
+        myModal.show();
+    }
+
     document.querySelectorAll('.filter-pill').forEach(btn => {
         btn.addEventListener('click', function () {
             document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));

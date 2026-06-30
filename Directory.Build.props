@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <DefaultItemExcludes>$(DefaultItemExcludes);**/wwwroot/uploads/**;**\wwwroot\uploads\**</DefaultItemExcludes>
+    <CopyToOutputDirectoryExcludes>$(CopyToOutputDirectoryExcludes);**/wwwroot/uploads/**;**\wwwroot\uploads\**</CopyToOutputDirectoryExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Watch Remove="**/wwwroot/uploads/**" />
+    <Watch Remove="**\wwwroot\uploads\**" />
+    <Content Remove="**/wwwroot/uploads/**" />
+    <Content Remove="**\wwwroot\uploads\**" />
+    <None Remove="**/wwwroot/uploads/**" />
+    <None Remove="**\wwwroot\uploads\**" />
+  </ItemGroup>
+</Project>

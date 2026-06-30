@@ -61,5 +61,29 @@ namespace Doccure.AppointmentService.Services.AppointmentServices
             _context.Appointments.Update(value);
             await _context.SaveChangesAsync();
         }
+
+
+        public async Task<LastAppointmentDto> GetLastAppointmentByPatientIdAsync(string patientId)
+        {
+            var value = await _context.Appointments
+         .Include(x => x.AppointmentDetail)
+         .Where(x => x.PatientId == patientId)
+         .OrderByDescending(x => x.AppointmentDate)
+         .FirstOrDefaultAsync();
+
+            if (value == null)
+                return null;
+
+            return new LastAppointmentDto
+            {
+                AppointmentId = value.AppointmentId,
+                DoctorId = value.DoctorId,
+                BranchId = value.BranchId,
+                AppointmentDate = value.AppointmentDate,
+                Diagnosis = value.AppointmentDetail?.Diagnosis,
+                Status = value.Status
+            };
+        }
+
     }
 }

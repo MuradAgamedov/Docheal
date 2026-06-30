@@ -1,12 +1,14 @@
-﻿using Doccure.DoctorService.Dtos.DoctorDtos;
+using Doccure.DoctorService.Dtos.DoctorDtos;
 using Doccure.DoctorService.Services.DoctorServices;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Doccure.DoctorService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class DoctorsController : ControllerBase
     {
         private readonly IDoctorService _doctorService;
@@ -50,6 +52,16 @@ namespace Doccure.DoctorService.Controllers
         public async Task<IActionResult> GetBranch(string id)
         {
             var value = await _doctorService.GetByIdAsync(id);
+            return Ok(value);
+        }
+
+
+
+        [HttpGet("{id}/summary")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDoctorNameAndSurnameById(string id)
+        {
+            var value = await _doctorService.GetDoctorByIdAsync(id);
             return Ok(value);
         }
     }

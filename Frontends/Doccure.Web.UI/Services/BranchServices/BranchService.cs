@@ -1,18 +1,15 @@
 using Doccure.Web.UI.Dtos.BranchDtos;
 using Newtonsoft.Json;
-using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Http;
 
 namespace Doccure.Web.UI.Services.BranchServices
 {
     public class BranchService : IBranchService
     {
         private readonly HttpClient _client;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public BranchService(HttpClient client, IHttpContextAccessor httpContextAccessor)
+
+        public BranchService(HttpClient client)
         {
             _client = client;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task CreateAsync(CreateBranchDto dto)
@@ -31,20 +28,16 @@ namespace Doccure.Web.UI.Services.BranchServices
 
         public async Task<List<ResultBranchDto>> GetAllAsync()
         {
-            var token = _httpContextAccessor.HttpContext.Session.GetString("JwtToken");
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var responseMessage = await _client.GetAsync("https://localhost:5000/api/branches");
             var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var values = JsonConvert.DeserializeObject<List<ResultBranchDto>>(jsonData);
-            return values;
+            return JsonConvert.DeserializeObject<List<ResultBranchDto>>(jsonData) ?? new List<ResultBranchDto>();
         }
 
         public async Task<GetBranchByIdDto> GetByIdAsync(string id)
         {
             var responseMessage = await _client.GetAsync($"https://localhost:5000/api/branches/GetBranch?id={id}");
             var jsonData = await responseMessage.Content.ReadAsStringAsync();
-            var value = JsonConvert.DeserializeObject<GetBranchByIdDto>(jsonData);
-            return value;
+            return JsonConvert.DeserializeObject<GetBranchByIdDto>(jsonData);
         }
 
         public async Task UpdateAsync(UpdateBranchDto dto)

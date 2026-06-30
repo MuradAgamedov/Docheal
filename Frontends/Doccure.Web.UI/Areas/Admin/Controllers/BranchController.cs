@@ -1,5 +1,6 @@
 using Doccure.Web.UI.Dtos.BranchDtos;
 using Doccure.Web.UI.Services.BranchServices;
+using Doccure.Web.UI.Services.DoctorServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Doccure.Web.UI.Areas.Admin.Controllers
@@ -8,15 +9,18 @@ namespace Doccure.Web.UI.Areas.Admin.Controllers
     public class BranchController : Controller
     {
         private readonly IBranchService _branchService;
+        private readonly IDoctorService _doctorService;
 
-        public BranchController(IBranchService branchService)
+        public BranchController(IBranchService branchService, IDoctorService doctorService)
         {
             _branchService = branchService;
+            _doctorService = doctorService;
         }
 
         public async Task<IActionResult> Index()
         {
             var values = await _branchService.GetAllAsync();
+            ViewBag.Doctors = await _doctorService.GetAllAsync();
             return View(values);
         }
 

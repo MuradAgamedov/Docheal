@@ -1,4 +1,4 @@
-﻿using Doccure.IdentityService.Dtos;
+using Doccure.IdentityService.Dtos;
 using Doccure.IdentityService.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +18,12 @@ namespace Doccure.IdentityService.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> CreateRegister(RegisterDto registerDto)
         {
-            var result = await _authService.RegisterAsync(registerDto);
-            if (!result)
+            var userId = await _authService.RegisterAsync(registerDto);
+            if (string.IsNullOrEmpty(userId))
             {
                 return BadRequest("Registration failed.");
             }
-            return Ok("Registration Successful");
+            return Ok(new { message = "Registration Successful", userId });
         }
 
         [HttpPost("login")]

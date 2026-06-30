@@ -37,7 +37,7 @@ namespace Doccure.IdentityService.Services
             return await GenerateJwtToken(user);
         }
 
-        public async Task<bool> RegisterAsync(RegisterDto dto)
+        public async Task<string?> RegisterAsync(RegisterDto dto)
         {
             var user = new AppUser { 
                 UserName=dto.Username,
@@ -48,11 +48,13 @@ namespace Doccure.IdentityService.Services
                 BirthDate = dto.BirthDate,
                 Gender = dto.Gender,
                 PhoneNumber = dto.PhoneNumber,
+                ImageUrl = dto.ImageUrl,
+                BloodGroup = dto.BloodGroup,
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
 
-            return result.Succeeded;
+            return result.Succeeded ? user.Id : null;
         }
 
 

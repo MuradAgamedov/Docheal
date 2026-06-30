@@ -1,0 +1,254 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>403 - Girişə İcazə Yoxdur | Doccure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at 20% 30%, #1a0e12 0%, #0d0609 50%, #030103 100%);
+            font-family: 'Outfit', sans-serif;
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bg-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.1;
+            z-index: 1;
+            pointer-events: none;
+            animation: float-glow 25s infinite alternate ease-in-out;
+        }
+
+        .bg-glow-1 {
+            background: #ef4444;
+            top: -15%;
+            left: -15%;
+        }
+
+        .bg-glow-2 {
+            background: #f97316;
+            bottom: -15%;
+            right: -15%;
+            animation-delay: -12s;
+        }
+
+        @@keyframes float-glow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(120px, 80px) scale(1.15); }
+        }
+
+        .error-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 550px;
+            padding: 1.5rem;
+        }
+
+        .error-card {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 3.5rem 2.5rem;
+            text-align: center;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6), 
+                        inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon-container {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 2rem;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 15px 35px -5px rgba(239, 68, 68, 0.3);
+        }
+
+        .icon-container::after {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 35px;
+            border: 1px dashed rgba(239, 68, 68, 0.3);
+            animation: spin 30s linear infinite;
+        }
+
+        @@keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .shield-svg {
+            width: 48px;
+            height: 48px;
+            color: #ef4444;
+            animation: shield-pulse 3s ease-in-out infinite;
+        }
+
+        @@keyframes shield-pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(239, 68, 68, 0)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6)); }
+        }
+
+        .error-code {
+            font-size: 7rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fca5a5 0%, #ffedd5 40%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -3px;
+            filter: drop-shadow(0 4px 15px rgba(239, 68, 68, 0.2));
+        }
+
+        .error-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .error-desc {
+            font-size: 1.05rem;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-custom {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.9rem 1.8rem;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff;
+            box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.4);
+            border: none;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -5px rgba(239, 68, 68, 0.6);
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+        }
+
+        .btn-secondary-custom {
+            background: rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary-custom:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transform: translateY(-3px);
+        }
+
+        @@media (max-width: 480px) {
+            .btn-group {
+                flex-direction: column;
+            }
+            .error-card {
+                padding: 2.5rem 1.5rem;
+            }
+            .error-code {
+                font-size: 5.5rem;
+            }
+            .error-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="error-container">
+        <div class="error-card">
+            <div class="icon-container">
+                <svg class="shield-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <h1 class="error-code">403</h1>
+            <h2 class="error-title">Girişə İcazə Yoxdur</h2>
+            <p class="error-desc">
+                Sizin bu səhifəyə və ya resursa daxil olmaq üçün lazımi icazəniz yoxdur.
+            </p>
+            <div class="btn-group">
+                <a onclick="history.back();" class="btn-custom btn-primary-custom">
+                    <i class="bi bi-arrow-left"></i> Geri Dön
+                </a>
+                <a href="/" class="btn-custom btn-secondary-custom">
+                    <i class="bi bi-house"></i> Ana Səhifə
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
