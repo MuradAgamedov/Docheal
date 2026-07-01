@@ -1,0 +1,125 @@
+@model List<Doccure.Web.UI.Dtos.ProductDtos.ResultProductDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Məhsul İdarəsi";
+}
+
+@section Styles {
+<style>
+    .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
+    .page-header h2 { font-family:'Poppins',sans-serif; font-size:1.35rem; font-weight:700; color:#1e293b; margin:0; }
+    .btn-add {
+        background: linear-gradient(135deg,#22c55e,#16a34a);
+        color:#fff; border:none; border-radius:10px; padding:.55rem 1.2rem;
+        font-weight:600; font-size:.85rem; text-decoration:none;
+        display:inline-flex; align-items:center; gap:6px;
+        box-shadow:0 4px 12px rgba(22,163,74,.3); transition:all .2s;
+    }
+    .btn-add:hover { transform:translateY(-2px); color:#fff; box-shadow:0 8px 20px rgba(22,163,74,.4); }
+    .table-card { background:#fff; border-radius:16px; border:1px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,.04); overflow:hidden; }
+    .table thead th { background:#f8fafc; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:#64748b; padding:12px 16px; border-bottom:2px solid #e2e8f0; }
+    .table tbody td { padding:13px 16px; vertical-align:middle; border-bottom:1px solid #f1f5f9; font-size:.85rem; }
+    .table tbody tr:last-child td { border-bottom:none; }
+    .table tbody tr:hover td { background:#fafafa; }
+    .product-thumb { width:48px; height:48px; border-radius:10px; object-fit:cover; background:#f1f5f9; }
+    .product-thumb-placeholder { width:48px; height:48px; border-radius:10px; background:linear-gradient(135deg,#dcfce7,#f0fdf4); display:inline-flex; align-items:center; justify-content:center; color:#22c55e; font-size:1.2rem; }
+    .badge-status-active { background:#dcfce7; color:#16a34a; padding:.25rem .7rem; border-radius:30px; font-size:.7rem; font-weight:700; }
+    .badge-status-passive { background:#fee2e2; color:#ef4444; padding:.25rem .7rem; border-radius:30px; font-size:.7rem; font-weight:700; }
+    .action-btn { width:30px; height:30px; border-radius:8px; border:none; display:inline-flex; align-items:center; justify-content:center; font-size:.8rem; cursor:pointer; transition:all .15s; }
+    .action-btn.edit { background:#eff6ff; color:#3b82f6; }
+    .action-btn.edit:hover { background:#3b82f6; color:#fff; }
+    .action-btn.del { background:#fff1f2; color:#f43f5e; }
+    .action-btn.del:hover { background:#f43f5e; color:#fff; }
+    .price-badge { font-weight:700; color:#16a34a; }
+    .cat-chip { background:#f0fdf4; color:#15803d; font-size:.7rem; font-weight:600; padding:.2rem .6rem; border-radius:20px; border:1px solid #dcfce7; }
+    .empty-row td { text-align:center; padding:3rem; color:#94a3b8; }
+</style>
+}
+
+<div class="container-fluid p-4">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 rounded-3 mb-3" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="page-header">
+        <h2><i class="bi bi-bag-check-fill me-2 text-success"></i>Məhsul İdarəsi</h2>
+        <a asp-area="Admin" asp-controller="Product" asp-action="CreateProduct" class="btn-add">
+            <i class="bi bi-plus-lg"></i> Yeni Məhsul
+        </a>
+    </div>
+
+    <div class="table-card">
+        <table class="table mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Şəkil</th>
+                    <th>Məhsul Adı</th>
+                    <th>Kateqoriya</th>
+                    <th>Qiymət</th>
+                    <th>Status</th>
+                    <th>Əməliyyat</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr class="empty-row">
+                        <td colspan="7">
+                            <i class="bi bi-bag-x" style="font-size:2.5rem;display:block;margin-bottom:.5rem;"></i>
+                            Hələ heç bir məhsul yoxdur
+                        </td>
+                    </tr>
+                }
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td class="text-muted" style="font-size:.75rem;">#@p.ProductId</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(p.ImageUrl))
+                            {
+                                <img src="@p.ImageUrl" class="product-thumb"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex';" />
+                                <div class="product-thumb-placeholder" style="display:none;"><i class="bi bi-bag"></i></div>
+                            }
+                            else
+                            {
+                                <div class="product-thumb-placeholder"><i class="bi bi-bag"></i></div>
+                            }
+                        </td>
+                        <td><strong style="color:#1e293b;">@p.ProductName</strong></td>
+                        <td><span class="cat-chip">@p.Category</span></td>
+                        <td><span class="price-badge">₼@p.Price.ToString("F2")</span></td>
+                        <td>
+                            @if (p.Status)
+                            {
+                                <span class="badge-status-active"><i class="bi bi-check-circle-fill me-1"></i>Aktiv</span>
+                            }
+                            else
+                            {
+                                <span class="badge-status-passive"><i class="bi bi-x-circle-fill me-1"></i>Deaktiv</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a asp-area="Admin" asp-controller="Product" asp-action="UpdateProduct"
+                                   asp-route-id="@p.ProductId" class="action-btn edit" title="Düzəliş et">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-area="Admin" asp-controller="Product" asp-action="DeleteProduct"
+                                   asp-route-id="@p.ProductId" class="action-btn del" title="Sil"
+                                   onclick="return confirm('@p.ProductName məhsulunu silmək istədiyinizə əminsiniz?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

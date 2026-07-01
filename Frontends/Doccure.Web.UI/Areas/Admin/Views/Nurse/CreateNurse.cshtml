@@ -1,0 +1,113 @@
+@model Doccure.Web.UI.Dtos.NurseDtos.CreateNurseDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Yeni Tibb Bacısı";
+}
+@section Styles {
+<style>
+    .form-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:2rem; box-shadow:0 4px 12px rgba(0,0,0,.03); }
+    .form-section-title { font-size:.8rem; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:#94a3b8; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid #f1f5f9; }
+    .form-label { font-weight:500; font-size:.85rem; color:#334155; margin-bottom:6px; }
+    .form-control-custom { width:100%; padding:.65rem 1rem; border:1.5px solid #e2e8f0; border-radius:10px; font-size:.88rem; color:#1e293b; background:#f8fafc; outline:none; transition:all .2s; }
+    .form-control-custom:focus { border-color:#0e82fd; background:#fff; box-shadow:0 0 0 3px rgba(14,130,253,.12); }
+    .field-validation-error { color:#f43f5e; font-size:.78rem; margin-top:4px; display:block; }
+    .btn-submit { background:linear-gradient(135deg,#0e82fd,#5b5cee); color:#fff; border:none; border-radius:10px; padding:.65rem 1.8rem; font-weight:600; font-size:.88rem; transition:all .2s; box-shadow:0 4px 12px rgba(14,130,253,.25); }
+    .btn-cancel { background:#f1f5f9; color:#64748b; border:none; border-radius:10px; padding:.65rem 1.5rem; font-weight:500; font-size:.88rem; text-decoration:none; }
+    .btn-cancel:hover { background:#e2e8f0; color:#1e293b; }
+    .back-link { display:inline-flex; align-items:center; gap:6px; color:#64748b; font-size:.84rem; text-decoration:none; padding:6px 12px; border-radius:8px; background:#f1f5f9; }
+    .back-link:hover { background:#e2e8f0; }
+</style>
+}
+<div class="container-fluid p-4">
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <a href="@Url.Action("Index","Nurse",new{area="Admin"})" class="back-link"><i class="bi bi-arrow-left"></i> Geri</a>
+        <h2 style="font-family:'Poppins',sans-serif;font-size:1.35rem;font-weight:700;color:#1e293b;margin:0;">
+            <i class="bi bi-person-plus me-2 text-primary"></i>Yeni Tibb Bacısı Əlavə Et
+        </h2>
+    </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <form asp-action="CreateNurse" asp-controller="Nurse" asp-area="Admin" method="post">
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Şəxsi Məlumatlar</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label"></label>
+                            <input asp-for="FirstName" class="form-control-custom" placeholder="Ad" />
+                            <span asp-validation-for="FirstName" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label"></label>
+                            <input asp-for="LastName" class="form-control-custom" placeholder="Soyad" />
+                            <span asp-validation-for="LastName" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Unit" class="form-label"></label>
+                            <input asp-for="Unit" class="form-control-custom" placeholder="Məs: Daxili Xəstəliklər" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Branch" class="form-label"></label>
+                            <select asp-for="Branch" class="form-control-custom">
+                                <option value="Daxili">Daxili</option>
+                                <option value="Cərrahiyyə">Cərrahiyyə</option>
+                                <option value="Təcili">Təcili</option>
+                                <option value="Pediatriya">Pediatriya</option>
+                                <option value="Kardiologiya">Kardiologiya</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Növbə və Status</p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="Shift" class="form-label"></label>
+                            <select asp-for="Shift" class="form-control-custom">
+                                <option value="Gündüz">Gündüz</option>
+                                <option value="Gecə">Gecə</option>
+                                <option value="Axşam">Axşam</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Status" class="form-label"></label>
+                            <select asp-for="Status" class="form-control-custom">
+                                <option value="Növbədə">Növbədə</option>
+                                <option value="Məzuniyyətdə">Məzuniyyətdə</option>
+                                <option value="Fasilədə">Fasilədə</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Experience" class="form-label"></label>
+                            <input asp-for="Experience" type="number" class="form-control-custom" placeholder="0" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Statistika</p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="Rating" class="form-label"></label>
+                            <input asp-for="Rating" type="number" step="0.1" min="1" max="5" class="form-control-custom" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Performance" class="form-label"></label>
+                            <input asp-for="Performance" type="number" min="0" max="100" class="form-control-custom" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Attendance" class="form-label"></label>
+                            <input asp-for="Attendance" type="number" min="0" max="100" class="form-control-custom" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Skills" class="form-label"></label>
+                            <input asp-for="Skills" class="form-control-custom" placeholder="Məs: BLS, EKG, IV Müalicə" />
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn-submit"><i class="bi bi-check-lg me-1"></i> Əlavə Et</button>
+                    <a href="@Url.Action("Index","Nurse",new{area="Admin"})" class="btn-cancel">Ləğv Et</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

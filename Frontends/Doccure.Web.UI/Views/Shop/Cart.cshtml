@@ -1,0 +1,276 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Səbət";
+}
+
+@section Styles {
+<style>
+    .cart-hero {
+        background: linear-gradient(135deg, #15803d, #22c55e);
+        padding: 2.5rem 0;
+        color: #fff;
+        margin-bottom: 2rem;
+    }
+    .cart-hero h1 { font-family:'Poppins',sans-serif; font-size:1.9rem; font-weight:800; margin:0; }
+
+    .cart-wrapper { padding: 0 0 4rem; background: #f0fdf4; min-height: 60vh; }
+
+    .cart-table-card {
+        background: #fff;
+        border-radius: 18px;
+        border: 1px solid #dcfce7;
+        box-shadow: 0 2px 12px rgba(22,163,74,.06);
+        overflow: hidden;
+    }
+    .cart-table thead th {
+        background: #f0fdf4;
+        color: #15803d;
+        font-size: .75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        padding: 14px 20px;
+        border-bottom: 2px solid #dcfce7;
+    }
+    .cart-table tbody td {
+        padding: 16px 20px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0fdf4;
+    }
+    .cart-table tbody tr:last-child td { border-bottom: none; }
+    .product-thumb {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        background: #dcfce7;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #16a34a;
+        font-size: 1.6rem;
+        flex-shrink: 0;
+    }
+    .qty-ctrl {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #f0fdf4;
+        border-radius: 30px;
+        padding: 4px 12px;
+    }
+    .qty-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 2px solid #22c55e;
+        background: #fff;
+        color: #16a34a;
+        font-weight: 700;
+        font-size: .9rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all .15s;
+    }
+    .qty-btn:hover { background: #22c55e; color: #fff; }
+    .qty-val { font-weight: 700; font-size: .9rem; color: #1e293b; min-width: 22px; text-align: center; }
+    .item-price { font-weight: 700; color: #16a34a; font-size: .95rem; }
+    .btn-remove { background: #fff1f2; color: #f43f5e; border: none; border-radius: 8px; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all .2s; }
+    .btn-remove:hover { background: #f43f5e; color: #fff; }
+
+    .summary-card {
+        background: #fff;
+        border-radius: 18px;
+        border: 1px solid #dcfce7;
+        box-shadow: 0 2px 12px rgba(22,163,74,.06);
+        padding: 1.5rem;
+        position: sticky;
+        top: 80px;
+    }
+    .summary-title { font-family:'Poppins',sans-serif; font-weight:700; font-size:1.05rem; color:#1e293b; margin-bottom:1.2rem; }
+    .summary-row { display:flex; justify-content:space-between; align-items:center; padding:.55rem 0; font-size:.88rem; }
+    .summary-row.total { border-top:2px dashed #dcfce7; margin-top:.5rem; padding-top:.9rem; font-weight:800; font-size:1rem; color:#16a34a; }
+    .btn-checkout {
+        width: 100%;
+        background: linear-gradient(135deg,#16a34a,#22c55e);
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        padding: .85rem;
+        font-weight: 700;
+        font-size: .95rem;
+        margin-top: 1.2rem;
+        cursor: pointer;
+        transition: all .2s;
+        box-shadow: 0 4px 16px rgba(22,163,74,.3);
+    }
+    .btn-checkout:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(22,163,74,.4); }
+    .btn-continue { display:block; text-align:center; margin-top:.75rem; color:#16a34a; font-size:.85rem; font-weight:600; text-decoration:none; }
+    .btn-continue:hover { color:#15803d; }
+
+    .empty-cart { text-align:center; padding:5rem 0; }
+    .empty-cart i { font-size:5rem; color:#bbf7d0; display:block; margin-bottom:1rem; }
+
+    .promo-input { flex:1; padding:.6rem 1rem; border:1.5px solid #dcfce7; border-radius:10px 0 0 10px; font-size:.85rem; outline:none; }
+    .promo-input:focus { border-color:#22c55e; }
+    .promo-btn { background:#22c55e; color:#fff; border:none; border-radius:0 10px 10px 0; padding:.6rem 1.1rem; font-weight:600; font-size:.85rem; cursor:pointer; }
+</style>
+}
+
+<div class="cart-hero">
+    <div class="container">
+        <div class="d-flex align-items-center gap-3">
+            <a href="@Url.Action("Index","Shop")" class="text-white text-decoration-none opacity-75 hover-opacity-100">
+                <i class="bi bi-arrow-left me-1"></i> Mağazaya qayıt
+            </a>
+            <span class="text-white opacity-50">|</span>
+            <h1><i class="bi bi-cart2 me-2"></i>Mənim Səbətim</h1>
+        </div>
+    </div>
+</div>
+
+<div class="cart-wrapper">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Səbət siyahısı -->
+            <div class="col-lg-8">
+                <div class="cart-table-card" id="cartContainer">
+                    <!-- JS ilə doldurulur -->
+                </div>
+            </div>
+
+            <!-- Xülasə -->
+            <div class="col-lg-4">
+                <div class="summary-card">
+                    <div class="summary-title"><i class="bi bi-receipt me-2 text-success"></i>Sifariş Xülasəsi</div>
+                    <div class="summary-row">
+                        <span class="text-muted">Məhsullar</span>
+                        <span id="summaryCount">0 ədəd</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="text-muted">Ara cəm</span>
+                        <span id="summarySubtotal">₼0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="text-muted">Çatdırılma</span>
+                        <span class="text-success fw-semibold">Pulsuz</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Ümumi</span>
+                        <span id="summaryTotal">₼0.00</span>
+                    </div>
+
+                    <div class="d-flex mt-3 mb-3">
+                        <input type="text" class="promo-input" placeholder="Endirim kodu..." />
+                        <button class="promo-btn">Tətbiq et</button>
+                    </div>
+
+                    <button class="btn-checkout" onclick="alert('Bu funksiya tezliklə əlavə olunacaq!')">
+                        <i class="bi bi-bag-check me-2"></i>Sifarişi Tamamla
+                    </button>
+                    <a href="@Url.Action("Index","Shop")" class="btn-continue">
+                        <i class="bi bi-arrow-left me-1"></i> Alışverişə davam et
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function getCart() {
+        return JSON.parse(localStorage.getItem('doccure_cart') || '[]');
+    }
+
+    function saveCart(cart) {
+        localStorage.setItem('doccure_cart', JSON.stringify(cart));
+    }
+
+    function renderCart() {
+        const cart = getCart();
+        const container = document.getElementById('cartContainer');
+
+        if (cart.length === 0) {
+            container.innerHTML = `
+                <div class="empty-cart">
+                    <i class="bi bi-cart-x"></i>
+                    <h5 style="color:#1e293b;font-family:'Poppins',sans-serif;">Səbətiniz boşdur</h5>
+                    <p class="text-muted">Mağazadan məhsul əlavə edin</p>
+                    <a href="/Shop" class="btn btn-success rounded-pill px-4 mt-2">Mağazaya keç</a>
+                </div>`;
+            updateSummary(cart);
+            return;
+        }
+
+        let html = `<table class="table cart-table mb-0">
+            <thead><tr>
+                <th>Məhsul</th>
+                <th>Qiymət</th>
+                <th>Miqdar</th>
+                <th>Cəm</th>
+                <th></th>
+            </tr></thead>
+            <tbody id="cartBody">`;
+
+        cart.forEach((item, idx) => {
+            const total = (item.price * item.qty).toFixed(2);
+            html += `<tr>
+                <td>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="product-thumb"><i class="bi bi-capsule-pill"></i></div>
+                        <div>
+                            <div style="font-weight:600;font-size:.88rem;color:#1e293b;">${item.name}</div>
+                            <div style="font-size:.72rem;color:#94a3b8;">Kod: #${item.id}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="item-price">₼${Number(item.price).toFixed(2)}</td>
+                <td>
+                    <div class="qty-ctrl">
+                        <button class="qty-btn" onclick="changeQty(${idx}, -1)">−</button>
+                        <span class="qty-val">${item.qty}</span>
+                        <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+                    </div>
+                </td>
+                <td class="item-price">₼${total}</td>
+                <td>
+                    <button class="btn-remove" onclick="removeItem(${idx})" title="Sil">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>`;
+        });
+
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+        updateSummary(cart);
+    }
+
+    function changeQty(idx, delta) {
+        let cart = getCart();
+        cart[idx].qty += delta;
+        if (cart[idx].qty < 1) cart.splice(idx, 1);
+        saveCart(cart);
+        renderCart();
+    }
+
+    function removeItem(idx) {
+        let cart = getCart();
+        cart.splice(idx, 1);
+        saveCart(cart);
+        renderCart();
+    }
+
+    function updateSummary(cart) {
+        const count = cart.reduce((s, i) => s + i.qty, 0);
+        const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        document.getElementById('summaryCount').textContent = count + ' ədəd';
+        document.getElementById('summarySubtotal').textContent = '₼' + total.toFixed(2);
+        document.getElementById('summaryTotal').textContent = '₼' + total.toFixed(2);
+    }
+
+    renderCart();
+</script>
+}

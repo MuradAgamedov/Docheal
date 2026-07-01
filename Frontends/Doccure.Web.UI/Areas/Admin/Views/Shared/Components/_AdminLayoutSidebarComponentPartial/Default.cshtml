@@ -46,8 +46,32 @@
                 <span>Görüş İdarəsi</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a asp-area="Admin" asp-controller="Queue" asp-action="Index" class="nav-link-custom">
+                <i class="bi bi-clock-history"></i>
+                <span>Xəstə Sırası</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a asp-area="Admin" asp-controller="Medicine" asp-action="Index" class="nav-link-custom">
+                <i class="bi bi-capsule-pill"></i>
+                <span>Dərman İdarəsi</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="nav-link-custom">
+                <i class="bi bi-bag-check-fill"></i>
+                <span>Sifariş İdarəsi</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="nav-link-custom">
+                <i class="bi bi-shop"></i>
+                <span>Məhsul İdarəsi</span>
+            </a>
+        </li>
         <li class="nav-item mt-4 pt-3 border-top">
-            <a href="#" class="nav-link-custom text-danger">
+            <a asp-area="" asp-controller="Auth" asp-action="Logout" class="nav-link-custom text-danger">
                 <i class="bi bi-box-arrow-left"></i>
                 <span>Çıxış Et</span>
             </a>

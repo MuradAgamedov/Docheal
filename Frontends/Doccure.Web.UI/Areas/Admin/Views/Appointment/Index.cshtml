@@ -1,679 +1,120 @@
+@model List<Doccure.Web.UI.Dtos.AppointmentDtos.ResultAppointmentDto>
 @{
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Görüş İdarəsi";
 }
 
 @section Styles {
 <style>
-    .page-title-block { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.75rem; flex-wrap:wrap; gap:1rem; }
-    .page-title { font-family:'Poppins',sans-serif; font-size:1.6rem; font-weight:700; color:var(--dark-color); margin:0 0 4px 0; }
-    .page-subtitle { font-size:.88rem; color:#64748b; margin:0; }
-    .page-actions { display:flex; gap:.6rem; flex-wrap:wrap; flex-shrink:0; }
-
-    .filter-bar { background:#fff; border:1px solid var(--card-border); border-radius:16px; padding:1.1rem 1.4rem; margin-bottom:1.5rem; display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; }
-    .filter-search { position:relative; flex:1; min-width:200px; max-width:300px; }
-    .filter-search i { position:absolute; left:.9rem; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:.9rem; }
-    .filter-search input { width:100%; padding:.48rem 1rem .48rem 2.2rem; border-radius:30px; border:1.5px solid #e2e8f0; font-size:.83rem; background:#f8fafc; }
-    .filter-search input:focus { outline:none; border-color:var(--primary-color); background:#fff; box-shadow:0 0 0 3px rgba(14,130,253,.12); }
-    .filter-select { padding:.46rem 1.9rem .46rem .8rem; border-radius:30px; border:1.5px solid #e2e8f0; font-size:.82rem; color:#475569; background:#f8fafc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right .7rem center; appearance:none; cursor:pointer; }
-    .filter-select:focus { outline:none; border-color:var(--primary-color); }
-    .filter-pills { display:flex; gap:.35rem; flex-wrap:wrap; }
-    .filter-pill { padding:.4rem .85rem; border-radius:30px; border:1.5px solid #e2e8f0; background:#fff; color:#64748b; font-size:.79rem; font-weight:500; cursor:pointer; transition:all .2s; white-space:nowrap; }
-    .filter-pill:hover,.filter-pill.active { border-color:var(--primary-color); color:var(--primary-color); background:var(--primary-light); font-weight:600; }
-
-    /* Calendar */
-    .cal-card { background:#fff; border:1px solid var(--card-border); border-radius:16px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.03); }
-    .cal-header { display:flex; align-items:center; justify-content:space-between; padding:1.1rem 1.4rem; border-bottom:1px solid #f1f5f9; }
-    .cal-title { font-family:'Poppins',sans-serif; font-weight:700; font-size:1rem; color:var(--dark-color); margin:0; }
-    .cal-nav { display:flex; gap:.35rem; }
-    .cal-nav-btn { width:30px; height:30px; border-radius:8px; border:1.5px solid #e2e8f0; background:#fff; color:#64748b; display:inline-flex; align-items:center; justify-content:center; font-size:.8rem; cursor:pointer; transition:all .2s; }
-    .cal-nav-btn:hover { border-color:var(--primary-color); color:var(--primary-color); background:var(--primary-light); }
-    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:0; }
-    .cal-day-header { padding:.5rem .3rem; text-align:center; font-size:.68rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid #f1f5f9; }
-    .cal-cell { padding:.5rem .3rem; min-height:64px; border-bottom:1px solid #f8fafc; border-right:1px solid #f8fafc; }
-    .cal-cell:nth-child(7n) { border-right:0; }
-    .cal-date { font-size:.75rem; font-weight:600; color:#64748b; margin-bottom:.25rem; width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
-    .cal-date.today { background:var(--primary-color); color:#fff; }
-    .cal-date.other-month { color:#cbd5e1; }
-    .cal-event { font-size:.6rem; font-weight:600; padding:.15rem .4rem; border-radius:4px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
-    .ev-blue   { background:var(--primary-light); color:var(--primary-color); }
-    .ev-green  { background:rgba(22,163,74,.1);  color:#15803d; }
-    .ev-red    { background:rgba(239,68,68,.1);  color:#dc2626; }
-    .ev-yellow { background:rgba(245,158,11,.1); color:#b45309; }
-
-    /* Table */
-    .appt-table-wrap { background:#fff; border:1px solid var(--card-border); border-radius:16px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.03); }
-    .appt-table-header { display:flex; align-items:center; justify-content:space-between; padding:1.1rem 1.4rem; border-bottom:1px solid #f1f5f9; flex-wrap:wrap; gap:.75rem; }
-    .appt-table-title { font-family:'Poppins',sans-serif; font-weight:600; font-size:1rem; color:var(--dark-color); margin:0; display:flex; align-items:center; gap:8px; }
-    .appt-table-title i { color:var(--primary-color); }
-
-    .appt-table { width:100%; border-collapse:collapse; }
-    .appt-table th { padding:.75rem 1rem; font-size:.75rem; font-weight:700; color:#475569; background:#f8fafc; border-bottom:2px solid #e2e8f0; text-transform:uppercase; letter-spacing:.4px; white-space:nowrap; }
-    .appt-table td { padding:.85rem 1rem; border-bottom:1px solid #f1f5f9; vertical-align:middle; font-size:.855rem; }
-    .appt-table tr:last-child td { border-bottom:none; }
-    .appt-table tr:hover td { background:#fafbfc; }
-    .appt-table tr.hidden { display:none; }
-
-    .pat-cell { display:flex; align-items:center; gap:9px; }
-    .pat-ini  { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.72rem; color:#fff; flex-shrink:0; }
-    .pat-name { font-weight:600; color:var(--dark-color); font-size:.855rem; }
-    .pat-sub  { font-size:.72rem; color:#94a3b8; }
-
-    .badge-status { display:inline-flex; align-items:center; gap:5px; padding:.3rem .75rem; border-radius:30px; font-size:.74rem; font-weight:700; }
-    .bs-confirmed { background:rgba(22,163,74,.1);   color:#15803d; }
-    .bs-pending   { background:rgba(245,158,11,.1);  color:#b45309; }
-    .bs-cancelled { background:rgba(239,68,68,.1);   color:#dc2626; }
-    .bs-completed { background:rgba(14,130,253,.1);  color:#0e82fd; }
-
-    .act-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid #e2e8f0; background:#fff; color:#64748b; display:inline-flex; align-items:center; justify-content:center; font-size:.8rem; cursor:pointer; transition:all .2s; }
-    .act-btn:hover { border-color:var(--primary-color); color:var(--primary-color); background:var(--primary-light); }
-    .act-btn.del:hover { border-color:#ef4444; color:#ef4444; background:rgba(239,68,68,.06); }
-
-    .table-footer { display:flex; justify-content:space-between; align-items:center; padding:.9rem 1.4rem; border-top:1px solid #f1f5f9; flex-wrap:wrap; gap:.5rem; }
-    .table-footer-info { font-size:.8rem; color:#64748b; }
-    .pag-btn { width:32px; height:32px; border-radius:8px; border:1.5px solid #e2e8f0; background:#fff; color:#64748b; display:inline-flex; align-items:center; justify-content:center; font-size:.8rem; cursor:pointer; transition:all .2s; }
-    .pag-btn:hover,.pag-btn.active { border-color:var(--primary-color); color:#fff; background:var(--primary-color); }
-
-    /* Detail Modal */
-    .detail-modal .modal-content { border:0; border-radius:18px; box-shadow:0 20px 60px rgba(0,0,0,.15); overflow:hidden; }
-    .detail-modal .modal-header { background:linear-gradient(135deg,var(--primary-color),var(--secondary-color)); color:#fff; border:0; padding:1.4rem 1.6rem; }
-    .detail-modal .modal-title { font-family:'Poppins',sans-serif; font-weight:700; font-size:1.1rem; display:flex; align-items:center; gap:8px; }
-    .detail-modal .btn-close { filter:invert(1) brightness(2); opacity:.9; }
-    .detail-modal .modal-body { padding:1.6rem; }
-    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
-    @@media (max-width:576px) { .detail-grid { grid-template-columns:1fr; } }
-    .detail-field { background:#f8fafc; border-radius:10px; padding:.75rem 1rem; }
-    .detail-field-label { font-size:.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
-    .detail-field-value { font-size:.88rem; font-weight:600; color:var(--dark-color); }
-    .appt-detail-notes { background:#f8fafc; border-radius:10px; padding:.9rem 1rem; margin-top:.9rem; }
-    .appt-detail-notes-label { font-size:.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
-    .appt-detail-notes-text { font-size:.85rem; color:#475569; line-height:1.55; }
+    .appt-table-wrapper { background:#fff; border:1px solid #e8edf3; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,.04); overflow:hidden; }
+    .appt-table thead th { background:#f8fafc; color:#64748b; font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.5px; padding:14px 20px; border-bottom:1px solid #e8edf3; white-space:nowrap; }
+    .appt-table tbody td { padding:14px 20px; vertical-align:middle; font-size:.88rem; color:#374151; border-bottom:1px solid #f1f5f9; }
+    .appt-table tbody tr:last-child td { border-bottom:none; }
+    .appt-table tbody tr:hover { background:#f8fafc; }
+    .appt-id { font-family:monospace; font-size:.8rem; font-weight:600; color:#64748b; }
+    .appt-date { font-weight:600; color:#1e293b; }
+    .appt-price { font-weight:700; color:#0e82fd; }
+    .status-confirmed { background:#d1fae5; color:#065f46; padding:3px 12px; border-radius:50px; font-size:.75rem; font-weight:600; }
+    .status-pending { background:#fef3c7; color:#92400e; padding:3px 12px; border-radius:50px; font-size:.75rem; font-weight:600; }
+    .status-cancelled { background:#fee2e2; color:#991b1b; padding:3px 12px; border-radius:50px; font-size:.75rem; font-weight:600; }
+    .status-completed { background:#dbeafe; color:#1e40af; padding:3px 12px; border-radius:50px; font-size:.75rem; font-weight:600; }
+    .table-page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; gap:12px; flex-wrap:wrap; }
+    .page-title-group h2 { font-family:'Poppins',sans-serif; font-size:1.45rem; font-weight:700; color:#1e293b; margin:0; }
+    .page-title-group p { color:#94a3b8; font-size:.84rem; margin:4px 0 0 0; }
+    .btn-add-primary { background:linear-gradient(135deg,#0e82fd,#5b5cee); color:#fff; border:none; border-radius:10px; padding:10px 22px; font-weight:600; font-size:.88rem; display:inline-flex; align-items:center; gap:8px; text-decoration:none; transition:all .2s; box-shadow:0 4px 12px rgba(14,130,253,.25); }
+    .btn-add-primary:hover { transform:translateY(-2px); color:#fff; box-shadow:0 8px 20px rgba(14,130,253,.35); }
+    .action-btn { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; border:none; cursor:pointer; transition:all .2s; text-decoration:none; font-size:.88rem; }
+    .action-btn-edit { background:#eff6ff; color:#3b82f6; }
+    .action-btn-edit:hover { background:#3b82f6; color:#fff; }
+    .action-btn-delete { background:#fff1f2; color:#f43f5e; }
+    .action-btn-delete:hover { background:#f43f5e; color:#fff; }
 </style>
 }
 
-<!-- Səhifə Başlığı -->
-<div class="page-title-block">
-    <div>
-        <h1 class="page-title">
-            <i class="bi bi-calendar-check-fill me-2" style="color:var(--primary-color);font-size:1.35rem;"></i>
-            Görüş İdarəsi
-        </h1>
-        <p class="page-subtitle">Xəstə görüşlərini planlaşdırın, izləyin və idarə edin.</p>
-    </div>
-    <div class="page-actions">
-        <button class="btn btn-outline-secondary d-flex align-items-center gap-2" style="border-radius:10px;font-weight:500;font-size:.85rem;">
-            <i class="bi bi-download"></i> İxrac et
-        </button>
-        <button class="btn btn-primary d-flex align-items-center gap-2" style="border-radius:10px;font-weight:500;font-size:.85rem;">
-            <i class="bi bi-plus-lg"></i> Yeni Görüş
-        </button>
-    </div>
-</div>
-
-<!-- Statistika Kartları -->
-<div class="row g-4 mb-4">
-    <div class="col-6 col-xl-3">
-        <div class="stat-card">
-            <div class="stat-info"><div class="stat-value">1,482</div><div class="stat-label">Ümumi Görüş</div></div>
-            <div class="stat-icon icon-blue"><i class="bi bi-calendar-event-fill"></i></div>
+<div class="container-fluid p-4">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    </div>
-    <div class="col-6 col-xl-3">
-        <div class="stat-card">
-            <div class="stat-info"><div class="stat-value">24</div><div class="stat-label">Bu Günkü</div></div>
-            <div class="stat-icon icon-teal"><i class="bi bi-calendar-day-fill"></i></div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    </div>
-    <div class="col-6 col-xl-3">
-        <div class="stat-card">
-            <div class="stat-info"><div class="stat-value">8</div><div class="stat-label">Gözləyən</div></div>
-            <div class="stat-icon icon-yellow"><i class="bi bi-hourglass-split"></i></div>
+    }
+
+    <div class="table-page-header">
+        <div class="page-title-group">
+            <h2><i class="bi bi-calendar-check-fill me-2 text-primary"></i> Görüş İdarəsi</h2>
+            <p>Cəmi <strong>@Model?.Count</strong> görüş qeydiyyatda</p>
         </div>
-    </div>
-    <div class="col-6 col-xl-3">
-        <div class="stat-card">
-            <div class="stat-info"><div class="stat-value">3</div><div class="stat-label">Ləğv Edilən</div></div>
-            <div class="stat-icon icon-red"><i class="bi bi-calendar-x-fill"></i></div>
-        </div>
-    </div>
-</div>
-
-<!-- Mini Təqvim + Tez Filtr -->
-<div class="row g-4 mb-4">
-    <div class="col-12 col-xl-8">
-        <!-- Aylıq Təqvim -->
-        <div class="cal-card">
-            <div class="cal-header">
-                <h5 class="cal-title"><i class="bi bi-calendar3 me-2" style="color:var(--primary-color);"></i>İyun 2026</h5>
-                <div class="cal-nav">
-                    <button class="cal-nav-btn"><i class="bi bi-chevron-left"></i></button>
-                    <button class="cal-nav-btn"><i class="bi bi-chevron-right"></i></button>
-                </div>
-            </div>
-            <div class="cal-grid">
-                <div class="cal-day-header">B.e</div>
-                <div class="cal-day-header">Ç.a</div>
-                <div class="cal-day-header">Çər</div>
-                <div class="cal-day-header">C.a</div>
-                <div class="cal-day-header">Cüm</div>
-                <div class="cal-day-header">Şnb</div>
-                <div class="cal-day-header">Baz</div>
-
-                <!-- Sıra 1 -->
-                <div class="cal-cell"><div class="cal-date other-month">26</div></div>
-                <div class="cal-cell"><div class="cal-date other-month">27</div></div>
-                <div class="cal-cell"><div class="cal-date other-month">28</div></div>
-                <div class="cal-cell"><div class="cal-date other-month">29</div></div>
-                <div class="cal-cell"><div class="cal-date other-month">30</div></div>
-                <div class="cal-cell"><div class="cal-date other-month">31</div></div>
-                <div class="cal-cell"><div class="cal-date">1</div></div>
-
-                <!-- Sıra 2 -->
-                <div class="cal-cell"><div class="cal-date">2</div><div class="cal-event ev-blue">Dr. Demir</div></div>
-                <div class="cal-cell"><div class="cal-date">3</div></div>
-                <div class="cal-cell"><div class="cal-date">4</div><div class="cal-event ev-green">Dr. Arslan</div></div>
-                <div class="cal-cell"><div class="cal-date">5</div><div class="cal-event ev-blue">2 görüş</div></div>
-                <div class="cal-cell"><div class="cal-date">6</div><div class="cal-event ev-yellow">Dr. Öztürk</div></div>
-                <div class="cal-cell"><div class="cal-date">7</div></div>
-                <div class="cal-cell"><div class="cal-date">8</div></div>
-
-                <!-- Sıra 3 -->
-                <div class="cal-cell"><div class="cal-date">9</div><div class="cal-event ev-blue">3 görüş</div></div>
-                <div class="cal-cell"><div class="cal-date">10</div><div class="cal-event ev-green">Dr. Çelik</div></div>
-                <div class="cal-cell"><div class="cal-date">11</div></div>
-                <div class="cal-cell"><div class="cal-date">12</div><div class="cal-event ev-red">Ləğv edildi</div></div>
-                <div class="cal-cell"><div class="cal-date">13</div><div class="cal-event ev-blue">Dr. Demir</div></div>
-                <div class="cal-cell"><div class="cal-date">14</div></div>
-                <div class="cal-cell"><div class="cal-date">15</div></div>
-
-                <!-- Sıra 4 -->
-                <div class="cal-cell"><div class="cal-date">16</div><div class="cal-event ev-blue">4 görüş</div></div>
-                <div class="cal-cell"><div class="cal-date">17</div><div class="cal-event ev-yellow">2 görüş</div></div>
-                <div class="cal-cell"><div class="cal-date">18</div><div class="cal-event ev-green">Dr. Kocaman</div></div>
-                <div class="cal-cell"><div class="cal-date">19</div></div>
-                <div class="cal-cell"><div class="cal-date">20</div><div class="cal-event ev-blue">Dr. Arslan</div></div>
-                <div class="cal-cell"><div class="cal-date">21</div></div>
-                <div class="cal-cell"><div class="cal-date">22</div></div>
-
-                <!-- Sıra 5 -->
-                <div class="cal-cell"><div class="cal-date">23</div><div class="cal-event ev-blue">3 görüş</div></div>
-                <div class="cal-cell"><div class="cal-date">24</div><div class="cal-event ev-green">Dr. Demir</div></div>
-                <div class="cal-cell"><div class="cal-date">25</div><div class="cal-event ev-yellow">2 görüş</div></div>
-                <div class="cal-cell"><div class="cal-date">26</div><div class="cal-event ev-red">Ləğv edildi</div></div>
-                <div class="cal-cell"><div class="cal-date">27</div><div class="cal-event ev-blue">Dr. Çelik</div></div>
-                <div class="cal-cell"><div class="cal-date">28</div></div>
-                <div class="cal-cell"><div class="cal-date today">29</div><div class="cal-event ev-blue">5 görüş</div></div>
-
-                <!-- Sıra 6 -->
-                <div class="cal-cell"><div class="cal-date">30</div><div class="cal-event ev-green">Dr. Öztürk</div></div>
-                <div class="cal-cell"><div class="cal-date other-month">1</div></div>
-                <div class="cal-cell"><div class="cal-date other-month">2</div></div>
-                <div class="cal-cell"><div class="cal-date other-month">3</div></div>
-                <div class="cal-cell"><div class="cal-date other-month">4</div></div>
-                <div class="cal-cell"><div class="cal-date other-month">5</div></div>
-                <div class="cal-cell"><div class="cal-date other-month">6</div></div>
-            </div>
-        </div>
+        <a href="@Url.Action("CreateAppointment","Appointment",new{area="Admin"})" class="btn-add-primary">
+            <i class="bi bi-plus-lg"></i> Yeni Görüş Əlavə Et
+        </a>
     </div>
 
-    <div class="col-12 col-xl-4">
-        <!-- Bu Günkü Görüşlər -->
-        <div class="content-card h-100">
-            <div class="card-header-custom">
-                <h5 class="card-title-custom" style="font-size:.95rem;">
-                    <i class="bi bi-calendar-day-fill"></i>
-                    Bu Günkü Görüşlər
-                </h5>
-                <span class="badge rounded-pill" style="background:var(--primary-light);color:var(--primary-color);font-size:.75rem;">5</span>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:.6rem;">
-
-                <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem .8rem;background:#f8fafc;border-radius:10px;border-left:3px solid var(--primary-color);">
-                    <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:.82rem;color:var(--primary-color);min-width:42px;">09:30</div>
-                    <div style="flex:1;"><div style="font-weight:600;font-size:.82rem;color:var(--dark-color);">Ayşe Kaya</div><div style="font-size:.7rem;color:#94a3b8;">Dr. Murat Demir · Kardiologiya</div></div>
-                    <span class="badge-status bs-confirmed" style="font-size:.65rem;padding:.2rem .5rem;">Təsdiqləndi</span>
-                </div>
-
-                <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem .8rem;background:#f8fafc;border-radius:10px;border-left:3px solid #f59e0b;">
-                    <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:.82rem;color:#f59e0b;min-width:42px;">11:00</div>
-                    <div style="flex:1;"><div style="font-weight:600;font-size:.82rem;color:var(--dark-color);">Mehmet Ercan</div><div style="font-size:.7rem;color:#94a3b8;">Dr. Selin Arslan · Pediatriya</div></div>
-                    <span class="badge-status bs-pending" style="font-size:.65rem;padding:.2rem .5rem;">Gözləyir</span>
-                </div>
-
-                <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem .8rem;background:#f8fafc;border-radius:10px;border-left:3px solid #22c55e;">
-                    <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:.82rem;color:#22c55e;min-width:42px;">13:15</div>
-                    <div style="flex:1;"><div style="font-weight:600;font-size:.82rem;color:var(--dark-color);">Fatma Yıldız</div><div style="font-size:.7rem;color:#94a3b8;">Dr. Kemal Öztürk · Dermatoloji</div></div>
-                    <span class="badge-status bs-confirmed" style="font-size:.65rem;padding:.2rem .5rem;">Təsdiqləndi</span>
-                </div>
-
-                <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem .8rem;background:#f8fafc;border-radius:10px;border-left:3px solid var(--primary-color);">
-                    <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:.82rem;color:var(--primary-color);min-width:42px;">14:30</div>
-                    <div style="flex:1;"><div style="font-weight:600;font-size:.82rem;color:var(--dark-color);">Nurcan Şahin</div><div style="font-size:.7rem;color:#94a3b8;">Dr. Ali Kocaman · Ortopediya</div></div>
-                    <span class="badge-status bs-confirmed" style="font-size:.65rem;padding:.2rem .5rem;">Təsdiqləndi</span>
-                </div>
-
-                <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem .8rem;background:#f8fafc;border-radius:10px;border-left:3px solid #f59e0b;">
-                    <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:.82rem;color:#f59e0b;min-width:42px;">16:00</div>
-                    <div style="flex:1;"><div style="font-weight:600;font-size:.82rem;color:var(--dark-color);">Emre Yılmaz</div><div style="font-size:.7rem;color:#94a3b8;">Dr. Murat Demir · Kardiologiya</div></div>
-                    <span class="badge-status bs-pending" style="font-size:.65rem;padding:.2rem .5rem;">Gözləyir</span>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Filtr Paneli -->
-<div class="filter-bar">
-    <div class="filter-search">
-        <i class="bi bi-search"></i>
-        <input type="text" id="apptSearch" placeholder="Xəstə və ya həkim axtar...">
-    </div>
-    <select class="filter-select" id="branchFilter">
-        <option value="">Bütün Şöbələr</option>
-        <option value="kardiologiya">Kardiologiya</option>
-        <option value="pediatriya">Pediatriya</option>
-        <option value="dermatoloji">Dermatoloji</option>
-        <option value="nevrologiya">Nevrologiya</option>
-        <option value="ortopediya">Ortopediya</option>
-    </select>
-    <select class="filter-select" id="statusFilter">
-        <option value="">Bütün Vəziyyətlər</option>
-        <option value="tesdiqlendi">Təsdiqləndi</option>
-        <option value="gozeliyir">Gözləyir</option>
-        <option value="legvedildi">Ləğv edildi</option>
-        <option value="tamamlandi">Tamamlandı</option>
-    </select>
-    <div class="filter-pills">
-        <button class="filter-pill active" data-cat="all">Hamısı</button>
-        <button class="filter-pill" data-cat="tesdiqlendi">Təsdiqləndi</button>
-        <button class="filter-pill" data-cat="gozeliyir">Gözləyir</button>
-        <button class="filter-pill" data-cat="legvedildi">Ləğv edildi</button>
-    </div>
-</div>
-
-<!-- Görüş Cədvəli -->
-<div class="appt-table-wrap">
-    <div class="appt-table-header">
-        <h5 class="appt-table-title"><i class="bi bi-list-ul"></i> Görüş Siyahısı</h5>
-        <span class="text-muted small">12 görüşdən 1,482 göstərilir</span>
-    </div>
-    <div style="overflow-x:auto;">
-        <table class="appt-table">
+    <div class="appt-table-wrapper">
+        <table class="table appt-table mb-0">
             <thead>
                 <tr>
-                    <th>Görüş ID</th>
-                    <th>Xəstə</th>
-                    <th>Həkim</th>
-                    <th>Şöbə</th>
-                    <th>Tarix &amp; Saat</th>
-                    <th>Növ</th>
-                    <th>Vəziyyət</th>
-                    <th style="text-align:center;">Əməliyyat</th>
+                    <th>#ID</th>
+                    <th>Həkim ID</th>
+                    <th>Xəstə ID</th>
+                    <th>Görüş Tarixi</th>
+                    <th>Qiymət</th>
+                    <th>Status</th>
+                    <th style="width:90px;">Əməliyyat</th>
                 </tr>
             </thead>
-            <tbody id="apptTableBody">
-
-                <tr data-name="ayşe kaya murat demir" data-branch="kardiologiya" data-status="tesdiqlendi" data-cat="tesdiqlendi">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0001</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#ec4899,#f9a8d4);">AK</div>
-                            <div><div class="pat-name">Ayşe Kaya</div><div class="pat-sub">#XST-0001</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Murat Demir</div><div class="pat-sub">Kardioloq</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Kardiologiya</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">28 İyun 2026</div><div class="pat-sub">09:30</div></td>
-                    <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size:.72rem;">Müayinə</span></td>
-                    <td><span class="badge-status bs-confirmed"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Təsdiqləndi</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0001','Ayşe Kaya','Dr. Murat Demir','Kardiologiya','28 İyun 2026','09:30','Müayinə','Təsdiqləndi','Ürək ritmi pozuntusu şikayəti ilə müraciət. EKQ nəticələri normal hüdudlarda.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-                            <button class="act-btn del" title="Ləğv et"><i class="bi bi-x-circle"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr data-name="mehmet ercan selin arslan" data-branch="pediatriya" data-status="gozeliyir" data-cat="gozeliyir">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0002</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#0e82fd,#38bdf8);">ME</div>
-                            <div><div class="pat-name">Mehmet Ercan</div><div class="pat-sub">#XST-0002</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Selin Arslan</div><div class="pat-sub">Pediatr</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Pediatriya</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">28 İyun 2026</div><div class="pat-sub">11:00</div></td>
-                    <td><span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:.72rem;">Yoxlama</span></td>
-                    <td><span class="badge-status bs-pending"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Gözləyir</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0002','Mehmet Ercan','Dr. Selin Arslan','Pediatriya','28 İyun 2026','11:00','Yoxlama','Gözləyir','Aylıq yoxlama görüşü. Uşaq böyüməsinin qiymətləndirilməsi.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-                            <button class="act-btn del" title="Ləğv et"><i class="bi bi-x-circle"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr data-name="fatma yıldız kemal öztürk" data-branch="dermatoloji" data-status="tesdiqlendi" data-cat="tesdiqlendi">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0003</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#f59e0b,#fde68a);color:#92400e;">FY</div>
-                            <div><div class="pat-name">Fatma Yıldız</div><div class="pat-sub">#XST-0003</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Kemal Öztürk</div><div class="pat-sub">Dermatoloq</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Dermatoloji</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">28 İyun 2026</div><div class="pat-sub">13:15</div></td>
-                    <td><span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size:.72rem;">Prosedur</span></td>
-                    <td><span class="badge-status bs-confirmed"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Təsdiqləndi</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0003','Fatma Yıldız','Dr. Kemal Öztürk','Dermatoloji','28 İyun 2026','13:15','Prosedur','Təsdiqləndi','Dəri yırtığı müalicəsi proseduru. Lazımi hazırlıq tamamlanıb.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-                            <button class="act-btn del" title="Ləğv et"><i class="bi bi-x-circle"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr data-name="hasan bozkurt zeynep çelik" data-branch="nevrologiya" data-status="legvedildi" data-cat="legvedildi">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0004</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#ef4444,#fca5a5);">HB</div>
-                            <div><div class="pat-name">Hasan Bozkurt</div><div class="pat-sub">#XST-0004</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Zeynep Çelik</div><div class="pat-sub">Nevroloq</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Nevrologiya</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">27 İyun 2026</div><div class="pat-sub">16:00</div></td>
-                    <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size:.72rem;">Müayinə</span></td>
-                    <td><span class="badge-status bs-cancelled"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Ləğv edildi</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0004','Hasan Bozkurt','Dr. Zeynep Çelik','Nevrologiya','27 İyun 2026','16:00','Müayinə','Ləğv edildi','Xəstə tərəfindən ləğv edildi. Yenidən planlaşdırma gözlənilir.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Yenidən Planla"><i class="bi bi-arrow-repeat"></i></button>
-                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr data-name="nurcan şahin ali kocaman" data-branch="ortopediya" data-status="tesdiqlendi" data-cat="tesdiqlendi">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0005</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#7c3aed,#c4b5fd);">NŞ</div>
-                            <div><div class="pat-name">Nurcan Şahin</div><div class="pat-sub">#XST-0005</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Ali Kocaman</div><div class="pat-sub">Ortopedik Cərrah</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Ortopediya</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">28 İyun 2026</div><div class="pat-sub">14:30</div></td>
-                    <td><span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size:.72rem;">Prosedur</span></td>
-                    <td><span class="badge-status bs-confirmed"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Təsdiqləndi</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0005','Nurcan Şahin','Dr. Ali Kocaman','Ortopediya','28 İyun 2026','14:30','Prosedur','Təsdiqləndi','Diz bərpası müalicəsi. Fizioterapiya ilə birlikdə planlaşdırılıb.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-                            <button class="act-btn del" title="Ləğv et"><i class="bi bi-x-circle"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr data-name="emre yılmaz murat demir" data-branch="kardiologiya" data-status="gozeliyir" data-cat="gozeliyir">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0006</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#01c0c8,#6ee7b7);">EY</div>
-                            <div><div class="pat-name">Emre Yılmaz</div><div class="pat-sub">#XST-0006</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Murat Demir</div><div class="pat-sub">Kardioloq</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Kardiologiya</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">28 İyun 2026</div><div class="pat-sub">16:00</div></td>
-                    <td><span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:.72rem;">Yoxlama</span></td>
-                    <td><span class="badge-status bs-pending"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Gözləyir</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0006','Emre Yılmaz','Dr. Murat Demir','Kardiologiya','28 İyun 2026','16:00','Yoxlama','Gözləyir','Aylıq ürək yoxlaması. EKQ və qan analizi planlaşdırılıb.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-                            <button class="act-btn del" title="Ləğv et"><i class="bi bi-x-circle"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr data-name="selin arslan selin arslan" data-branch="pediatriya" data-status="tamamlandi" data-cat="tamamlandi">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0007</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#ec4899,#f9a8d4);">SA</div>
-                            <div><div class="pat-name">Selin Arslan</div><div class="pat-sub">#XST-0007</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Selin Arslan</div><div class="pat-sub">Pediatr</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Pediatriya</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">25 İyun 2026</div><div class="pat-sub">10:00</div></td>
-                    <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size:.72rem;">Müayinə</span></td>
-                    <td><span class="badge-status bs-completed"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Tamamlandı</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0007','Selin Arslan','Dr. Selin Arslan','Pediatriya','25 İyun 2026','10:00','Müayinə','Tamamlandı','Uşaq böyüməsi yoxlanışı tamamlandı. Növbəti görüş 3 ay sonra.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Resept Yaz"><i class="bi bi-prescription"></i></button>
-                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr data-name="kemal öztürk zeynep çelik" data-branch="nevrologiya" data-status="tamamlandi" data-cat="tamamlandi">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0008</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#16a34a,#86efac);">KÖ</div>
-                            <div><div class="pat-name">Kemal Öztürk</div><div class="pat-sub">#XST-0008</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Zeynep Çelik</div><div class="pat-sub">Nevroloq</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Nevrologiya</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">25 İyun 2026</div><div class="pat-sub">15:30</div></td>
-                    <td><span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:.72rem;">Yoxlama</span></td>
-                    <td><span class="badge-status bs-completed"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Tamamlandı</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0008','Kemal Öztürk','Dr. Zeynep Çelik','Nevrologiya','25 İyun 2026','15:30','Yoxlama','Tamamlandı','Nevrológik yoxlama tamamlandı. Müalicə davam edir.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Resept Yaz"><i class="bi bi-prescription"></i></button>
-                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr data-name="zeynep çelik kemal öztürk" data-branch="dermatoloji" data-status="legvedildi" data-cat="legvedildi">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0009</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#94a3b8,#cbd5e1);">ZÇ</div>
-                            <div><div class="pat-name">Zeynep Çelik</div><div class="pat-sub">#XST-0009</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Kemal Öztürk</div><div class="pat-sub">Dermatoloq</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Dermatoloji</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">26 İyun 2026</div><div class="pat-sub">12:00</div></td>
-                    <td><span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size:.72rem;">Prosedur</span></td>
-                    <td><span class="badge-status bs-cancelled"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Ləğv edildi</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0009','Zeynep Çelik','Dr. Kemal Öztürk','Dermatoloji','26 İyun 2026','12:00','Prosedur','Ləğv edildi','Şəxsi səbəblərə görə ləğv edildi.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Yenidən Planla"><i class="bi bi-arrow-repeat"></i></button>
-                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr data-name="ali kocaman ali kocaman" data-branch="ortopediya" data-status="gozeliyir" data-cat="gozeliyir">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0010</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#dc2626,#fca5a5);">AK</div>
-                            <div><div class="pat-name">Ali Kocaman</div><div class="pat-sub">#XST-0010</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Ali Kocaman</div><div class="pat-sub">Ortopedik Cərrah</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Ortopediya</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">29 İyun 2026</div><div class="pat-sub">10:30</div></td>
-                    <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size:.72rem;">Müayinə</span></td>
-                    <td><span class="badge-status bs-pending"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Gözləyir</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0010','Ali Kocaman','Dr. Ali Kocaman','Ortopediya','29 İyun 2026','10:30','Müayinə','Gözləyir','Əməliyyat öncəsi yoxlama. Qan analizi nəticələri gözlənilir.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-                            <button class="act-btn del" title="Ləğv et"><i class="bi bi-x-circle"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr data-name="ayşe kaya selin arslan" data-branch="pediatriya" data-status="tesdiqlendi" data-cat="tesdiqlendi">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0011</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#ec4899,#f9a8d4);">AK</div>
-                            <div><div class="pat-name">Ayşe Kaya</div><div class="pat-sub">#XST-0001</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Selin Arslan</div><div class="pat-sub">Pediatr</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Pediatriya</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">30 İyun 2026</div><div class="pat-sub">11:45</div></td>
-                    <td><span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:.72rem;">Yoxlama</span></td>
-                    <td><span class="badge-status bs-confirmed"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Təsdiqləndi</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0011','Ayşe Kaya','Dr. Selin Arslan','Pediatriya','30 İyun 2026','11:45','Yoxlama','Təsdiqləndi','İkinci rəy üçün pediatr müayinəsi.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-                            <button class="act-btn del" title="Ləğv et"><i class="bi bi-x-circle"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr data-name="nurcan şahin murat demir" data-branch="kardiologiya" data-status="tamamlandi" data-cat="tamamlandi">
-                    <td><span style="font-family:monospace;font-size:.8rem;color:#475569;font-weight:600;">#GRŞ-0012</span></td>
-                    <td>
-                        <div class="pat-cell">
-                            <div class="pat-ini" style="background:linear-gradient(135deg,#7c3aed,#c4b5fd);">NŞ</div>
-                            <div><div class="pat-name">Nurcan Şahin</div><div class="pat-sub">#XST-0005</div></div>
-                        </div>
-                    </td>
-                    <td><div class="pat-name" style="font-size:.84rem;">Dr. Murat Demir</div><div class="pat-sub">Kardioloq</div></td>
-                    <td><span class="badge bg-light text-secondary border" style="font-size:.73rem;">Kardiologiya</span></td>
-                    <td><div style="font-weight:600;font-size:.83rem;color:var(--dark-color);">24 İyun 2026</div><div class="pat-sub">09:00</div></td>
-                    <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size:.72rem;">Müayinə</span></td>
-                    <td><span class="badge-status bs-completed"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Tamamlandı</span></td>
-                    <td>
-                        <div class="d-flex gap-1 justify-content-center">
-                            <button class="act-btn" title="Ətraflı bax" onclick="openApptDetail('#GRŞ-0012','Nurcan Şahin','Dr. Murat Demir','Kardiologiya','24 İyun 2026','09:00','Müayinə','Tamamlandı','EKQ nəticələri normal. Müalicə davam edir, növbəti yoxlama 1 ay sonra.')"><i class="bi bi-eye"></i></button>
-                            <button class="act-btn" title="Resept Yaz"><i class="bi bi-prescription"></i></button>
-                            <button class="act-btn del" title="Sil"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        string statusClass = item.Status switch
+                        {
+                            "Təsdiqləndi" => "status-confirmed",
+                            "Tamamlandı" => "status-completed",
+                            "Ləğv edildi" => "status-cancelled",
+                            _ => "status-pending"
+                        };
+                        <tr>
+                            <td><span class="appt-id">#GRŞ-@item.AppointmentId.ToString("D4")</span></td>
+                            <td class="text-muted">@item.DoctorId</td>
+                            <td class="text-muted">@item.PatientId</td>
+                            <td><span class="appt-date">@item.AppointmentDate.ToString("dd.MM.yyyy HH:mm")</span></td>
+                            <td><span class="appt-price">₼@item.Price.ToString("F2")</span></td>
+                            <td><span class="@statusClass">@(string.IsNullOrEmpty(item.Status) ? "Gözləyir" : item.Status)</span></td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <a href="@Url.Action("UpdateAppointment","Appointment",new{area="Admin",id=item.AppointmentId})"
+                                       class="action-btn action-btn-edit" title="Düzəliş et">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="@Url.Action("DeleteAppointment","Appointment",new{area="Admin",id=item.AppointmentId})"
+                                       class="action-btn action-btn-delete" title="Sil"
+                                       onclick="return confirm('#@item.AppointmentId nömrəli görüşü silmək istədiyinizdən əminsinizmi?')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            <i class="bi bi-calendar-x" style="font-size:2.5rem; opacity:0.3;"></i>
+                            <p class="mt-2">Heç bir görüş qeydiyyatda deyil</p>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
-    <div class="table-footer">
-        <span class="table-footer-info">Cəmi 1,482 görüşdən 1-12 arası göstərilir</span>
-        <div class="d-flex gap-1">
-            <button class="pag-btn"><i class="bi bi-chevron-left"></i></button>
-            <button class="pag-btn active">1</button>
-            <button class="pag-btn">2</button>
-            <button class="pag-btn">3</button>
-            <button class="pag-btn">...</button>
-            <button class="pag-btn">124</button>
-            <button class="pag-btn"><i class="bi bi-chevron-right"></i></button>
-        </div>
-    </div>
 </div>
-
-<!-- Görüş Detal Modası -->
-<div class="modal fade detail-modal" id="apptDetailModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-calendar-check-fill"></i> Görüş Məlumatları</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="detail-grid">
-                    <div class="detail-field"><div class="detail-field-label">Görüş ID</div><div class="detail-field-value" id="aModalId">#GRŞ-0001</div></div>
-                    <div class="detail-field"><div class="detail-field-label">Vəziyyət</div><div class="detail-field-value" id="aModalStatus">Təsdiqləndi</div></div>
-                    <div class="detail-field"><div class="detail-field-label">Xəstə</div><div class="detail-field-value" id="aModalPatient">Ayşe Kaya</div></div>
-                    <div class="detail-field"><div class="detail-field-label">Həkim</div><div class="detail-field-value" id="aModalDoctor">Dr. Murat Demir</div></div>
-                    <div class="detail-field"><div class="detail-field-label">Şöbə</div><div class="detail-field-value" id="aModalBranch">Kardiologiya</div></div>
-                    <div class="detail-field"><div class="detail-field-label">Görüş Növü</div><div class="detail-field-value" id="aModalType">Müayinə</div></div>
-                    <div class="detail-field"><div class="detail-field-label">Tarix</div><div class="detail-field-value" id="aModalDate">28 İyun 2026</div></div>
-                    <div class="detail-field"><div class="detail-field-label">Saat</div><div class="detail-field-value" id="aModalTime">09:30</div></div>
-                </div>
-                <div class="appt-detail-notes">
-                    <div class="appt-detail-notes-label">Qeydlər</div>
-                    <div class="appt-detail-notes-text" id="aModalNotes">—</div>
-                </div>
-            </div>
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius:10px;">Bağla</button>
-                <button type="button" class="btn btn-primary" style="border-radius:10px;"><i class="bi bi-pencil me-1"></i>Redaktə et</button>
-                <button type="button" class="btn btn-outline-danger" style="border-radius:10px;"><i class="bi bi-x-circle me-1"></i>Ləğv et</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-<script>
-    function openApptDetail(id, patient, doctor, branch, date, time, type, status, notes) {
-        document.getElementById('aModalId').textContent      = id;
-        document.getElementById('aModalPatient').textContent = patient;
-        document.getElementById('aModalDoctor').textContent  = doctor;
-        document.getElementById('aModalBranch').textContent  = branch;
-        document.getElementById('aModalDate').textContent    = date;
-        document.getElementById('aModalTime').textContent    = time;
-        document.getElementById('aModalType').textContent    = type;
-        document.getElementById('aModalNotes').textContent   = notes;
-
-        const el = document.getElementById('aModalStatus');
-        el.className = 'detail-field-value';
-        if      (status === 'Təsdiqləndi')  { el.style.color = '#15803d'; }
-        else if (status === 'Gözləyir')     { el.style.color = '#b45309'; }
-        else if (status === 'Ləğv edildi')  { el.style.color = '#dc2626'; }
-        else                                { el.style.color = '#0e82fd'; }
-        el.textContent = status;
-
-        new bootstrap.Modal(document.getElementById('apptDetailModal')).show();
-    }
-
-    document.querySelectorAll('.filter-pill').forEach(btn => {
-        btn.addEventListener('click', function () {
-            document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            applyFilters();
-        });
-    });
-    document.getElementById('apptSearch').addEventListener('input', applyFilters);
-    document.getElementById('branchFilter').addEventListener('change', applyFilters);
-    document.getElementById('statusFilter').addEventListener('change', applyFilters);
-
-    function applyFilters() {
-        const search = document.getElementById('apptSearch').value.toLowerCase().trim();
-        const branch = document.getElementById('branchFilter').value;
-        const status = document.getElementById('statusFilter').value;
-        const cat    = (document.querySelector('.filter-pill.active') || {}).dataset?.cat || 'all';
-
-        document.querySelectorAll('#apptTableBody tr').forEach(row => {
-            const mSearch = !search || (row.dataset.name || '').includes(search);
-            const mBranch = !branch || row.dataset.branch === branch;
-            const mStatus = !status || row.dataset.status === status;
-            const mCat    = cat === 'all' || row.dataset.cat === cat;
-            row.classList.toggle('hidden', !(mSearch && mBranch && mStatus && mCat));
-        });
-    }
-</script>
-}

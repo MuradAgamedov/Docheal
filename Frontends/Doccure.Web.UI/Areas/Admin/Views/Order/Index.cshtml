@@ -1,0 +1,191 @@
+@model List<Doccure.Web.UI.Dtos.OrderDtos.ResultOrderDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Sifarişlər";
+}
+
+@section Styles {
+<style>
+    .order-table-wrapper {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #e8edf3;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        overflow: hidden;
+    }
+    .order-table thead th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 14px 20px;
+        border-bottom: 1px solid #e8edf3;
+        white-space: nowrap;
+    }
+    .order-table tbody td {
+        padding: 14px 20px;
+        vertical-align: middle;
+        font-size: 0.88rem;
+        color: #374151;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .order-table tbody tr:last-child td { border-bottom: none; }
+    .order-table tbody tr:hover { background: #f8fafc; }
+    .patient-name { font-weight: 600; color: #1e293b; font-size: 0.93rem; }
+    .location-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 8px;
+    }
+    .price-cell { font-weight: 700; color: #0e82fd; }
+    .status-waiting { background: #fef3c7; color: #92400e; padding: 3px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; }
+    .status-done { background: #d1fae5; color: #065f46; padding: 3px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; }
+    .status-cancelled { background: #fee2e2; color: #991b1b; padding: 3px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; }
+    .status-other { background: #e0e7ff; color: #3730a3; padding: 3px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; }
+    .table-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .page-title-group h2 { font-family: 'Poppins', sans-serif; font-size: 1.45rem; font-weight: 700; color: #1e293b; margin: 0; }
+    .page-title-group p { color: #94a3b8; font-size: 0.84rem; margin: 4px 0 0 0; }
+    .btn-add-primary {
+        background: linear-gradient(135deg, #0e82fd, #5b5cee);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(14,130,253,0.25);
+    }
+    .btn-add-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(14,130,253,0.35); color: #fff; }
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        font-size: 0.88rem;
+    }
+    .action-btn-edit { background: #eff6ff; color: #3b82f6; }
+    .action-btn-edit:hover { background: #3b82f6; color: #fff; }
+    .action-btn-delete { background: #fff1f2; color: #f43f5e; }
+    .action-btn-delete:hover { background: #f43f5e; color: #fff; }
+</style>
+}
+
+<div class="container-fluid p-4">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="table-page-header">
+        <div class="page-title-group">
+            <h2><i class="bi bi-bag-check me-2 text-primary"></i> Sifariş İdarəsi</h2>
+            <p>Cəmi <strong>@Model?.Count</strong> sifariş qeydiyyatda</p>
+        </div>
+        <a href="@Url.Action("CreateOrder","Order",new{area="Admin"})" class="btn-add-primary">
+            <i class="bi bi-plus-lg"></i> Yeni Sifariş Əlavə Et
+        </a>
+    </div>
+
+    <div class="order-table-wrapper">
+        <table class="table order-table mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Xəstə Adı</th>
+                    <th>Yer</th>
+                    <th>Məbləğ</th>
+                    <th>Tarix</th>
+                    <th>Status</th>
+                    <th style="width:90px;">Əməliyyat</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    int i = 1;
+                    foreach (var item in Model)
+                    {
+                        string statusClass = item.Status switch
+                        {
+                            "Gözləyir" => "status-waiting",
+                            "Tamamlandı" => "status-done",
+                            "Ləğv edildi" => "status-cancelled",
+                            _ => "status-other"
+                        };
+                        <tr>
+                            <td class="text-muted">@i</td>
+                            <td><span class="patient-name">@item.PatientName</span></td>
+                            <td>
+                                <span class="location-badge">
+                                    <i class="bi bi-building"></i> @item.BlockNo / @item.FloorNo / @item.RoomNo
+                                </span>
+                            </td>
+                            <td><span class="price-cell">₼@item.TotalPrice.ToString("F2")</span></td>
+                            <td class="text-muted">@item.OrderDate.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td><span class="@statusClass">@item.Status</span></td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <a href="@Url.Action("UpdateOrder","Order",new{area="Admin",id=item.OrderId})"
+                                       class="action-btn action-btn-edit" title="Düzəliş et">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="@Url.Action("DeleteOrder","Order",new{area="Admin",id=item.OrderId})"
+                                       class="action-btn action-btn-delete" title="Sil"
+                                       onclick="return confirm('@item.PatientName sifarişini silmək istədiyinizdən əminsinizmi?')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            <i class="bi bi-bag-x" style="font-size:2.5rem; opacity:0.3;"></i>
+                            <p class="mt-2">Heç bir sifariş qeydiyyatda deyil</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

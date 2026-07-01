@@ -100,3 +100,37 @@
 
 
 ---------------------------------------------------------------
+
+
+INSERT INTO [DoccureMarketDb].[dbo].[Products] ([ProductName], [Price], [Category], [ImageUrl], [Status])
+VALUES
+('Paracetamol 500mg (20 tablet)', 2.50, 'Dərman', '/images/products/paracetamol.jpg', 1),
+('Ibuprofen 400mg (20 tablet)', 3.20, 'Dərman', '/images/products/ibuprofen.jpg', 1),
+('Amoksisillin 500mg (16 kapsul)', 5.80, 'Dərman', '/images/products/amoksisillin.jpg', 1),
+('Aspirin 100mg (30 tablet)', 2.10, 'Dərman', '/images/products/aspirin.jpg', 1),
+('Vitamin C 1000mg (10 şipuçan tablet)', 4.50, 'Vitamin', '/images/products/vitaminc.jpg', 1),
+('Vitamin D3 2000IU (30 kapsul)', 6.90, 'Vitamin', '/images/products/vitamind.jpg', 1),
+('Antiseptik məhlul (100ml)', 3.75, 'Tibbi ləvazimat', '/images/products/antiseptik.jpg', 1),
+('Steril tibbi əlcək (100 ədəd)', 8.00, 'Tibbi ləvazimat', '/images/products/eldiven.jpg', 1),
+('Tibbi maska N95 (10 ədəd)', 7.50, 'Tibbi ləvazimat', '/images/products/mask.jpg', 1),
+('Cərrahi bandaj (5m)', 2.30, 'Tibbi ləvazimat', '/images/products/bandaj.jpg', 1),
+('Termometr (rəqəmsal)', 12.90, 'Tibbi cihaz', '/images/products/termometr.jpg', 1),
+('Qan təzyiqi ölçən cihaz', 45.00, 'Tibbi cihaz', '/images/products/tonometr.jpg', 1),
+('Pulsoksimetr', 25.50, 'Tibbi cihaz', '/images/products/pulsoksimetr.jpg', 1),
+('İnsulin şprisi (10 ədəd)', 4.00, 'Tibbi ləvazimat', '/images/products/sprist.jpg', 1),
+('Şəkər ölçən test zolağı (50 ədəd)', 15.00, 'Tibbi ləvazimat', '/images/products/glucose.jpg', 1),
+('Pambıq (100q)', 1.50, 'Tibbi ləvazimat', '/images/products/pambiq.jpg', 1),
+('Yara plasteri (20 ədəd)', 2.00, 'Tibbi ləvazimat', '/images/products/plaster.jpg', 1),
+('Antihistamin tablet (10 ədəd)', 3.60, 'Dərman', '/images/products/antihistamin.jpg', 1),
+('Omeprazol 20mg (14 kapsul)', 4.20, 'Dərman', '/images/products/omeprazol.jpg', 1),
+('Öskürək siropu (100ml)', 5.10, 'Dərman', '/images/products/oskurek.jpg', 1),
+('Fizioloji məhlul (0.9% NaCl 500ml)', 3.00, 'Tibbi ləvazimat', '/images/products/fizioloji.jpg', 1),
+('Sarğı materialı (steril)', 2.80, 'Tibbi ləvazimat', '/images/products/sargi.jpg', 1),
+('Əl dezinfeksiyaedici gel (250ml)', 3.40, 'Gigiyena', '/images/products/dezinfeksiya.jpg', 1),
+('Tibbi papaq (50 ədəd)', 4.90, 'Tibbi ləvazimat', '/images/products/papaq.jpg', 1),
+('Ağız-burun maska (50 ədəd)', 6.50, 'Tibbi ləvazimat', '/images/products/agiz_maska.jpg', 1),
+('Su (0.5L)', 0.80, 'İçki', '/images/products/su.jpg', 1),
+('Meyvə şirəsi (1L)', 2.20, 'İçki', '/images/products/meyve_shire.jpg', 1),
+('Enerji bar', 1.90, 'Qida', '/images/products/enerji_bar.jpg', 1),
+('Sabun (antibakterial)', 1.60, 'Gigiyena', '/images/products/sabun.jpg', 1),
+('Salfetka (nəm, 20 ədəd)', 2.40, 'Gigiyena', '/images/products/salfetka.jpg', 1);

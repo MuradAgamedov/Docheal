@@ -1,0 +1,111 @@
+@model Doccure.Web.UI.Dtos.OrderDtos.UpdateOrderDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Sifarişi Yenilə";
+}
+
+@section Styles {
+<style>
+    .form-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+    .form-section-title { font-family: 'Poppins', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #94a3b8; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9; }
+    .form-label { font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 0.85rem; color: #334155; margin-bottom: 6px; }
+    .form-control-custom { width: 100%; padding: 0.65rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 0.88rem; color: #1e293b; background: #f8fafc; transition: all 0.2s ease; outline: none; }
+    .form-control-custom:focus { border-color: #0e82fd; background: #fff; box-shadow: 0 0 0 3px rgba(14,130,253,0.12); }
+    .form-control-custom.input-validation-error { border-color: #f43f5e; background: #fff5f7; }
+    .field-validation-error { color: #f43f5e; font-size: 0.78rem; margin-top: 4px; display: block; }
+    .btn-submit { background: linear-gradient(135deg,#0e82fd,#5b5cee); color: #fff; border: none; border-radius: 10px; padding: 0.65rem 1.8rem; font-weight: 600; font-size: 0.88rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(14,130,253,0.25); }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(14,130,253,0.35); }
+    .btn-cancel { background: #f1f5f9; color: #64748b; border: none; border-radius: 10px; padding: 0.65rem 1.5rem; font-weight: 500; font-size: 0.88rem; text-decoration: none; transition: all 0.2s; }
+    .btn-cancel:hover { background: #e2e8f0; color: #1e293b; }
+    .page-back-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .page-back-header h2 { font-family: 'Poppins', sans-serif; font-size: 1.35rem; font-weight: 700; color: #1e293b; margin: 0; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #64748b; font-size: 0.84rem; text-decoration: none; padding: 6px 12px; border-radius: 8px; background: #f1f5f9; transition: all 0.2s; }
+    .back-link:hover { background: #e2e8f0; color: #1e293b; }
+</style>
+}
+
+<div class="container-fluid p-4">
+    <div class="page-back-header">
+        <a href="@Url.Action("Index","Order",new{area="Admin"})" class="back-link">
+            <i class="bi bi-arrow-left"></i> Geri
+        </a>
+        <h2><i class="bi bi-pencil-square me-2 text-primary"></i> Sifarişi Yenilə</h2>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <form asp-action="UpdateOrder" asp-controller="Order" asp-area="Admin" method="post">
+                <input asp-for="OrderId" type="hidden" />
+
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Xəstə Məlumatları</p>
+                    <div class="col-md-8">
+                        <label asp-for="PatientName" class="form-label"></label>
+                        <input asp-for="PatientName" class="form-control-custom" />
+                        <span asp-validation-for="PatientName" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Yer Məlumatları</p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="BlockNo" class="form-label"></label>
+                            <input asp-for="BlockNo" class="form-control-custom" />
+                            <span asp-validation-for="BlockNo" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="FloorNo" class="form-label"></label>
+                            <input asp-for="FloorNo" class="form-control-custom" />
+                            <span asp-validation-for="FloorNo" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="RoomNo" class="form-label"></label>
+                            <input asp-for="RoomNo" class="form-control-custom" />
+                            <span asp-validation-for="RoomNo" class="field-validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Status</p>
+                    <div class="col-md-6">
+                        <label asp-for="Status" class="form-label"></label>
+                        <select asp-for="Status" class="form-control-custom">
+                            <option value="Gözləyir">Gözləyir</option>
+                            <option value="Tamamlandı">Tamamlandı</option>
+                            <option value="Ləğv edildi">Ləğv edildi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-check-lg me-1"></i> Yadda Saxla
+                    </button>
+                    <a href="@Url.Action("Index","Order",new{area="Admin"})" class="btn-cancel">Ləğv Et</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="form-card">
+                <p class="form-section-title">Cari Məlumatlar</p>
+                <div class="d-flex flex-column gap-2">
+                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="text-muted small">Sifariş ID</span>
+                        <strong class="small">#@Model.OrderId</strong>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="text-muted small">Xəstə</span>
+                        <strong class="small">@Model.PatientName</strong>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="text-muted small">Yer</span>
+                        <strong class="small">@Model.BlockNo / @Model.FloorNo / @Model.RoomNo</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,76 @@
+@model Tuple<Doccure.Web.UI.Dtos.QueueDtos.ResultPatientQueueDro, Doccure.Web.UI.Dtos.QueueDtos.ResultPatientQueueDro>
+@{
+    var currentCalled = Model.Item1;
+    var previousCalled = Model.Item2;
+    
+    string waitingDuration = "~8 dəq";
+    if (currentCalled != null && !string.IsNullOrEmpty(currentCalled.AppointmentTime))
+    {
+        if (TimeSpan.TryParse(currentCalled.AppointmentTime, out var appTime))
+        {
+            var nowTime = DateTime.Now.TimeOfDay;
+            var diff = nowTime - appTime;
+            waitingDuration = diff.TotalMinutes > 0 ? $"~{Math.Round(diff.TotalMinutes)} dəq" : "1 dəq";
+        }
+        else if (DateTime.TryParse(currentCalled.AppointmentTime, out var appDateTime))
+        {
+            var diff = DateTime.Now - appDateTime;
+            waitingDuration = diff.TotalMinutes > 0 ? $"~{Math.Round(diff.TotalMinutes)} dəq" : "1 dəq";
+        }
+    }
+}
+
+<div class="called-patient-card">
+    <div>
+        <div class="card-title-header">
+            <i class="bi bi-megaphone-fill"></i>
+            <span>Hal-hazırda Çağrılan Xəstə</span>
+        </div>
+
+        <!-- Details Container (hidden if no patient is called) -->
+        <div class="called-details-wrap" id="called-details-container" style="@(currentCalled == null ? "display: none;" : "")">
+            <div class="big-number-block">
+                <span class="big-number-title">Sıra No</span>
+                <span class="big-number-val" id="called-queue-no">@(currentCalled?.QueueNumber.ToString().PadLeft(3, '0') ?? "000")</span>
+                <span class="big-number-time">İndi</span>
+            </div>
+            <div class="called-info">
+                <div class="called-name" id="called-patient-name">@(currentCalled?.PatientName ?? "")</div>
+                <div class="called-meta">
+                    <div class="called-meta-item">
+                        <i class="bi bi-door-closed-fill text-muted"></i>
+                        <span id="called-branch-name">@(currentCalled?.BranchName ?? "")</span>
+                    </div>
+                    <div class="called-meta-item">
+                        <i class="bi bi-clock-history text-muted"></i>
+                        <span>Gözləmə müddəti: <strong id="called-wait-time">@waitingDuration</strong></span>
+                    </div>
+                </div>
+                <div class="direction-badge">
+                    <i class="bi bi-arrow-right-circle-fill"></i>
+                    <span>Zəhmət olmasa <strong>3 Nömrəli Müayinə Otağına</strong> keçin</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Patient Called Placeholder (hidden if patient is called) -->
+        <div class="text-center py-4 text-muted" id="no-called-placeholder" style="@(currentCalled != null ? "display: none;" : "")">
+            <i class="bi bi-person-dash" style="font-size: 3rem;"></i>
+            <p class="mt-2 font-weight-bold">Hal-hazırda çağrılan xəstə yoxdur.</p>
+        </div>
+    </div>
+
+    <div class="called-footer-bar">
+        <span id="called-previous-info">
+            @if (previousCalled != null)
+            {
+                <i class="bi bi-arrow-left-circle me-1"></i><span> Əvvəlki: <strong>No @previousCalled.QueueNumber.ToString().PadLeft(3, '0') - @previousCalled.PatientName</strong></span>
+            }
+            else
+            {
+                <span>Əvvəlki çağrılan xəstə yoxdur</span>
+            }
+        </span>
+        <span id="called-previous-status">@(previousCalled != null ? "Tamamlandı" : "-")</span>
+    </div>
+</div>

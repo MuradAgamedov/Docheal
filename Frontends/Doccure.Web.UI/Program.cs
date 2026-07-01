@@ -11,8 +11,9 @@ namespace Doccure.Web.UI
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllersWithViews(options=>
-            { 
+            {
                 options.Filters.Add<ApiExceptionFilter>();
+                options.Filters.Add<Doccure.Web.UI.Filters.SessionAuthFilter>();
             });
             builder.Services.AddHttpContextAccessor();
         
@@ -30,6 +31,13 @@ namespace Doccure.Web.UI
                 .AddHttpMessageHandler<JwtDelegatingHandler>();
             builder.Services.AddHttpClient<Doccure.Web.UI.Services.PatientServices.IPatientService, Doccure.Web.UI.Services.PatientServices.PatientService>()
                 .AddHttpMessageHandler<JwtDelegatingHandler>();
+            builder.Services.AddHttpClient<Doccure.Web.UI.Services.QueueServices.IQueueService, Doccure.Web.UI.Services.QueueServices.QueueService>();
+            builder.Services.AddHttpClient<Doccure.Web.UI.Services.MedicineServices.IMedicineService, Doccure.Web.UI.Services.MedicineServices.MedicineService>();
+            builder.Services.AddHttpClient<Doccure.Web.UI.Services.OrderServices.IOrderService, Doccure.Web.UI.Services.OrderServices.OrderService>();
+            builder.Services.AddHttpClient<Doccure.Web.UI.Services.AppointmentServices.IAppointmentService, Doccure.Web.UI.Services.AppointmentServices.AppointmentService>();
+            builder.Services.AddHttpClient<Doccure.Web.UI.Services.NurseServices.INurseService, Doccure.Web.UI.Services.NurseServices.NurseService>();
+            builder.Services.AddHttpClient<Doccure.Web.UI.Services.ProductServices.IProductService, Doccure.Web.UI.Services.ProductServices.ProductService>();
+            builder.Services.AddHttpClient<Doccure.Web.UI.Services.CartServices.ICartService, Doccure.Web.UI.Services.CartServices.CartService>();
      
             builder.Services.AddSession();
             var app = builder.Build();
@@ -48,6 +56,24 @@ namespace Doccure.Web.UI
             app.UseAuthorization();
 
             app.UseStaticFiles();   // wwwroot/ (uploads, css, js və s.)
+
+            var backendProductsPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "MicroServices", "Doccure.MarketService", "wwwroot", "uploads", "products"));
+            if (!System.IO.Directory.Exists(backendProductsPath))
+                System.IO.Directory.CreateDirectory(backendProductsPath);
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(backendProductsPath),
+                RequestPath = "/uploads/products"
+            });
+
+            var backendMedicinesPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "MicroServices", "Doccure.PharmacyService", "wwwroot", "uploads", "medicines"));
+            if (!System.IO.Directory.Exists(backendMedicinesPath))
+                System.IO.Directory.CreateDirectory(backendMedicinesPath);
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(backendMedicinesPath),
+                RequestPath = "/uploads/medicines"
+            });
 
             var backendPatientsPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "MicroServices", "Doccure.PatientService", "wwwroot", "uploads", "patients"));
             if (!System.IO.Directory.Exists(backendPatientsPath))

@@ -1,0 +1,321 @@
+@model Doccure.Web.UI.Dtos.MedicineDtos.UpdateMedicineDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Dərmanı Yenilə";
+}
+
+@section Styles {
+<style>
+    .form-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .form-section-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #94a3b8;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .form-label {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        font-size: 0.85rem;
+        color: #334155;
+        margin-bottom: 6px;
+    }
+    .form-control-custom {
+        width: 100%;
+        padding: 0.65rem 1rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        color: #1e293b;
+        background: #f8fafc;
+        transition: all 0.2s ease;
+        outline: none;
+    }
+    .form-control-custom:focus {
+        border-color: #0e82fd;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(14,130,253,0.12);
+    }
+    .form-control-custom.input-validation-error { border-color: #f43f5e; background: #fff5f7; }
+    .field-validation-error { color: #f43f5e; font-size: 0.78rem; margin-top: 4px; display: block; }
+    .btn-submit {
+        background: linear-gradient(135deg,#0e82fd,#5b5cee);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 0.65rem 1.8rem;
+        font-weight: 600;
+        font-size: 0.88rem;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(14,130,253,0.25);
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(14,130,253,0.35); }
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #64748b;
+        border: none;
+        border-radius: 10px;
+        padding: 0.65rem 1.5rem;
+        font-weight: 500;
+        font-size: 0.88rem;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .btn-cancel:hover { background: #e2e8f0; color: #1e293b; }
+    .page-back-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+    .page-back-header h2 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+    }
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #64748b;
+        font-size: 0.84rem;
+        text-decoration: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        transition: all 0.2s;
+    }
+    .back-link:hover { background: #e2e8f0; color: #1e293b; }
+    .toggle-switch { position: relative; display: inline-block; width: 48px; height: 26px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+        position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #e2e8f0; border-radius: 50px; transition: 0.3s;
+    }
+    .toggle-slider:before {
+        position: absolute; content: "";
+        height: 20px; width: 20px; left: 3px; bottom: 3px;
+        background-color: white; border-radius: 50%; transition: 0.3s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    input:checked + .toggle-slider { background-color: #0e82fd; }
+    input:checked + .toggle-slider:before { transform: translateX(22px); }
+
+    .img-upload-box {
+        border: 2px dashed #e2e8f0;
+        border-radius: 14px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all .2s;
+        background: #f8fafc;
+        position: relative;
+        overflow: hidden;
+    }
+    .img-upload-box:hover { border-color: #0e82fd; background: #eff6ff; }
+    .img-upload-box i { font-size: 2rem; color: #cbd5e1; display: block; margin-bottom: .4rem; }
+    .img-upload-box span { font-size: .82rem; color: #94a3b8; display: block; }
+    .img-upload-box input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .img-preview-wrap { position: relative; }
+    .img-preview-wrap img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; }
+    .btn-clear-img {
+        position: absolute; top: 6px; right: 6px;
+        background: rgba(0,0,0,.55); color: #fff; border: none;
+        border-radius: 50%; width: 28px; height: 28px;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: .75rem; cursor: pointer;
+    }
+    .current-img-label { font-size: .72rem; color: #94a3b8; margin-bottom: .5rem; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+</style>
+}
+
+<div class="container-fluid p-4">
+    <div class="page-back-header">
+        <a href="@Url.Action("Index","Medicine",new{area="Admin"})" class="back-link">
+            <i class="bi bi-arrow-left"></i> Geri
+        </a>
+        <h2><i class="bi bi-pencil-square me-2 text-primary"></i> Dərman Məlumatlarını Yenilə</h2>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <form asp-action="UpdateMedicine" asp-controller="Medicine" asp-area="Admin" method="post" enctype="multipart/form-data">
+                <input asp-for="MedicineId" type="hidden" />
+                <input asp-for="ImageUrl" type="hidden" />
+
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Əsas Məlumatlar</p>
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label asp-for="MedicineName" class="form-label"></label>
+                            <input asp-for="MedicineName" class="form-control-custom" />
+                            <span asp-validation-for="MedicineName" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Barcode" class="form-label"></label>
+                            <input asp-for="Barcode" class="form-control-custom" />
+                            <span asp-validation-for="Barcode" class="field-validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Stok və Qiymət</p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="Stock" class="form-label"></label>
+                            <input asp-for="Stock" type="number" min="0" class="form-control-custom" />
+                            <span asp-validation-for="Stock" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="CriticalStockLevel" class="form-label"></label>
+                            <input asp-for="CriticalStockLevel" type="number" min="0" class="form-control-custom" />
+                            <span asp-validation-for="CriticalStockLevel" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="UnitPrice" class="form-label"></label>
+                            <input asp-for="UnitPrice" type="number" step="0.01" min="0" class="form-control-custom" />
+                            <span asp-validation-for="UnitPrice" class="field-validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Şəkil</p>
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div class="current-img-label">Cari şəkil</div>
+                        <div class="img-preview-wrap mb-3" id="currentImgWrap">
+                            <img src="@Model.ImageUrl" alt="Cari şəkil" id="displayedImg" />
+                            <button type="button" class="btn-clear-img" id="removeCurrentImg" title="Şəkli sil">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    }
+                    <div class="img-upload-box @(!string.IsNullOrEmpty(Model.ImageUrl) ? "mt-2" : "")" id="uploadBox">
+                        <i class="bi bi-cloud-upload"></i>
+                        <span>@(!string.IsNullOrEmpty(Model.ImageUrl) ? "Yeni şəkil seçin (dəyişdirmək üçün)" : "Şəkil seçin və ya buraya sürükləyin")</span>
+                        <input type="file" name="imageFile" id="imageFileInput" accept="image/*" />
+                    </div>
+                    <div class="img-preview-wrap mt-2" id="newPreviewWrap" style="display:none;">
+                        <img id="newImgPreview" src="#" alt="Yeni şəkil" />
+                        <button type="button" class="btn-clear-img" id="clearNewImg" title="Seçimi ləğv et">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Tarix və Status</p>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-6">
+                            <label asp-for="ExpirationDate" class="form-label"></label>
+                            <input asp-for="ExpirationDate" type="date" class="form-control-custom" />
+                            <span asp-validation-for="ExpirationDate" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label d-block">Status</label>
+                            <div class="d-flex align-items-center gap-3 mt-1">
+                                <label class="toggle-switch">
+                                    <input asp-for="Status" type="checkbox" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="text-muted" style="font-size:0.85rem;">@(Model.Status ? "Aktivdir" : "Deaktivdir")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-check-lg me-1"></i> Yadda Saxla
+                    </button>
+                    <a href="@Url.Action("Index","Medicine",new{area="Admin"})" class="btn-cancel">Ləğv Et</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="form-card">
+                <p class="form-section-title">Cari Məlumatlar</p>
+                <div class="d-flex flex-column gap-2">
+                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="text-muted small">ID</span>
+                        <strong class="small">#@Model.MedicineId</strong>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="text-muted small">Stok</span>
+                        <strong class="small @(Model.Stock <= Model.CriticalStockLevel ? "text-danger" : "text-success")">
+                            @Model.Stock ədəd
+                        </strong>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="text-muted small">Qiymət</span>
+                        <strong class="small text-primary">₼@Model.UnitPrice.ToString("F2")</strong>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="text-muted small">Son İst. Tarixi</span>
+                        <strong class="small @(Model.ExpirationDate <= DateTime.Now.AddMonths(3) ? "text-danger" : "")">
+                            @Model.ExpirationDate.ToString("dd.MM.yyyy")
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const fileInput = document.getElementById('imageFileInput');
+    const newPreviewWrap = document.getElementById('newPreviewWrap');
+    const newImgPreview = document.getElementById('newImgPreview');
+    const clearNewBtn = document.getElementById('clearNewImg');
+    const uploadBox = document.getElementById('uploadBox');
+    const imageUrlInput = document.querySelector('input[name="ImageUrl"]');
+    const currentImgWrap = document.getElementById('currentImgWrap');
+    const removeCurrentBtn = document.getElementById('removeCurrentImg');
+
+    if (removeCurrentBtn) {
+        removeCurrentBtn.addEventListener('click', function () {
+            currentImgWrap.style.display = 'none';
+            imageUrlInput.value = '';
+            uploadBox.querySelector('span').textContent = 'Şəkil seçin və ya buraya sürükləyin';
+        });
+    }
+
+    fileInput.addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                newImgPreview.src = e.target.result;
+                newPreviewWrap.style.display = 'block';
+                uploadBox.querySelector('span').textContent = this.files[0].name;
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    if (clearNewBtn) {
+        clearNewBtn.addEventListener('click', function () {
+            fileInput.value = '';
+            newImgPreview.src = '#';
+            newPreviewWrap.style.display = 'none';
+            uploadBox.querySelector('span').textContent = 'Yeni şəkil seçin (dəyişdirmək üçün)';
+        });
+    }
+</script>
+}

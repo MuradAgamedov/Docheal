@@ -1,0 +1,110 @@
+@model Doccure.Web.UI.Dtos.OrderDtos.CreateOrderDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Yeni Sifariş";
+}
+
+@section Styles {
+<style>
+    .form-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+    .form-section-title { font-family: 'Poppins', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #94a3b8; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9; }
+    .form-label { font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 0.85rem; color: #334155; margin-bottom: 6px; }
+    .form-control-custom { width: 100%; padding: 0.65rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 0.88rem; color: #1e293b; background: #f8fafc; transition: all 0.2s ease; outline: none; }
+    .form-control-custom:focus { border-color: #0e82fd; background: #fff; box-shadow: 0 0 0 3px rgba(14,130,253,0.12); }
+    .form-control-custom.input-validation-error { border-color: #f43f5e; background: #fff5f7; }
+    .field-validation-error { color: #f43f5e; font-size: 0.78rem; margin-top: 4px; display: block; }
+    .btn-submit { background: linear-gradient(135deg,#0e82fd,#5b5cee); color: #fff; border: none; border-radius: 10px; padding: 0.65rem 1.8rem; font-weight: 600; font-size: 0.88rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(14,130,253,0.25); }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(14,130,253,0.35); }
+    .btn-cancel { background: #f1f5f9; color: #64748b; border: none; border-radius: 10px; padding: 0.65rem 1.5rem; font-weight: 500; font-size: 0.88rem; text-decoration: none; transition: all 0.2s; }
+    .btn-cancel:hover { background: #e2e8f0; color: #1e293b; }
+    .page-back-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .page-back-header h2 { font-family: 'Poppins', sans-serif; font-size: 1.35rem; font-weight: 700; color: #1e293b; margin: 0; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #64748b; font-size: 0.84rem; text-decoration: none; padding: 6px 12px; border-radius: 8px; background: #f1f5f9; transition: all 0.2s; }
+    .back-link:hover { background: #e2e8f0; color: #1e293b; }
+</style>
+}
+
+<div class="container-fluid p-4">
+    <div class="page-back-header">
+        <a href="@Url.Action("Index","Order",new{area="Admin"})" class="back-link">
+            <i class="bi bi-arrow-left"></i> Geri
+        </a>
+        <h2><i class="bi bi-plus-circle me-2 text-primary"></i> Yeni Sifariş Əlavə Et</h2>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <form asp-action="CreateOrder" asp-controller="Order" asp-area="Admin" method="post">
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Xəstə Məlumatları</p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="PatientId" class="form-label"></label>
+                            <input asp-for="PatientId" type="number" class="form-control-custom" placeholder="Xəstə ID" />
+                            <span asp-validation-for="PatientId" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-8">
+                            <label asp-for="PatientName" class="form-label"></label>
+                            <input asp-for="PatientName" class="form-control-custom" placeholder="Məs: Əli Həsənov" />
+                            <span asp-validation-for="PatientName" class="field-validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Yer Məlumatları</p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="BlockNo" class="form-label"></label>
+                            <input asp-for="BlockNo" class="form-control-custom" placeholder="Məs: A" />
+                            <span asp-validation-for="BlockNo" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="FloorNo" class="form-label"></label>
+                            <input asp-for="FloorNo" class="form-control-custom" placeholder="Məs: 3" />
+                            <span asp-validation-for="FloorNo" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="RoomNo" class="form-label"></label>
+                            <input asp-for="RoomNo" class="form-control-custom" placeholder="Məs: 301" />
+                            <span asp-validation-for="RoomNo" class="field-validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card mb-4">
+                    <p class="form-section-title">Status</p>
+                    <div class="col-md-6">
+                        <label asp-for="Status" class="form-label"></label>
+                        <select asp-for="Status" class="form-control-custom">
+                            <option value="Gözləyir">Gözləyir</option>
+                            <option value="Tamamlandı">Tamamlandı</option>
+                            <option value="Ləğv edildi">Ləğv edildi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-check-lg me-1"></i> Əlavə Et
+                    </button>
+                    <a href="@Url.Action("Index","Order",new{area="Admin"})" class="btn-cancel">Ləğv Et</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="form-card">
+                <p class="form-section-title">Məlumat</p>
+                <div class="d-flex gap-2 mb-3">
+                    <i class="bi bi-info-circle text-primary mt-1"></i>
+                    <p class="text-muted small mb-0">Sifariş yaradıldıqdan sonra məhsullar sifariş detalları bölməsindən əlavə edilə bilər.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <i class="bi bi-geo-alt text-warning mt-1"></i>
+                    <p class="text-muted small mb-0">Blok, Mərtəbə və Otaq nömrəsi xəstənin fiziki yerini göstərir.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,7 @@
 
+using Doccure.QueueService.Context;
+using Doccure.QueueService.Hubs;
+
 namespace Doccure.QueueService
 {
     public class Program
@@ -6,19 +9,35 @@ namespace Doccure.QueueService
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<QueueContext>();
+            builder.Services.AddSignalR();
 
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+            
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .SetIsOriginAllowed((host) => true)
+                          .AllowCredentials();
+                });
+            });
 
             var app = builder.Build();
+
+            app.UseCors("CorsPolicy");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();
@@ -27,7 +46,7 @@ namespace Doccure.QueueService
 
 
             app.MapControllers();
-
+            app.MapHub<QueueHub>("/queuehub");
             app.Run();
         }
     }

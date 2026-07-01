@@ -40,6 +40,8 @@ namespace Doccure.Web.UI.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("JwtToken")))
+                return RedirectToAction("Index", "AdminLayaut", new { area = "Admin" });
             return View();
         }
 
@@ -62,7 +64,33 @@ namespace Doccure.Web.UI.Controllers
             TempData["Success"] = "Uğurla daxil oldunuz!";
             ViewBag.v = result;
             HttpContext.Session.SetString("JwtToken", result);
+
+            var userId = ExtractClaim(result, "sub") ?? ExtractClaim(result, "nameid")
+                ?? ExtractClaim(result, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
+                ?? model.UsernameOrEmail;
+            HttpContext.Session.SetString("UserId", userId);
+
             return RedirectToAction("Index", "AdminLayaut", new { area = "Admin"});
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login", "Auth");
+        }
+
+        private static string? ExtractClaim(string token, string claimKey)
+        {
+            try
+            {
+                var payload = token.Split('.')[1];
+                var padded = payload.PadRight(payload.Length + (4 - payload.Length % 4) % 4, '=');
+                var json = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(padded));
+                var obj = Newtonsoft.Json.Linq.JObject.Parse(json);
+                return obj[claimKey]?.ToString();
+            }
+            catch { return null; }
         }
     }
 }
